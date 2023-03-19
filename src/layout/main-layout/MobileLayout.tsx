@@ -10,21 +10,37 @@ import {
     SettingsIcon,
     UserPlusIcon,
 } from '@/assets'
+import { useAuth } from '@/context/AuthContext'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Fragment, ReactNode } from 'react'
-import { HiChevronDown } from 'react-icons/hi'
+import { HiChevronDown, HiChevronLeft } from 'react-icons/hi'
+
+function TopNavbar() {
+    const router = useRouter()
+
+    switch (router.pathname) {
+        case '/':
+            return <HomeMobileNav />
+        case '/[id]':
+            return <ProfileMobileNav />
+        case '/accounts/edit':
+            return <EditPageMobileNav title="Edit Profile" />
+        case '/accounts/password/change':
+            return <EditPageMobileNav title="Change Password" />
+        default:
+            return <HomeMobileNav />
+    }
+}
 
 function MobileLayout({ children }: { children: ReactNode }) {
-    const router = useRouter()
-    const isHome = router.pathname === '/'
+    const currentUser = useAuth()
 
     return (
         <Fragment>
-            {isHome ? <HomeMobileNav /> : <ProfileMobileNav />}
-
-            <footer className="fixed inset-x-0 bottom-0 z-40 flex h-10 items-center justify-evenly border-y border-y-gray-300 bg-white">
+            <TopNavbar />
+            <footer className="fixed inset-x-0 bottom-0 z-40 flex h-12 items-center justify-evenly border-y border-y-gray-300 bg-white">
                 <Link href="/" className="group rounded-full p-1">
                     <HomeIcon
                         aria-label="Home"
@@ -56,18 +72,21 @@ function MobileLayout({ children }: { children: ReactNode }) {
                     />
                 </button>
 
-                <button className="group relative rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2">
+                <Link
+                    href={`/${currentUser?.uid ?? ''}`}
+                    className="group relative rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                >
                     <Image
-                        src={PlaceholderImage}
-                        alt="username"
+                        src={currentUser?.photoURL ?? PlaceholderImage.src}
+                        alt={currentUser?.displayName ?? ''}
                         width={24}
                         height={24}
                         className="h-6 w-6 rounded-full object-cover"
                     />
-                </button>
+                </Link>
             </footer>
 
-            <div className="mb-10 mt-10 xs:mt-14">{children}</div>
+            <div className="mb-12 mt-12 xs:mt-14">{children}</div>
         </Fragment>
     )
 }
@@ -112,6 +131,24 @@ function ProfileMobileNav() {
                     className="scale-90 transform group-hover:scale-100"
                 />
             </button>
+        </nav>
+    )
+}
+
+function EditPageMobileNav({ title }: { title: string }) {
+    const router = useRouter()
+
+    return (
+        <nav className="fixed inset-x-0 top-0 z-40 flex h-10 items-center justify-between border-y border-y-gray-300 bg-white px-2 text-sm xs:px-4">
+            <button className="rounded-full p-1" onClick={() => router.back()}>
+                <HiChevronLeft className="text-2xl" aria-label="back" />
+            </button>
+
+            <button className="px-2 py-0.5">
+                <b>{title}</b>
+            </button>
+
+            <span aria-hidden></span>
         </nav>
     )
 }

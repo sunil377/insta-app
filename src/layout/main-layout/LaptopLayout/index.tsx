@@ -258,7 +258,7 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                     <SettingButton isSpread={isSpread} />
                 </div>
             </nav>
-            <main className="ml-16 bg-white px-10 lg:ml-56">{children}</main>
+            <main className="ml-16 bg-white px-2 lg:ml-56">{children}</main>
         </div>
     )
 }

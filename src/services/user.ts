@@ -23,7 +23,7 @@ export interface IUser {
     userId: string
     username: string
     fullname: string
-    bio: string[]
+    bio: string
     likes: string[]
     posts: string[]
     saved: string[]
@@ -49,7 +49,7 @@ function createUser({
         likes: [],
         posts: [],
         saved: [],
-        bio: [],
+        bio: '',
         updatedAt: currentTime,
     }
     return setDoc(doc(db, user_collection_name, userId), data)

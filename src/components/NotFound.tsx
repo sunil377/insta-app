@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 function NotFound({ statusCode }: { statusCode: number }) {
     return (
-        <div className="fixed inset-0 flex items-center justify-center">
+        <div className="fixed inset-0 z-30 flex items-center justify-center bg-white">
             <div className="space-y-2 text-center text-sm">
                 <p>Page Not Found {statusCode}</p>
                 <Link

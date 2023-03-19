@@ -11,6 +11,7 @@ import type {
     InferGetServerSidePropsType,
 } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import nookies from 'nookies'
 import { useEffect, useState } from 'react'
@@ -57,9 +58,12 @@ const Profile: NextPageWithLayout<
                         <p className="order-1 max-w-[12ch] truncate text-xl font-light">
                             {user?.username}
                         </p>
-                        <button className="order-last w-full rounded-md bg-gray-100 px-2 py-1 font-medium sm:order-2 sm:w-auto">
+                        <Link
+                            href="/accounts/edit"
+                            className="order-last w-full rounded-md bg-gray-100 px-2 py-1 font-medium sm:order-2 sm:w-auto"
+                        >
                             Edit profile
-                        </button>
+                        </Link>
                         <button className="order-3 p-1.5">
                             <SettingsIcon />
                         </button>
