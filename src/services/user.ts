@@ -18,12 +18,19 @@ function getUserDocRef(docId: string) {
     return doc(db, user_collection_name, docId)
 }
 
+export interface IUserProfile {
+    fullname: string
+    email: string
+    photo: string
+    bio: string
+    phoneNumber: string
+    gender: 'male' | 'female' | 'prefer not'
+}
+
 export interface IUser {
     docId: string
-    userId: string
     username: string
-    fullname: string
-    bio: string
+    profile: IUserProfile
     likes: string[]
     posts: string[]
     saved: string[]
@@ -36,12 +43,23 @@ export interface IUser {
 function createUser({
     username,
     fullname,
+    email,
     userId,
-}: Pick<IUser, 'fullname' | 'username' | 'userId'>) {
+    phoneNumber,
+    photo,
+    gender,
+}: Omit<IUserProfile, 'bio'> & Pick<IUser, 'username'> & { userId: string }) {
     const currentTime = new Date().getTime()
+
     const data: Omit<IUser, 'docId'> = {
-        userId,
-        fullname,
+        profile: {
+            bio: '',
+            email,
+            fullname,
+            phoneNumber,
+            photo,
+            gender,
+        },
         username,
         createdAt: currentTime,
         followers: [],
@@ -49,7 +67,6 @@ function createUser({
         likes: [],
         posts: [],
         saved: [],
-        bio: '',
         updatedAt: currentTime,
     }
     return setDoc(doc(db, user_collection_name, userId), data)
@@ -88,18 +105,7 @@ function deleteUser(docId: string) {
     return deleteDoc(getUserDocRef(docId))
 }
 
-function updateUser(
-    docId: string,
-    data: Partial<
-        Omit<
-            IUser,
-            keyof Pick<
-                IUser,
-                'username' | 'createdAt' | 'updatedAt' | 'docId' | 'userId'
-            >
-        >
-    >,
-) {
+function updateUser(docId: string, data: Partial<IUser>) {
     return updateDoc(getUserDocRef(docId), data)
 }
 

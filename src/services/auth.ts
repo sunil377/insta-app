@@ -5,13 +5,10 @@ import {
     deleteUser as deleteAuthUser,
     fetchSignInMethodsForEmail,
     getAdditionalUserInfo,
-    getRedirectResult,
     GoogleAuthProvider,
     signInWithEmailAndPassword,
     signInWithPopup,
-    signInWithRedirect,
     signOut,
-    updateProfile,
     UserCredential,
 } from 'firebase/auth'
 import { createUser, getUserByUsername } from './user'
@@ -55,15 +52,11 @@ async function handleSignin(
                 username,
                 fullname,
                 userId: response.user.uid,
+                email: response.user.email!,
+                gender: 'prefer not',
+                phoneNumber: response.user.phoneNumber ?? '',
+                photo: response.user.photoURL ?? '',
             })
-            try {
-                await updateProfile(response.user, {
-                    displayName: fullname,
-                })
-            } catch (error) {
-                console.error(error)
-                alert('failed to update profile.Nothing to worry about')
-            }
         } catch (error) {
             try {
                 console.error(error)
@@ -107,37 +100,8 @@ async function googleSigninWithPopup() {
     return response
 }
 
-async function handleRedirection() {
-    const response = await getRedirectResult(auth)
-
-    if (!response) {
-        throw new Error('Google Signin Failed')
-    }
-
-    const username = response.user.email?.replace(/\@.+/g, '')!
-    const fullname = response.user.displayName!
-    const info = getAdditionalUserInfo(response)
-
-    if (info?.isNewUser) {
-        return handleSignin(response, username, fullname)
-    }
-    return response
-}
-
-async function googleSigninWithRedirect() {
-    window.localStorage.setItem('google.com', 'true')
-    await signInWithRedirect(auth, Provider)
-}
-
 function logout() {
     return signOut(auth)
 }
 
-export {
-    login,
-    signup,
-    logout,
-    googleSigninWithPopup,
-    googleSigninWithRedirect,
-    handleRedirection,
-}
+export { login, signup, logout, googleSigninWithPopup }
