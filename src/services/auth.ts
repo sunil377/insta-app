@@ -9,6 +9,8 @@ import {
     signInWithEmailAndPassword,
     signInWithPopup,
     signOut,
+    updatePassword,
+    User,
     UserCredential,
 } from 'firebase/auth'
 import { createUser, getUserByUsername } from './user'
@@ -104,4 +106,29 @@ function logout() {
     return signOut(auth)
 }
 
-export { login, signup, logout, googleSigninWithPopup }
+async function changePassword(
+    email: string,
+    oldPassword: string,
+    newPassword: string,
+) {
+    let user: User | null = null
+
+    try {
+        const result = await signInWithEmailAndPassword(
+            auth,
+            email,
+            oldPassword,
+        )
+        user = result.user
+    } catch (error) {
+        throw error
+    }
+
+    if (!user) {
+        throw new Error('Unkown Error')
+    }
+
+    return await updatePassword(user, newPassword)
+}
+
+export { login, signup, logout, googleSigninWithPopup, changePassword }

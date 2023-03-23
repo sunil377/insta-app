@@ -8,10 +8,11 @@ function AccountLayout({ children }: { children: ReactNode }) {
     const router = useRouter()
     const isEditPage = router.pathname === '/accounts/edit'
     const isPasswordChange = router.pathname === '/accounts/password/change'
+    
 
     return (
         <Fragment>
-            <div className="mx-auto my-10  w-full border bg-white text-sm lg:max-w-4xl">
+            <div className="mx-auto my-10 border bg-white text-sm lg:max-w-4xl">
                 <div className="min-h-[min(500px,calc(100vh-2rem))] sm:grid sm:grid-cols-4">
                     <div className="border-r sm:col-span-1">
                         <section className="space-y-2 border-b px-6 py-4">
@@ -60,7 +61,7 @@ function AccountLayout({ children }: { children: ReactNode }) {
                             </Link>
                         </section>
                     </div>
-                    <div className="sm:col-span-3 ">{children}</div>
+                    <div className="sm:col-span-3">{children}</div>
                 </div>
             </div>
         </Fragment>

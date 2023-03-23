@@ -3,6 +3,7 @@ import { adminAuth, adminDB } from '@/config/firebase-admin'
 import { useAuth } from '@/context/AuthContext'
 import { parseZodError } from '@/helpers/util'
 import useRedirect from '@/hooks/useRedirect'
+import useSuccess from '@/hooks/useSuccess'
 import AccountLayout from '@/layout/account-layout'
 import MainLayout from '@/layout/main-layout'
 import { IUser, updateUser, user_collection_name } from '@/services/user'
@@ -11,7 +12,7 @@ import { Field, Form, Formik } from 'formik'
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
 import Image from 'next/image'
 import nookies from 'nookies'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useState } from 'react'
 import { z } from 'zod'
 import { NextPageWithLayout } from '../_app'
 
@@ -22,21 +23,8 @@ const EditProfile: NextPageWithLayout<
     const isGoogleSignin =
         currentUser?.providerData[0].providerId === 'google.com'
 
-    const [success, setSuccess] = useState(false)
+    const [isSuccess, setSuccess] = useSuccess()
     const [error, setError] = useState('')
-
-    useEffect(() => {
-        let timer: NodeJS.Timer
-
-        if (success) {
-            timer = setTimeout(() => setSuccess(false), 3000)
-        }
-
-        return () => {
-            if (!timer) return
-            clearTimeout(timer)
-        }
-    }, [success])
 
     useRedirect()
 
@@ -48,8 +36,8 @@ const EditProfile: NextPageWithLayout<
     const { username } = user
 
     return (
-        <div className="p-10 text-sm">
-            {success ? (
+        <div className="py-10 px-4  text-sm sm:px-10">
+            {isSuccess ? (
                 <div
                     role="alert"
                     aria-live="polite"
@@ -102,8 +90,8 @@ const EditProfile: NextPageWithLayout<
                 {({ errors, isValid, submitCount, values }) => (
                     <Fragment>
                         <Form noValidate className="space-y-4">
-                            <section className="grid grid-cols-4 gap-x-6">
-                                <div className="col-span-1 flex justify-end">
+                            <section className="flex grid-cols-4 items-center gap-x-2 space-y-2 xs:grid xs:gap-x-6">
+                                <div className="col-span-1 items-center justify-end xs:inline-flex">
                                     {photo ? (
                                         <Image
                                             src={photo}
@@ -112,7 +100,11 @@ const EditProfile: NextPageWithLayout<
                                             width={32}
                                             height={32}
                                         />
-                                    ) : null}
+                                    ) : (
+                                        <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-3xl capitalize">
+                                            {username.at(0)}
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="col-span-3 leading-4">
                                     <h4>{user.username}</h4>
@@ -124,10 +116,10 @@ const EditProfile: NextPageWithLayout<
                                     </button>
                                 </div>
                             </section>
-                            <section className="grid grid-cols-4 gap-x-6">
+                            <section className="grid-cols-4 items-center gap-x-6 space-y-2 xs:grid">
                                 <label
-                                    htmlFor={`name`}
-                                    className="col-span-1 flex items-center justify-end font-semibold"
+                                    htmlFor="name"
+                                    className="col-span-1 text-right font-bold xs:font-semibold"
                                 >
                                     Name
                                 </label>
@@ -137,13 +129,14 @@ const EditProfile: NextPageWithLayout<
                                         name="fullname"
                                         className="w-full rounded-md border bg-gray-100 px-4 py-2"
                                         aria-describedby="user-fullname"
+                                        placeholder="Enter your fullname here..."
                                     />
                                 </div>
                             </section>
-                            <section className="grid grid-cols-4 gap-x-6">
+                            <section className="grid-cols-4 items-center gap-x-6 space-y-2 xs:grid">
                                 <label
                                     htmlFor={`username`}
-                                    className="col-span-1 flex items-center justify-end font-semibold"
+                                    className="col-span-1 text-right font-bold xs:font-semibold"
                                 >
                                     Username
                                 </label>
@@ -152,13 +145,14 @@ const EditProfile: NextPageWithLayout<
                                         id="username"
                                         name="username"
                                         className="w-full rounded-md border px-4 py-2"
+                                        placeholder="Enter username here..."
                                     />
                                 </div>
                             </section>
-                            <section className="grid grid-cols-4 gap-x-6">
+                            <section className="grid-cols-4 items-center gap-x-6 space-y-2 xs:grid">
                                 <label
                                     htmlFor={`bio`}
-                                    className="col-span-1 flex items-center justify-end font-semibold"
+                                    className="col-span-1 text-right font-bold xs:font-semibold"
                                 >
                                     Bio
                                 </label>
@@ -169,16 +163,17 @@ const EditProfile: NextPageWithLayout<
                                         name="bio"
                                         className="w-full rounded-md border bg-gray-100 px-4 py-2"
                                         maxLength={150}
+                                        placeholder="Write Something about your self here......."
                                     />
                                     <span className="text-xs leading-3">
                                         {values.bio.length} /150
                                     </span>
                                 </div>
                             </section>
-                            <section className="grid grid-cols-4 gap-x-6 gap-y-2">
+                            <section className="grid-cols-4 items-center gap-x-6 space-y-2 xs:grid">
                                 <label
                                     htmlFor={`email`}
-                                    className="col-span-1 flex items-center justify-end font-semibold"
+                                    className="col-span-1 text-right font-bold xs:font-semibold"
                                 >
                                     Email
                                 </label>
@@ -209,10 +204,10 @@ const EditProfile: NextPageWithLayout<
                                 ) : null}
                             </section>
 
-                            <section className="grid grid-cols-4 gap-x-6">
+                            <section className="grid-cols-4 items-center gap-x-6 space-y-2 xs:grid">
                                 <label
                                     htmlFor={`phone`}
-                                    className="col-span-1 flex items-center justify-end font-semibold"
+                                    className="col-span-1 text-right font-bold xs:font-semibold"
                                 >
                                     Phone Number
                                 </label>
@@ -222,13 +217,14 @@ const EditProfile: NextPageWithLayout<
                                         name="phoneNumber"
                                         className="w-full rounded-md border bg-gray-100 px-4 py-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
                                         type="text"
+                                        placeholder="Enter PhoneNumber here..."
                                     />
                                 </div>
                             </section>
-                            <section className="grid grid-cols-4 gap-x-6">
+                            <section className="grid-cols-4 items-center gap-x-6 space-y-2 xs:grid">
                                 <label
                                     htmlFor={`gender`}
-                                    className="col-span-1 flex items-center justify-end font-semibold"
+                                    className="col-span-1 text-right font-bold xs:font-semibold"
                                 >
                                     Gender
                                 </label>
@@ -239,6 +235,7 @@ const EditProfile: NextPageWithLayout<
                                         className="w-full rounded-md border bg-gray-100 px-4 py-2 capitalize"
                                         name="gender"
                                     >
+                                        <option>select Gender</option>
                                         <option value="prefer not">
                                             prefer not
                                         </option>
@@ -247,12 +244,12 @@ const EditProfile: NextPageWithLayout<
                                     </Field>
                                 </div>
                             </section>
-                            <section className="grid grid-cols-4 gap-x-6">
+                            <section className="grid-cols-4 items-center gap-x-6 space-y-2 xs:grid">
                                 <span className="col-span-1" aria-hidden></span>
-                                <div className="col-span-3 leading-4">
+                                <div className="col-span-3">
                                     <button
                                         type="submit"
-                                        className="rounded-md bg-blue-500 px-3 py-1.5 text-white transition-colors hover:bg-blue-700"
+                                        className="rounded-md bg-blue-500 px-3 py-1.5 font-semibold text-white transition-colors hover:bg-blue-700"
                                     >
                                         Submit
                                     </button>

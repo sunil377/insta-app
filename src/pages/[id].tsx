@@ -53,21 +53,27 @@ const Profile: NextPageWithLayout<
                                 fill
                                 className="rounded-full border border-gray-300 object-contain"
                             />
-                        ) : null}
+                        ) : (
+                            <div className="inline-flex h-full w-full items-center justify-center rounded-full bg-gray-200 text-5xl capitalize">
+                                {user.username.at(0)}
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 <div className="col-span-3 flex flex-col justify-center gap-y-4 px-4 sm:justify-start">
-                    <div className="space-y-2 sm:flex sm:items-center sm:gap-x-4">
+                    <div className="flex-wrap space-y-2 xs:flex xs:items-center xs:gap-x-4">
                         <h4 className="text-xl font-light">{user.username}</h4>
-                        <Link
-                            href="/accounts/edit"
-                            className="block w-full rounded-md bg-gray-100 py-1.5 px-4 text-center text-sm font-medium sm:w-auto"
-                        >
-                            Edit Profile
-                        </Link>
-                        <button className="hidden rounded-full p-1.5 sm:inline-block">
-                            <SettingsIcon />
+                        <div className="basis-full xs:order-last sm:basis-auto">
+                            <Link
+                                href="/accounts/edit"
+                                className="block w-full rounded-md bg-gray-100 py-1.5 px-4 text-center text-sm font-medium sm:w-auto"
+                            >
+                                Edit Profile
+                            </Link>
+                        </div>
+                        <button className="hidden rounded-full p-1.5 xs:inline-block sm:order-last">
+                            <SettingsIcon aria-label="setttings" />
                         </button>
                     </div>
 
@@ -140,7 +146,7 @@ function UserBio({ bio }: { bio: null | string }) {
                 href="/accounts/edit#bio"
                 className="leading-5 text-blue-500 hover:underline"
             >
-                Say Something about your self
+                Tell them about your self...
             </Link>
         )
     }

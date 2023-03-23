@@ -7,7 +7,6 @@ import {
     MessengerIcon,
     PlaceholderImage,
     ReelsIcon,
-    SettingsIcon,
     UserPlusIcon,
 } from '@/assets'
 import { useAuth } from '@/context/AuthContext'
@@ -16,6 +15,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Fragment, ReactNode } from 'react'
 import { HiChevronDown, HiChevronLeft } from 'react-icons/hi'
+import SettingsDialog from './SettingsDialog'
 
 function TopNavbar() {
     const router = useRouter()
@@ -59,13 +59,19 @@ function MobileLayout({ children }: { children: ReactNode }) {
                     href={`/${currentUser?.uid ?? ''}`}
                     className="group relative rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                 >
-                    <Image
-                        src={currentUser?.photoURL ?? PlaceholderImage.src}
-                        alt={currentUser?.displayName ?? ''}
-                        width={24}
-                        height={24}
-                        className="h-6 w-6 rounded-full object-cover"
-                    />
+                    {currentUser?.photoURL ? (
+                        <Image
+                            src={currentUser?.photoURL ?? PlaceholderImage.src}
+                            alt={currentUser?.displayName ?? ''}
+                            width={24}
+                            height={24}
+                            className="h-6 w-6 rounded-full object-cover"
+                        />
+                    ) : (
+                        <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-2xl capitalize">
+                            {(currentUser?.displayName ?? 'R').at(0)}
+                        </div>
+                    )}
                 </Link>
             </footer>
 
@@ -95,9 +101,7 @@ function HomeMobileNav() {
 function ProfileMobileNav() {
     return (
         <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center justify-between border-y border-y-gray-300 bg-white px-2 text-sm xs:px-4">
-            <Link href="/" className="rounded-full p-1">
-                <SettingsIcon aria-label="settings" />
-            </Link>
+            <SettingsDialog />
 
             <button className="flex items-center px-2 py-0.5">
                 <b>sunil.panwar.ts</b>
