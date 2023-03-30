@@ -1,3 +1,4 @@
+import PageLoader from '@/components/PageLoader'
 import AuthProvider from '@/context/AuthContext'
 import '@/styles/globals.css'
 import { NextPage } from 'next'
@@ -21,6 +22,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     return (
         <AuthProvider>
             <QueryClientProvider client={client}>
+                <PageLoader />
                 {getLayout(<Component {...pageProps} />)}
             </QueryClientProvider>
         </AuthProvider>
