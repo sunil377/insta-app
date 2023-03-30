@@ -3,11 +3,11 @@ import { useRouter } from 'next/router'
 import { Fragment } from 'react'
 import { useMutation } from 'react-query'
 
-function GoogleSignIn({
-    children,
-}: {
+interface Props {
     children: (onClick: () => void, isLoading: boolean) => JSX.Element
-}) {
+}
+
+function GoogleSignIn({ children }: Props) {
     const router = useRouter()
 
     const {

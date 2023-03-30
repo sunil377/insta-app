@@ -1,38 +1,41 @@
 import NotFound from '@/components/NotFound'
 import { adminAuth, adminDB } from '@/config/firebase-admin'
-import { useAuth } from '@/context/AuthContext'
-import { parseZodError } from '@/helpers/util'
-import useRedirect from '@/hooks/useRedirect'
+import { convertZodErrorToFormikError } from '@/helpers/util'
 import useSuccess from '@/hooks/useSuccess'
 import AccountLayout from '@/layout/account-layout'
 import MainLayout from '@/layout/main-layout'
-import { IUser, updateUser, user_collection_name } from '@/services/user'
+import {
+    ProfileSchema,
+    updateUser,
+    UserServer,
+    user_collection_name,
+} from '@/services/user'
 import { FirebaseError } from 'firebase/app'
 import { Field, Form, Formik } from 'formik'
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
 import Image from 'next/image'
 import nookies from 'nookies'
 import { Fragment, useState } from 'react'
-import { z } from 'zod'
 import { NextPageWithLayout } from '../_app'
+
+const Schema = ProfileSchema.pick({
+    fullname: true,
+    bio: true,
+    phoneNumber: true,
+    gender: true,
+})
 
 const EditProfile: NextPageWithLayout<
     InferGetServerSidePropsType<typeof getServerSideProps>
 > = function EditProfile({ user, statusCode }) {
-    const currentUser = useAuth()
-    const isGoogleSignin =
-        currentUser?.providerData[0].providerId === 'google.com'
-
     const [isSuccess, setSuccess] = useSuccess()
     const [error, setError] = useState('')
-
-    useRedirect()
 
     if (statusCode || !user) {
         return <NotFound statusCode={statusCode ?? 404} />
     }
 
-    const { fullname, photo, email } = user.profile
+    const { fullname, photo, email, phoneNumber, bio, gender } = user.profile
     const { username } = user
 
     return (
@@ -48,34 +51,21 @@ const EditProfile: NextPageWithLayout<
             ) : null}
 
             <Formik
-                initialValues={{ ...user.profile, username }}
+                initialValues={{
+                    fullname,
+                    bio,
+                    phoneNumber,
+                    gender,
+                }}
                 validate={(values) => {
-                    const response = z
-                        .object({
-                            fullname: z.string().min(3),
-                            username: z.string().min(3),
-                            bio: z.string().max(150),
-                            gender: z.enum(['male', 'female', 'prefer not']),
-                            phoneNumber: z.string(),
-                            email: z
-                                .string()
-                                .email()
-                                .regex(
-                                    new RegExp(email),
-                                    "Email can't be changed",
-                                ),
-                        })
-                        .safeParse(values)
-
-                    return parseZodError(response)
+                    return convertZodErrorToFormikError(values, Schema)
                 }}
                 onSubmit={async (values, { setSubmitting }) => {
                     try {
-                        const { username, ...rest } = values
                         await updateUser(user.docId, {
-                            username: username,
                             profile: {
-                                ...rest,
+                                ...user.profile,
+                                ...values,
                             },
                         })
                         setSuccess(true)
@@ -87,7 +77,7 @@ const EditProfile: NextPageWithLayout<
                     }
                 }}
             >
-                {({ errors, isValid, submitCount, values }) => (
+                {({ errors, isValid, submitCount, values, isSubmitting }) => (
                     <Fragment>
                         <Form noValidate className="space-y-4">
                             <section className="flex grid-cols-4 items-center gap-x-2 space-y-2 xs:grid xs:gap-x-6">
@@ -101,7 +91,7 @@ const EditProfile: NextPageWithLayout<
                                             height={32}
                                         />
                                     ) : (
-                                        <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-3xl capitalize">
+                                        <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xl font-semibold capitalize">
                                             {username.at(0)}
                                         </div>
                                     )}
@@ -141,11 +131,15 @@ const EditProfile: NextPageWithLayout<
                                     Username
                                 </label>
                                 <div className="col-span-3 leading-4">
-                                    <Field
+                                    <input
                                         id="username"
                                         name="username"
-                                        className="w-full rounded-md border px-4 py-2"
+                                        className="w-full rounded-md border px-4 py-2 read-only:pointer-events-none read-only:opacity-50"
                                         placeholder="Enter username here..."
+                                        value={username}
+                                        readOnly
+                                        disabled
+                                        title="Username can't be changed"
                                     />
                                 </div>
                             </section>
@@ -163,6 +157,7 @@ const EditProfile: NextPageWithLayout<
                                         name="bio"
                                         className="w-full rounded-md border bg-gray-100 px-4 py-2"
                                         maxLength={150}
+                                        rows={3}
                                         placeholder="Write Something about your self here......."
                                     />
                                     <span className="text-xs leading-3">
@@ -178,30 +173,16 @@ const EditProfile: NextPageWithLayout<
                                     Email
                                 </label>
                                 <div className="col-span-3 space-y-2 leading-4">
-                                    <Field
+                                    <input
                                         name="email"
                                         id="email"
-                                        className="w-full rounded-md border border-gray-400 bg-gray-100 px-4 py-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
-                                        disabled={true}
-                                        aria-describedby="user-email"
+                                        className="w-full rounded-md border px-4 py-2 read-only:pointer-events-none read-only:opacity-50"
+                                        value={email}
+                                        readOnly
+                                        disabled
+                                        title="Email can't be changed"
                                     />
                                 </div>
-                                {isGoogleSignin ? (
-                                    <Fragment>
-                                        <span
-                                            aria-hidden
-                                            className="col-span-1"
-                                        ></span>
-
-                                        <div
-                                            id="user-email"
-                                            className="col-span-3 pl-2 text-xs text-gray-500"
-                                        >
-                                            Sorry,Email address can&apos;t be
-                                            changed
-                                        </div>
-                                    </Fragment>
-                                ) : null}
                             </section>
 
                             <section className="grid-cols-4 items-center gap-x-6 space-y-2 xs:grid">
@@ -232,15 +213,15 @@ const EditProfile: NextPageWithLayout<
                                     <Field
                                         as="select"
                                         id={`gender`}
-                                        className="w-full rounded-md border bg-gray-100 px-4 py-2 capitalize"
+                                        className="w-full rounded-md border bg-gray-100 px-4 py-2"
                                         name="gender"
                                     >
-                                        <option>select Gender</option>
+                                        <option>Select Gender</option>
                                         <option value="prefer not">
-                                            prefer not
+                                            Prefer not
                                         </option>
-                                        <option value="male">male</option>
-                                        <option value="female">female</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
                                     </Field>
                                 </div>
                             </section>
@@ -249,9 +230,12 @@ const EditProfile: NextPageWithLayout<
                                 <div className="col-span-3">
                                     <button
                                         type="submit"
-                                        className="rounded-md bg-blue-500 px-3 py-1.5 font-semibold text-white transition-colors hover:bg-blue-700"
+                                        className="rounded-md bg-blue-500 px-3 py-1.5 font-semibold text-white transition-colors hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
+                                        disabled={isSubmitting}
                                     >
-                                        Submit
+                                        {isSubmitting
+                                            ? 'updating...'
+                                            : 'Submit'}
                                     </button>
                                 </div>
                             </section>
@@ -313,7 +297,10 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         if (response.exists) {
             return {
                 props: {
-                    user: { docId: response.id, ...response.data() } as IUser,
+                    user: {
+                        docId: response.id,
+                        ...response.data(),
+                    } as UserServer,
                 },
             }
         }

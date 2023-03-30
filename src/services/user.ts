@@ -10,6 +10,7 @@ import {
     updateDoc,
     where,
 } from 'firebase/firestore'
+import { z } from 'zod'
 
 export const user_collection_name = 'users'
 const user_collection_ref = collection(db, user_collection_name)
@@ -18,64 +19,46 @@ function getUserDocRef(docId: string) {
     return doc(db, user_collection_name, docId)
 }
 
-export interface IUserProfile {
-    fullname: string
-    email: string
-    photo: string
-    bio: string
-    phoneNumber: string
-    gender: 'male' | 'female' | 'prefer not'
-}
+export const ProfileSchema = z.object({
+    fullname: z.string().min(3),
+    email: z.string().email(),
+    photo: z.string().url().nullable().default(null),
+    bio: z.string().max(150).default(''),
+    phoneNumber: z.string().default(''),
+    gender: z
+        .union([
+            z.literal('male'),
+            z.literal('female'),
+            z.literal('prefer not'),
+        ])
+        .optional(),
+})
 
-export interface IUser {
-    docId: string
-    username: string
-    profile: IUserProfile
-    likes: string[]
-    posts: string[]
-    saved: string[]
-    followings: string[]
-    followers: string[]
-    createdAt: number
-    updatedAt: number
-}
+const UserSchema = z.object({
+    docId: z.string(),
+    username: z.string().min(3),
+    profile: ProfileSchema,
+    likes: z.array(z.string()).default([]),
+    posts: z.array(z.string()).default([]),
+    saved: z.array(z.string()).default([]),
+    followings: z.array(z.string()).default([]),
+    followers: z.array(z.string()).default([]),
+    createdAt: z.number().default(new Date().getTime()),
+    updatedAt: z.number().nullable().default(null),
+})
 
-function createUser({
-    username,
-    fullname,
-    email,
-    userId,
-    phoneNumber,
-    photo,
-    gender,
-}: Omit<IUserProfile, 'bio'> & Pick<IUser, 'username'> & { userId: string }) {
-    const currentTime = new Date().getTime()
+export type UserClient = z.input<typeof UserSchema>
+export type UserServer = z.infer<typeof UserSchema>
 
-    const data: Omit<IUser, 'docId'> = {
-        profile: {
-            bio: '',
-            email,
-            fullname,
-            phoneNumber,
-            photo,
-            gender,
-        },
-        username,
-        createdAt: currentTime,
-        followers: [],
-        followings: [],
-        likes: [],
-        posts: [],
-        saved: [],
-        updatedAt: currentTime,
-    }
-    return setDoc(doc(db, user_collection_name, userId), data)
+function createUser(userData: UserClient) {
+    const { docId, ...data } = UserSchema.parse(userData)
+    return setDoc(getUserDocRef(docId), data)
 }
 
 async function getUser(docId: string) {
     const response = await getDoc(getUserDocRef(docId))
     if (response.exists()) {
-        return { docId: response.id, ...response.data() } as IUser
+        return { docId: response.id, ...response.data() } as UserServer
     }
 
     throw new Error('No User Found')
@@ -86,18 +69,15 @@ async function getUserByUsername(username: string) {
         query(user_collection_ref, where('username', '==', username)),
     )
 
-    const users: Array<IUser> = []
-
+    const users: Array<UserServer> = []
     response.forEach((result) => {
         if (result.exists()) {
-            users.push({ docId: result.id, ...result.data() } as IUser)
+            users.push({ docId: result.id, ...result.data() } as UserServer)
         }
     })
-
     if (response.empty || response.size === 0 || users.length === 0) {
         throw new Error('No User Found')
     }
-
     return users
 }
 
@@ -105,7 +85,7 @@ function deleteUser(docId: string) {
     return deleteDoc(getUserDocRef(docId))
 }
 
-function updateUser(docId: string, data: Partial<IUser>) {
+function updateUser(docId: string, data: Partial<UserServer>) {
     return updateDoc(getUserDocRef(docId), data)
 }
 

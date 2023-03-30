@@ -1,7 +1,8 @@
+import { adminAuth } from '@/config/firebase-admin'
 import GoogleSignIn from '@/feature/GoogleSignIn'
-import publicRoute from '@/gaurds/public-route'
 import { handleLoginError } from '@/helpers/errors'
-import { parseZodError } from '@/helpers/util'
+import { LoginSchema } from '@/helpers/schema'
+import { convertZodErrorToFormikError } from '@/helpers/util'
 import { login } from '@/services/auth'
 import clsx from 'clsx'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
@@ -10,10 +11,10 @@ import { GetServerSidePropsContext } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import nookies from 'nookies'
 import { useState } from 'react'
 import { BiLoaderCircle } from 'react-icons/bi'
 import { HiEye, HiEyeOff } from 'react-icons/hi'
-import { z } from 'zod'
 import Instagram from '../../public/images/instagram.png'
 
 const initialValues = {
@@ -33,14 +34,7 @@ export default function Login() {
                     initialValues={initialValues}
                     validateOnMount={true}
                     validate={(values) => {
-                        const response = z
-                            .object({
-                                email: z.string().email(),
-                                password: z.string().min(6),
-                            })
-                            .safeParse(values)
-
-                        return parseZodError(response)
+                        return convertZodErrorToFormikError(values, LoginSchema)
                     }}
                     onSubmit={async (
                         values,
@@ -157,13 +151,13 @@ export default function Login() {
                 </div>
 
                 <GoogleSignIn>
-                    {(onClick, disabled) => (
+                    {(onClick, isLoading) => (
                         <button
                             className="mx-auto block rounded-md px-4 py-2 text-sm font-medium text-blue-500 transition-colors hover:text-blue-700 disabled:pointer-events-none disabled:opacity-50"
                             onClick={onClick}
-                            disabled={disabled}
+                            disabled={isLoading}
                         >
-                            Log In with Google
+                            {isLoading ? 'Signing in...' : 'Log In with Google'}
                         </button>
                     )}
                 </GoogleSignIn>
@@ -186,5 +180,26 @@ export default function Login() {
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    return publicRoute(ctx)
+    const cookies = nookies.get(ctx)
+    const token = cookies.token ?? ''
+
+    if (!token) {
+        return {
+            props: {},
+        }
+    }
+
+    try {
+        await adminAuth.verifyIdToken(token)
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        } as never
+    } catch (error) {
+        return {
+            props: {},
+        }
+    }
 }

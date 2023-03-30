@@ -1,10 +1,12 @@
 import { SettingsIcon } from '@/assets'
 import NotFound from '@/components/NotFound'
 import { adminAuth, adminDB } from '@/config/firebase-admin'
-import { useAuth } from '@/context/AuthContext'
-import useRedirect from '@/hooks/useRedirect'
 import MainLayout from '@/layout/main-layout'
-import { getUserDocRef, IUser, user_collection_name } from '@/services/user'
+import {
+    getUserDocRef,
+    UserServer,
+    user_collection_name,
+} from '@/services/user'
 import { onSnapshot } from 'firebase/firestore'
 import type {
     GetServerSidePropsContext,
@@ -15,47 +17,62 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import nookies from 'nookies'
 import { Fragment, useEffect, useState } from 'react'
+import { z } from 'zod'
 import { NextPageWithLayout } from './_app'
 
 const Profile: NextPageWithLayout<
     InferGetServerSidePropsType<typeof getServerSideProps>
 > = (props) => {
-    const currentUser = useAuth()
     const router = useRouter()
-    const [user, setUser] = useState<IUser | null>(props.user ?? null)
-
-    useRedirect()
+    const [user, setUser] = useState<UserServer | null>(props.user ?? null)
 
     useEffect(() => {
-        if (!router.query.id || typeof router.query.id != 'string') {
-            return
-        }
-        return onSnapshot(getUserDocRef(router.query.id), (snapshot) => {
+        const response = z
+            .object({
+                query: z.object({
+                    id: z.string(),
+                }),
+            })
+            .safeParse(router)
+
+        if (!response.success) return
+
+        return onSnapshot(getUserDocRef(response.data.query.id), (snapshot) => {
             if (snapshot.exists()) {
-                setUser({ docId: snapshot.id, ...snapshot.data() } as IUser)
+                setUser({
+                    docId: snapshot.id,
+                    ...snapshot.data(),
+                } as UserServer)
             }
         })
-    }, [router.query.id])
+    }, [router])
 
     if (props.statusCode || !user) {
         return <NotFound statusCode={props.statusCode ?? 404} />
     }
+    const {
+        profile: { photo, fullname, bio },
+        username,
+        posts,
+        followers,
+        followings,
+    } = user
 
     return (
         <main className="mx-auto mt-16 max-w-3xl bg-white text-sm sm:mt-10">
             <section className="grid max-w-sm grid-cols-4 px-4 sm:max-w-none">
                 <div className="col-span-1">
                     <div className="relative aspect-square w-20 sm:mx-auto sm:w-28 lg:w-36">
-                        {user.profile.photo ? (
+                        {photo ? (
                             <Image
-                                src={user.profile.photo}
-                                alt={user.username}
+                                src={photo}
+                                alt={username}
                                 fill
                                 className="rounded-full border border-gray-300 object-contain"
                             />
                         ) : (
                             <div className="inline-flex h-full w-full items-center justify-center rounded-full bg-gray-200 text-5xl capitalize">
-                                {user.username.at(0)}
+                                {username.at(0)}
                             </div>
                         )}
                     </div>
@@ -63,7 +80,7 @@ const Profile: NextPageWithLayout<
 
                 <div className="col-span-3 flex flex-col justify-center gap-y-4 px-4 sm:justify-start">
                     <div className="flex-wrap space-y-2 xs:flex xs:items-center xs:gap-x-4">
-                        <h4 className="text-xl font-light">{user.username}</h4>
+                        <h4 className="text-xl font-light">{username}</h4>
                         <div className="basis-full xs:order-last sm:basis-auto">
                             <Link
                                 href="/accounts/edit"
@@ -79,23 +96,19 @@ const Profile: NextPageWithLayout<
 
                     <div className="hidden sm:flex sm:gap-x-6">
                         <UserInfo
-                            postCount={user.posts.length}
-                            followerCount={user.followers.length}
-                            followingsCount={user.followings.length}
+                            postCount={posts.length}
+                            followerCount={followers.length}
+                            followingsCount={followings.length}
                         />
                     </div>
                     <div className="hidden leading-4 sm:block">
-                        <p className="font-semibold capitalize">
-                            {user.profile.fullname}
-                        </p>
-                        <UserBio bio={user.profile.bio} />
+                        <p className="font-semibold capitalize">{fullname}</p>
+                        <UserBio bio={bio} />
                     </div>
                 </div>
                 <div className="col-span-4 mt-6 pl-2 leading-4 sm:hidden">
-                    <p className="font-semibold capitalize">
-                        {user.profile.fullname}
-                    </p>
-                    <UserBio bio={user.profile.bio} />
+                    <p className="font-semibold capitalize">{fullname}</p>
+                    <UserBio bio={bio} />
                 </div>
             </section>
 
@@ -109,9 +122,9 @@ const Profile: NextPageWithLayout<
 
             <section className="grid grid-cols-3 justify-items-center border-t py-2 sm:hidden">
                 <UserInfo
-                    postCount={user.posts.length}
-                    followerCount={user.followers.length}
-                    followingsCount={user.followings.length}
+                    postCount={posts.length}
+                    followerCount={followers.length}
+                    followingsCount={followings.length}
                 />
             </section>
 
@@ -139,7 +152,7 @@ const Profile: NextPageWithLayout<
     )
 }
 
-function UserBio({ bio }: { bio: null | string }) {
+function UserBio({ bio }: { bio: string }) {
     if (!bio) {
         return (
             <Link
@@ -218,7 +231,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         return {
             props: {
                 statusCode: 500,
-            } as const,
+            },
         }
     }
 
@@ -233,20 +246,20 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
                     user: {
                         docId: response.id,
                         ...response.data(),
-                    } as IUser,
-                } as const,
+                    } as UserServer,
+                },
             }
         }
 
         return {
             props: {
-                statusCode: 500,
-            } as const,
+                statusCode: 404,
+            },
         }
     } catch (error) {
         return {
             props: {
-                statusCode: 404,
+                statusCode: 500,
             },
         }
     }

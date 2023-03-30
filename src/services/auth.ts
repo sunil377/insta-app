@@ -10,7 +10,6 @@ import {
     signInWithPopup,
     signOut,
     updatePassword,
-    User,
     UserCredential,
 } from 'firebase/auth'
 import { createUser, getUserByUsername } from './user'
@@ -40,37 +39,51 @@ async function handleSignin(
     username: string,
     fullname: string,
 ) {
-    const msg = 'username already exists'
+    /**
+     * find user with username
+     */
     try {
         await getUserByUsername(username)
-        throw new ReferenceError(msg)
-    } catch (error) {
-        if (error instanceof ReferenceError && error.message === msg) {
-            deleteAuthUser(response.user)
-            throw error
+        console.log('found user with username', username)
+        /**
+         * user with username already exits so delete authUser
+         * but using trycatch and handleThat error with online error system.
+         */
+        try {
+            await deleteAuthUser(response.user)
+            console.log('delete user from authentication', username)
+        } catch (error) {
+            console.log('please contact custumer care.', error)
         }
+    } catch (error) {
+        /* so user don't exits  */
         try {
             await createUser({
                 username,
-                fullname,
-                userId: response.user.uid,
-                email: response.user.email!,
-                gender: 'prefer not',
-                phoneNumber: response.user.phoneNumber ?? '',
-                photo: response.user.photoURL ?? '',
+                docId: response.user.uid,
+                profile: {
+                    fullname,
+                    email: response.user.email!,
+                },
             })
+            console.log('created user on firestore')
+            return response
         } catch (error) {
+            /**
+             * failed to creating user in backend so deleting authuser
+             */
             try {
-                console.error(error)
                 await deleteAuthUser(response.user)
+                console.log('delete user from authentication', username)
             } catch (error) {
-                console.error(error)
-                alert('please get support from our customer services')
+                console.log('please contact custumer care.', error)
             }
+            console.log(error)
             throw error
         }
-        return response
     }
+
+    throw new Error('Username already exists.')
 }
 
 async function signup(
@@ -91,7 +104,7 @@ Provider.setCustomParameters({
 async function googleSigninWithPopup() {
     const response = await signInWithPopup(auth, Provider)
     const username = response.user.email?.replace(/\@.+/g, '')!
-    const fullname = response.user.displayName!
+    const fullname = response.user.displayName ?? ''
 
     const info = getAdditionalUserInfo(response)
 
@@ -111,23 +124,7 @@ async function changePassword(
     oldPassword: string,
     newPassword: string,
 ) {
-    let user: User | null = null
-
-    try {
-        const result = await signInWithEmailAndPassword(
-            auth,
-            email,
-            oldPassword,
-        )
-        user = result.user
-    } catch (error) {
-        throw error
-    }
-
-    if (!user) {
-        throw new Error('Unkown Error')
-    }
-
+    const { user } = await signInWithEmailAndPassword(auth, email, oldPassword)
     return await updatePassword(user, newPassword)
 }
 

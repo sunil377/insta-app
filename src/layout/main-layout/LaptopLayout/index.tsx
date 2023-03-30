@@ -6,7 +6,6 @@ import {
     InstagramTextIcon,
     InstaIcon,
     MessengerIcon,
-    PlaceholderImage,
     ReelsIcon,
     SearchIcon,
 } from '@/assets'
@@ -15,17 +14,13 @@ import { Popover, Transition } from '@headlessui/react'
 import clsx from 'clsx'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Fragment, ReactNode, useEffect, useState } from 'react'
+import { Fragment, ReactNode, useState } from 'react'
 import SettingButton from './SettingButton'
 import ToolTip from './Tooltip'
 
 function LaptopLayout({ children }: { children: ReactNode }) {
     const [isSpread, setSpread] = useState(true)
     const currentUser = useAuth()
-
-    useEffect(() => {
-        if (!currentUser) return
-    }, [currentUser])
 
     return (
         <div>
@@ -41,7 +36,7 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                     <Link
                         href="/"
                         className={clsx(
-                            'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100 ',
+                            'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100',
                             {
                                 'lg:w-full lg:rounded-l-full lg:rounded-r-full lg:px-0 lg:hover:bg-transparent ':
                                     isSpread,
@@ -241,13 +236,19 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                         )}
                     >
                         <div className="shrink-0">
-                            <Image
-                                src={currentUser?.photoURL ?? PlaceholderImage}
-                                width={24}
-                                height={24}
-                                alt="username"
-                                className="h-6 w-6 rounded-full object-cover"
-                            />
+                            {currentUser?.photoURL ? (
+                                <Image
+                                    src={currentUser.photoURL}
+                                    width={24}
+                                    height={24}
+                                    alt="username"
+                                    className="h-6 w-6 rounded-full object-cover"
+                                />
+                            ) : (
+                                <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xl font-semibold capitalize">
+                                    {currentUser?.email?.at(0) ?? 'R'}
+                                </div>
+                            )}
                         </div>
 
                         <ToolTip isSpread={isSpread}>Profile</ToolTip>

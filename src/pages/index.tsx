@@ -1,17 +1,16 @@
 import { PlaceholderImage } from '@/assets'
-import protectedRoute from '@/gaurds/protected-route'
-import useRedirect from '@/hooks/useRedirect'
+import { adminAuth, adminDB } from '@/config/firebase-admin'
 import MainLayout from '@/layout/main-layout'
+import { UserServer, user_collection_name } from '@/services/user'
 import type { GetServerSidePropsContext } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import nookies from 'nookies'
 import { AiOutlineHeart } from 'react-icons/ai'
 import { MdAdd, MdMenu } from 'react-icons/md'
-
 import { NextPageWithLayout } from './_app'
 
 const Home: NextPageWithLayout = () => {
-    useRedirect()
     return (
         <>
             <Head>
@@ -224,5 +223,64 @@ Home.getLayout = function getLayout(page) {
 export default Home
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    return protectedRoute(ctx)
+    const cookies = nookies.get(ctx)
+    const token = cookies.token
+    const userid = ctx.query.id
+
+    if (!token) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        } as never
+    }
+
+    try {
+        await adminAuth.verifyIdToken(token)
+    } catch (error) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        } as never
+    }
+
+    if (!userid || userid instanceof Array) {
+        return {
+            props: {
+                statusCode: 500,
+            },
+        }
+    }
+
+    try {
+        const response = await adminDB
+            .doc(user_collection_name + '/' + userid)
+            .get()
+
+        if (response.exists) {
+            return {
+                props: {
+                    user: {
+                        docId: response.id,
+                        ...response.data(),
+                    } as UserServer,
+                },
+            }
+        }
+
+        return {
+            props: {
+                statusCode: 404,
+            },
+        }
+    } catch (error) {
+        return {
+            props: {
+                statusCode: 500,
+            },
+        }
+    }
 }

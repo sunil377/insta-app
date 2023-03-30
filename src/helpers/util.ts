@@ -1,14 +1,17 @@
-import { SafeParseReturnType } from 'zod'
+import { z } from 'zod'
 
-function parseZodError<T = any>(response: SafeParseReturnType<T, T>) {
-    const error = {}
+function convertZodErrorToFormikError<A, B extends z.Schema>(
+    values: A,
+    schema: B,
+) {
+    const response = schema.safeParse(values)
     if (response.success) {
-        return error
+        return {}
     }
-    const r = response.error.errors[0]
+    const { path, message } = response.error.errors[0]
     return {
-        [r.path[0]]: r.message,
+        [path[0]]: message,
     }
 }
 
-export { parseZodError }
+export { convertZodErrorToFormikError }

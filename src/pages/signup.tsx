@@ -1,7 +1,8 @@
+import { adminAuth } from '@/config/firebase-admin'
 import GoogleSignIn from '@/feature/GoogleSignIn'
-import publicRoute from '@/gaurds/public-route'
 import { handleSignupError } from '@/helpers/errors'
-import { parseZodError } from '@/helpers/util'
+import { SignupSchema } from '@/helpers/schema'
+import { convertZodErrorToFormikError } from '@/helpers/util'
 import { signup } from '@/services/auth'
 import clsx from 'clsx'
 import type { FieldProps } from 'formik'
@@ -10,9 +11,9 @@ import type { GetServerSidePropsContext } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import nookies from 'nookies'
 import { useState } from 'react'
 import { HiEye, HiEyeOff } from 'react-icons/hi'
-import { z } from 'zod'
 import Instagram from '../../public/images/instagram.png'
 
 const initialValues = {
@@ -57,16 +58,10 @@ export default function Signup() {
                     initialValues={initialValues}
                     validateOnMount={true}
                     validate={(values) => {
-                        const response = z
-                            .object({
-                                email: z.string().email(),
-                                fullName: z.string().min(3),
-                                username: z.string().min(3),
-                                password: z.string().min(6),
-                            })
-                            .safeParse(values)
-
-                        return parseZodError(response)
+                        return convertZodErrorToFormikError(
+                            values,
+                            SignupSchema,
+                        )
                     }}
                     onSubmit={async (
                         values,
@@ -79,7 +74,6 @@ export default function Signup() {
                                 values.fullName,
                                 values.username,
                             )
-
                             router.replace('/')
                         } catch (error) {
                             const response = handleSignupError(error)
@@ -189,5 +183,26 @@ export default function Signup() {
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    return publicRoute(ctx)
+    const cookies = nookies.get(ctx)
+    const token = cookies.token ?? ''
+
+    if (!token) {
+        return {
+            props: {},
+        }
+    }
+
+    try {
+        await adminAuth.verifyIdToken(token)
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        } as never
+    } catch (error) {
+        return {
+            props: {},
+        }
+    }
 }
