@@ -3,6 +3,8 @@ import {
     collection,
     deleteDoc,
     doc,
+    DocumentData,
+    DocumentSnapshot,
     getDoc,
     getDocs,
     query,
@@ -34,15 +36,17 @@ export const ProfileSchema = z.object({
         .optional(),
 })
 
+const defaultArraySchema = z.array(z.string()).default([])
+
 const UserSchema = z.object({
     docId: z.string(),
     username: z.string().min(3),
     profile: ProfileSchema,
-    likes: z.array(z.string()).default([]),
-    posts: z.array(z.string()).default([]),
-    saved: z.array(z.string()).default([]),
-    followings: z.array(z.string()).default([]),
-    followers: z.array(z.string()).default([]),
+    likes: defaultArraySchema,
+    posts: defaultArraySchema,
+    saved: defaultArraySchema,
+    followings: defaultArraySchema,
+    followers: defaultArraySchema,
     createdAt: z.number().default(new Date().getTime()),
     updatedAt: z.number().nullable().default(null),
 })
@@ -57,11 +61,9 @@ function createUser(userData: UserClient) {
 
 async function getUser(docId: string) {
     const response = await getDoc(getUserDocRef(docId))
-    if (response.exists()) {
-        return { docId: response.id, ...response.data() } as UserServer
-    }
-
-    throw new Error('No User Found')
+    const result = parseSnapshot<UserServer>(response)
+    if (!result) throw new Error('No User Found')
+    return result
 }
 
 async function getUserByUsername(username: string) {
@@ -70,10 +72,10 @@ async function getUserByUsername(username: string) {
     )
 
     const users: Array<UserServer> = []
+
     response.forEach((result) => {
-        if (result.exists()) {
-            users.push({ docId: result.id, ...result.data() } as UserServer)
-        }
+        const res = parseSnapshot<UserServer>(result)
+        if (res) users.push(res)
     })
     if (response.empty || response.size === 0 || users.length === 0) {
         throw new Error('No User Found')
@@ -87,6 +89,13 @@ function deleteUser(docId: string) {
 
 function updateUser(docId: string, data: Partial<UserServer>) {
     return updateDoc(getUserDocRef(docId), data)
+}
+
+function parseSnapshot<T>(response: DocumentSnapshot<DocumentData>) {
+    if (response.exists()) {
+        return { docId: response.id, ...response.data() } as T
+    }
+    return null
 }
 
 export {
