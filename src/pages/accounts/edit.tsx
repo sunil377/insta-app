@@ -1,15 +1,10 @@
-import NotFound from '@/components/NotFound'
-import { adminAuth, adminDB } from '@/config/firebase-admin'
+import { adminAuth } from '@/config/firebase-admin'
 import { convertZodErrorToFormikError } from '@/helpers/util'
 import useSuccess from '@/hooks/useSuccess'
 import AccountLayout from '@/layout/account-layout'
 import MainLayout from '@/layout/main-layout'
-import {
-    ProfileSchema,
-    updateUser,
-    UserServer,
-    user_collection_name,
-} from '@/services/user'
+import { getServerUser } from '@/services/server'
+import { ProfileSchema, updateUser } from '@/services/user'
 import { FirebaseError } from 'firebase/app'
 import { Field, Form, Formik } from 'formik'
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
@@ -27,13 +22,9 @@ const Schema = ProfileSchema.pick({
 
 const EditProfile: NextPageWithLayout<
     InferGetServerSidePropsType<typeof getServerSideProps>
-> = function EditProfile({ user, statusCode }) {
+> = function EditProfile({ user }) {
     const [isSuccess, setSuccess] = useSuccess()
     const [error, setError] = useState('')
-
-    if (statusCode || !user) {
-        return <NotFound statusCode={statusCode ?? 404} />
-    }
 
     const { fullname, photo, email, phoneNumber, bio, gender } = user.profile
     const { username } = user
@@ -265,57 +256,37 @@ EditProfile.getLayout = function getLayout(page) {
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const cookies = nookies.get(ctx)
-    const token = cookies.token
-    let userid: string
+    const token = cookies?.token
 
     if (!token) {
         return {
             redirect: {
                 destination: '/login',
-                parmament: false,
+                permanent: false,
             },
         } as never
     }
 
+    let userId: string | null = null
+
     try {
         const response = await adminAuth.verifyIdToken(token)
-        userid = response.uid
+        userId = response.uid
     } catch (error) {
         return {
             redirect: {
                 destination: '/login',
-                parmament: false,
+                permanent: false,
             },
         } as never
     }
 
-    try {
-        const response = await adminDB
-            .doc(user_collection_name + '/' + userid)
-            .get()
+    const { user } = await getServerUser(userId)
 
-        if (response.exists) {
-            return {
-                props: {
-                    user: {
-                        docId: response.id,
-                        ...response.data(),
-                    } as UserServer,
-                },
-            }
-        }
-
-        return {
-            props: {
-                statusCode: 404,
-            },
-        }
-    } catch (error) {
-        return {
-            props: {
-                statusCode: 500,
-            },
-        }
+    return {
+        props: {
+            user,
+        },
     }
 }
 

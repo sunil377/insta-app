@@ -1,12 +1,9 @@
 import { SettingsIcon } from '@/assets'
-import NotFound from '@/components/NotFound'
-import { adminAuth, adminDB } from '@/config/firebase-admin'
+import { adminAuth } from '@/config/firebase-admin'
 import MainLayout from '@/layout/main-layout'
-import {
-    getUserDocRef,
-    UserServer,
-    user_collection_name,
-} from '@/services/user'
+import { parseSnapshot } from '@/services/helper'
+import { getServerUser } from '@/services/server'
+import { getUserDocRef, UserServer } from '@/services/user'
 import { onSnapshot } from 'firebase/firestore'
 import type {
     GetServerSidePropsContext,
@@ -24,32 +21,24 @@ const Profile: NextPageWithLayout<
     InferGetServerSidePropsType<typeof getServerSideProps>
 > = (props) => {
     const router = useRouter()
-    const [user, setUser] = useState<UserServer | null>(props.user ?? null)
+    const [user, setUser] = useState<UserServer>(props.profileUser)
 
     useEffect(() => {
         const response = z
             .object({
-                query: z.object({
-                    id: z.string(),
-                }),
+                id: z.string(),
             })
-            .safeParse(router)
+            .safeParse(router.query)
 
         if (!response.success) return
 
-        return onSnapshot(getUserDocRef(response.data.query.id), (snapshot) => {
-            if (snapshot.exists()) {
-                setUser({
-                    docId: snapshot.id,
-                    ...snapshot.data(),
-                } as UserServer)
-            }
+        return onSnapshot(getUserDocRef(response.data.id), (snapshot) => {
+            const response = parseSnapshot<UserServer>(snapshot)
+            if (!response) return router.replace('/login')
+            setUser(response)
         })
     }, [router])
 
-    if (props.statusCode || !user) {
-        return <NotFound statusCode={props.statusCode ?? 404} />
-    }
     const {
         profile: { photo, fullname, bio },
         username,
@@ -204,8 +193,7 @@ export default Profile
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const cookies = nookies.get(ctx)
-    const token = cookies.token
-    const userid = ctx.query.id
+    const token = cookies?.token
 
     if (!token) {
         return {
@@ -216,8 +204,11 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         } as never
     }
 
+    let userId: string | null = null
+
     try {
-        await adminAuth.verifyIdToken(token)
+        const response = await adminAuth.verifyIdToken(token)
+        userId = response.uid
     } catch (error) {
         return {
             redirect: {
@@ -227,40 +218,34 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         } as never
     }
 
-    if (!userid || userid instanceof Array) {
+    const { user } = await getServerUser(userId)
+
+    const { id } = z
+        .object({
+            id: z.string(),
+        })
+        .parse(ctx.query)
+
+    if (id === user.docId) {
         return {
             props: {
-                statusCode: 500,
+                user,
+                profileUser: user,
             },
         }
     }
 
     try {
-        const response = await adminDB
-            .doc(user_collection_name + '/' + userid)
-            .get()
-
-        if (response.exists) {
-            return {
-                props: {
-                    user: {
-                        docId: response.id,
-                        ...response.data(),
-                    } as UserServer,
-                },
-            }
-        }
-
+        const { user: profileUser } = await getServerUser(id)
         return {
             props: {
-                statusCode: 404,
+                user,
+                profileUser,
             },
         }
     } catch (error) {
         return {
-            props: {
-                statusCode: 500,
-            },
-        }
+            notFound: true,
+        } as never
     }
 }

@@ -9,6 +9,7 @@ import {
 import { logout } from '@/services/auth'
 import { Menu, Transition } from '@headlessui/react'
 import clsx from 'clsx'
+import { useRouter } from 'next/router'
 import { Fragment } from 'react'
 import { useMutation } from 'react-query'
 import ToolTip from './Tooltip'
@@ -155,7 +156,12 @@ function SettingButton({ isSpread }: { isSpread: boolean }) {
 }
 
 function LogoutButton() {
-    const { mutate: handleDelete } = useMutation(() => logout())
+    const router = useRouter()
+    const { mutate: handleDelete } = useMutation(() => logout(), {
+        onSuccess: () => {
+            router.push('/login')
+        },
+    })
     return (
         <Menu.Item>
             {({ active }) => (

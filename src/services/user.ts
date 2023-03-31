@@ -3,8 +3,6 @@ import {
     collection,
     deleteDoc,
     doc,
-    DocumentData,
-    DocumentSnapshot,
     getDoc,
     getDocs,
     query,
@@ -13,6 +11,7 @@ import {
     where,
 } from 'firebase/firestore'
 import { z } from 'zod'
+import { parseSnapshot } from './helper'
 
 export const user_collection_name = 'users'
 const user_collection_ref = collection(db, user_collection_name)
@@ -89,13 +88,6 @@ function deleteUser(docId: string) {
 
 function updateUser(docId: string, data: Partial<UserServer>) {
     return updateDoc(getUserDocRef(docId), data)
-}
-
-function parseSnapshot<T>(response: DocumentSnapshot<DocumentData>) {
-    if (response.exists()) {
-        return { docId: response.id, ...response.data() } as T
-    }
-    return null
 }
 
 export {

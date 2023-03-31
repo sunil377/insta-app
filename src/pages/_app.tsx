@@ -18,6 +18,7 @@ const client = new QueryClient()
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
     const getLayout = Component.getLayout || ((page) => page)
+    console.log('pageprops', pageProps)
 
     return (
         <AuthProvider>

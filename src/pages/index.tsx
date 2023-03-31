@@ -1,7 +1,7 @@
 import { PlaceholderImage } from '@/assets'
-import { adminAuth, adminDB } from '@/config/firebase-admin'
+import { adminAuth } from '@/config/firebase-admin'
 import MainLayout from '@/layout/main-layout'
-import { UserServer, user_collection_name } from '@/services/user'
+import { getServerUser } from '@/services/server'
 import type { GetServerSidePropsContext } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -224,8 +224,7 @@ export default Home
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const cookies = nookies.get(ctx)
-    const token = cookies.token
-    const userid = ctx.query.id
+    const token = cookies?.token
 
     if (!token) {
         return {
@@ -236,8 +235,11 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         } as never
     }
 
+    let userId: string | null = null
+
     try {
-        await adminAuth.verifyIdToken(token)
+        const response = await adminAuth.verifyIdToken(token)
+        userId = response.uid
     } catch (error) {
         return {
             redirect: {
@@ -247,40 +249,11 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         } as never
     }
 
-    if (!userid || userid instanceof Array) {
-        return {
-            props: {
-                statusCode: 500,
-            },
-        }
-    }
+    const { user } = await getServerUser(userId)
 
-    try {
-        const response = await adminDB
-            .doc(user_collection_name + '/' + userid)
-            .get()
-
-        if (response.exists) {
-            return {
-                props: {
-                    user: {
-                        docId: response.id,
-                        ...response.data(),
-                    } as UserServer,
-                },
-            }
-        }
-
-        return {
-            props: {
-                statusCode: 404,
-            },
-        }
-    } catch (error) {
-        return {
-            props: {
-                statusCode: 500,
-            },
-        }
+    return {
+        props: {
+            user,
+        },
     }
 }
