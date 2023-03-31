@@ -3,7 +3,7 @@ import GoogleSignIn from '@/feature/GoogleSignIn'
 import { handleSignupError } from '@/helpers/errors'
 import { SignupSchema } from '@/helpers/schema'
 import { convertZodErrorToFormikError } from '@/helpers/util'
-import { signup } from '@/services/auth'
+import { createUserForAuth, createUserForFirestore } from '@/services/auth'
 import clsx from 'clsx'
 import type { FieldProps } from 'formik'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
@@ -68,11 +68,14 @@ export default function Signup() {
                         { setSubmitting, setFieldError },
                     ) => {
                         try {
-                            await signup(
+                            const response = await createUserForAuth(
                                 values.email,
                                 values.password,
-                                values.fullName,
+                            )
+                            await createUserForFirestore(
+                                response,
                                 values.username,
+                                values.fullName,
                             )
                             router.replace('/')
                         } catch (error) {

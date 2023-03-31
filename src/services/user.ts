@@ -61,7 +61,7 @@ function createUser(userData: UserClient) {
 async function getUser(docId: string) {
     const response = await getDoc(getUserDocRef(docId))
     const result = parseSnapshot<UserServer>(response)
-    if (!result) throw new Error('No User Found')
+    if (!result) throw new ReferenceError('No User Found')
     return result
 }
 
@@ -77,7 +77,7 @@ async function getUserByUsername(username: string) {
         if (res) users.push(res)
     })
     if (response.empty || response.size === 0 || users.length === 0) {
-        throw new Error('No User Found')
+        throw new ReferenceError('No User Found')
     }
     return users
 }
