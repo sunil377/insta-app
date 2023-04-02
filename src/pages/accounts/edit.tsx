@@ -1,16 +1,17 @@
 import { adminAuth } from '@/config/firebase-admin'
+import { ProfileSchema } from '@/helpers/schema'
 import { convertZodErrorToFormikError } from '@/helpers/util'
 import useSuccess from '@/hooks/useSuccess'
 import AccountLayout from '@/layout/account-layout'
 import MainLayout from '@/layout/main-layout'
 import { getServerUser } from '@/services/server'
-import { ProfileSchema, updateUser } from '@/services/user'
-import { FirebaseError } from 'firebase/app'
-import { Field, Form, Formik } from 'formik'
+import { UserServer, updateUser } from '@/services/user'
+import { Field, Form, Formik, FormikHelpers } from 'formik'
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
 import Image from 'next/image'
 import nookies from 'nookies'
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
+import { z } from 'zod'
 import { NextPageWithLayout } from '../_app'
 
 const Schema = ProfileSchema.pick({
@@ -20,26 +21,70 @@ const Schema = ProfileSchema.pick({
     gender: true,
 })
 
-const EditProfile: NextPageWithLayout<
-    InferGetServerSidePropsType<typeof getServerSideProps>
-> = function EditProfile({ user }) {
-    const [isSuccess, setSuccess] = useSuccess()
-    const [error, setError] = useState('')
+type initialValues = z.infer<typeof Schema>
 
-    const { fullname, photo, email, phoneNumber, bio, gender } = user.profile
+async function onSubmit(
+    values: initialValues,
+    helpers: FormikHelpers<initialValues>,
+    user: UserServer,
+    handleSubmit: () => void,
+) {
+    try {
+        await updateUser(user.docId, {
+            profile: {
+                ...user.profile,
+                ...values,
+            },
+        })
+
+        handleSubmit()
+    } catch (error) {
+        helpers.setFieldError('fullname', (error as Error).message)
+    } finally {
+        helpers.setSubmitting(false)
+    }
+}
+
+const EditProfile: IPage = function EditProfile({ user }) {
+    const [isSuccess, setSuccess] = useSuccess()
+
+    const {
+        fullname,
+        photo,
+        email,
+        phoneNumber,
+        bio,
+        gender = 'prefer not',
+    } = user.profile
     const { username } = user
+
+    const snackbar = isSuccess ? (
+        <div
+            role="alert"
+            aria-live="polite"
+            className="fixed left-1/2 bottom-5 -translate-x-1/2 rounded-md bg-green-700 px-6 py-2 text-sm text-white"
+        >
+            Profile Updated
+        </div>
+    ) : null
+
+    const profilePic = photo ? (
+        <Image
+            src={photo}
+            alt={fullname}
+            className="h-8 w-8 rounded-full border bg-contain"
+            width={32}
+            height={32}
+        />
+    ) : (
+        <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xl font-semibold capitalize">
+            {username.at(0)}
+        </div>
+    )
 
     return (
         <div className="py-10 px-4  text-sm sm:px-10">
-            {isSuccess ? (
-                <div
-                    role="alert"
-                    aria-live="polite"
-                    className="fixed left-1/2 bottom-5 -translate-x-1/2 rounded-md bg-green-700 px-6 py-2 text-sm text-white"
-                >
-                    Profile Updated
-                </div>
-            ) : null}
+            {snackbar}
 
             <Formik
                 initialValues={{
@@ -51,21 +96,10 @@ const EditProfile: NextPageWithLayout<
                 validate={(values) => {
                     return convertZodErrorToFormikError(values, Schema)
                 }}
-                onSubmit={async (values, { setSubmitting }) => {
-                    try {
-                        await updateUser(user.docId, {
-                            profile: {
-                                ...user.profile,
-                                ...values,
-                            },
-                        })
+                onSubmit={(values, helpers) => {
+                    return onSubmit(values, helpers, user, () => {
                         setSuccess(true)
-                        setError('')
-                    } catch (error) {
-                        setError((error as FirebaseError).message)
-                    } finally {
-                        setSubmitting(false)
-                    }
+                    })
                 }}
             >
                 {({ errors, isValid, submitCount, values, isSubmitting }) => (
@@ -73,19 +107,7 @@ const EditProfile: NextPageWithLayout<
                         <Form noValidate className="space-y-4">
                             <section className="flex grid-cols-4 items-center gap-x-2 space-y-2 xs:grid xs:gap-x-6">
                                 <div className="col-span-1 items-center justify-end xs:inline-flex">
-                                    {photo ? (
-                                        <Image
-                                            src={photo}
-                                            alt={fullname}
-                                            className="h-8 w-8 rounded-full border bg-contain"
-                                            width={32}
-                                            height={32}
-                                        />
-                                    ) : (
-                                        <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xl font-semibold capitalize">
-                                            {username.at(0)}
-                                        </div>
-                                    )}
+                                    {profilePic}
                                 </div>
                                 <div className="col-span-3 leading-4">
                                     <h4>{user.username}</h4>
@@ -236,7 +258,7 @@ const EditProfile: NextPageWithLayout<
                                 role="alert"
                                 className="mt-2 text-center text-red-500 before:content-['*']"
                             >
-                                {error || Object.values(errors)[0]}
+                                {Object.values(errors)[0]}
                             </div>
                         ) : null}
                     </Fragment>
@@ -253,6 +275,10 @@ EditProfile.getLayout = function getLayout(page) {
         </MainLayout>
     )
 }
+
+type IPage = NextPageWithLayout<
+    InferGetServerSidePropsType<typeof getServerSideProps>
+>
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const cookies = nookies.get(ctx)

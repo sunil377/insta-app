@@ -1,30 +1,56 @@
+import {
+    CustomPasswordTextField,
+    CustomTextField,
+} from '@/components/form/TextField'
 import { adminAuth } from '@/config/firebase-admin'
 import GoogleSignIn from '@/feature/GoogleSignIn'
-import { handleSignupError } from '@/helpers/errors'
 import { SignupSchema } from '@/helpers/schema'
 import { convertZodErrorToFormikError } from '@/helpers/util'
 import { createUserForAuth, createUserForFirestore } from '@/services/auth'
-import clsx from 'clsx'
-import type { FieldProps } from 'formik'
+import type { FormikHelpers, FormikProps } from 'formik'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import type { GetServerSidePropsContext } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import nookies from 'nookies'
-import { useState } from 'react'
-import { HiEye, HiEyeOff } from 'react-icons/hi'
+import { BiLoaderCircle } from 'react-icons/bi'
 import Instagram from '../../public/images/instagram.png'
 
 const initialValues = {
     email: '',
-    fullName: '',
+    fullname: '',
     username: '',
     password: '',
 }
 
+function validate(values: typeof initialValues) {
+    return convertZodErrorToFormikError(values, SignupSchema)
+}
+
+async function onSubmit(
+    values: typeof initialValues,
+    helpers: FormikHelpers<typeof initialValues>,
+    handleSubmit: () => void,
+) {
+    try {
+        const response = await createUserForAuth(values.email, values.password)
+        await createUserForFirestore(response, values.username, values.fullname)
+        handleSubmit()
+    } catch (error) {
+        if (error instanceof ReferenceError) {
+            const { message, cause } = error
+            helpers.setFieldError(cause as string, message)
+        } else {
+            helpers.setFieldError('email', (error as Error).message)
+        }
+
+        console.log(error)
+        helpers.setSubmitting(false)
+    }
+}
+
 export default function Signup() {
-    const [isPasswordShowing, setPasswordShowing] = useState(false)
     const router = useRouter()
 
     return (
@@ -57,122 +83,14 @@ export default function Signup() {
                 <Formik
                     initialValues={initialValues}
                     validateOnMount={true}
-                    validate={(values) => {
-                        return convertZodErrorToFormikError(
-                            values,
-                            SignupSchema,
-                        )
-                    }}
-                    onSubmit={async (
-                        values,
-                        { setSubmitting, setFieldError },
-                    ) => {
-                        try {
-                            const response = await createUserForAuth(
-                                values.email,
-                                values.password,
-                            )
-                            await createUserForFirestore(
-                                response,
-                                values.username,
-                                values.fullName,
-                            )
+                    validate={validate}
+                    onSubmit={(values, helpers) => {
+                        return onSubmit(values, helpers, () => {
                             router.replace('/')
-                        } catch (error) {
-                            const response = handleSignupError(error)
-                            setFieldError(...response)
-                            setSubmitting(false)
-                        }
+                        })
                     }}
                 >
-                    {({ submitCount, isSubmitting, isValid }) => (
-                        <div>
-                            <Form noValidate className="space-y-2">
-                                {Object.keys(initialValues).map((arg) => (
-                                    <Field type="text" name={arg} key={arg}>
-                                        {({
-                                            field,
-                                            meta: { error },
-                                        }: FieldProps) => (
-                                            <div className="group relative rounded-sm border border-gray-300 py-0.5 focus-within:border-gray-500">
-                                                <div className="invisible text-xs">
-                                                    {arg}
-                                                </div>
-                                                <label
-                                                    className={clsx(
-                                                        'absolute top-0.5 w-full origin-top-left cursor-text bg-white pl-2 text-start text-xs capitalize text-gray-500 transition-all group-focus-within:scale-75 group-focus-within:transform group-focus-within:pt-0.5',
-                                                        field.value.length > 0
-                                                            ? 'scale-75 transform pt-0.5'
-                                                            : 'pt-2.5',
-                                                    )}
-                                                    htmlFor={arg}
-                                                >
-                                                    {arg}
-                                                </label>
-                                                <input
-                                                    type={
-                                                        arg === 'password'
-                                                            ? isPasswordShowing
-                                                                ? 'text'
-                                                                : 'password'
-                                                            : 'text'
-                                                    }
-                                                    className="w-full bg-white px-2 text-sm leading-4 focus:outline-none"
-                                                    id={arg}
-                                                    autoComplete="off"
-                                                    autoCorrect="off"
-                                                    autoCapitalize="off"
-                                                    aria-invalid={
-                                                        submitCount > 0 &&
-                                                        !!error
-                                                    }
-                                                    {...field}
-                                                />
-                                                {arg === 'password' && (
-                                                    <button
-                                                        type="button"
-                                                        className="absolute top-1/2 right-2 z-10 -translate-y-1/2 rounded-full p-2 text-lg leading-5"
-                                                        onClick={() =>
-                                                            setPasswordShowing(
-                                                                (prev) => !prev,
-                                                            )
-                                                        }
-                                                    >
-                                                        {isPasswordShowing ? (
-                                                            <HiEyeOff title="hide" />
-                                                        ) : (
-                                                            <HiEye title="show" />
-                                                        )}
-                                                    </button>
-                                                )}
-                                            </div>
-                                        )}
-                                    </Field>
-                                ))}
-                                <button
-                                    className="block w-full rounded-md bg-blue-500 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
-                                    type="submit"
-                                    disabled={!isValid || isSubmitting}
-                                >
-                                    Signup
-                                </button>
-                            </Form>
-                            <div className="h-3" role="alert">
-                                {submitCount > 0 &&
-                                    [
-                                        'other',
-                                        ...Object.keys(initialValues),
-                                    ].map((arg) => (
-                                        <ErrorMessage
-                                            name={arg}
-                                            component="span"
-                                            key={arg}
-                                            className="block pl-3 text-start text-xs capitalize text-red-500 before:content-['*']"
-                                        />
-                                    ))}
-                            </div>
-                        </div>
-                    )}
+                    {signupform}
                 </Formik>
             </section>
             <section className="bg-white py-2 text-center xs:mt-4 xs:border xs:border-gray-300 xs:py-4">
@@ -182,6 +100,54 @@ export default function Signup() {
                 </Link>
             </section>
         </main>
+    )
+}
+
+function signupform({
+    submitCount,
+    isSubmitting,
+    isValid,
+    errors,
+}: FormikProps<typeof initialValues>) {
+    const buttonText = isSubmitting ? (
+        <BiLoaderCircle
+            className="mx-auto animate-spin text-xl"
+            aria-label="loading"
+        />
+    ) : (
+        'Signup'
+    )
+
+    const errorText =
+        submitCount > 0 &&
+        Object.keys(errors).map((arg) => (
+            <ErrorMessage
+                name={arg}
+                component="span"
+                key={arg}
+                className="block pl-3 text-start text-xs capitalize leading-3 text-red-500 before:content-['*']"
+            />
+        ))
+
+    return (
+        <div>
+            <Form noValidate className="space-y-2">
+                <Field name="email">{CustomTextField}</Field>
+                <Field name="fullname">{CustomTextField}</Field>
+                <Field name="username">{CustomTextField}</Field>
+                <Field name="password">{CustomPasswordTextField}</Field>
+                <button
+                    className="block w-full rounded-md bg-blue-500 px-4 py-2 text-center font-medium text-white transition-colors hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
+                    type="submit"
+                    disabled={!isValid || isSubmitting}
+                >
+                    {buttonText}
+                </button>
+            </Form>
+            <div className="mt-1 h-3" role="alert">
+                {errorText}
+            </div>
+        </div>
     )
 }
 

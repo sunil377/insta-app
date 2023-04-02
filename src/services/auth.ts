@@ -1,70 +1,121 @@
 import { auth } from '@/config/firebase'
+import {
+    EMAIL_ALREADY_EXISTS,
+    PASSWORD_WRONG,
+    USERNAME_ALREADY_EXISTS,
+    USER_NOT_FOUND,
+    USER_SIGNIN_WITH_DIFF_PROVIDER,
+} from '@/constants/errors'
+import {
+    FIREBASE_EMAIL_ALREADY_EXISTS,
+    FIREBASE_USER_NOT_FOUND,
+    FIREBASE_WRONG_PASSWORD,
+} from '@/constants/firebase-auth-errors'
 import { FirebaseError } from 'firebase/app'
 import {
+    GoogleAuthProvider,
+    UserCredential,
     createUserWithEmailAndPassword,
     deleteUser as deleteAuthUser,
     fetchSignInMethodsForEmail,
     getAdditionalUserInfo,
-    GoogleAuthProvider,
     signInWithEmailAndPassword,
     signInWithPopup,
     signOut,
     updatePassword,
-    UserCredential,
 } from 'firebase/auth'
 import { createUser, getUserByUsername } from './user'
 
 async function login(email: string, password: string) {
     try {
-        const response = await signInWithEmailAndPassword(auth, email, password)
-        return response
+        return await signInWithEmailAndPassword(auth, email, password)
     } catch (error) {
-        if (
-            error instanceof FirebaseError &&
-            error.code === 'auth/wrong-password'
-        ) {
-            const [method] = await fetchSignInMethodsForEmail(auth, email)
-            if (method === 'google.com') {
-                throw new Error('You are previously login with Google.', {
-                    cause: error,
-                })
+        if (error instanceof FirebaseError) {
+            switch (error.code) {
+                case FIREBASE_USER_NOT_FOUND:
+                    throw new ReferenceError(USER_NOT_FOUND, {
+                        cause: 'email',
+                    })
+
+                case FIREBASE_WRONG_PASSWORD:
+                    const [method] = await fetchSignInMethodsForEmail(
+                        auth,
+                        email,
+                    )
+                    if (method === 'google.com') {
+                        throw new ReferenceError(
+                            USER_SIGNIN_WITH_DIFF_PROVIDER,
+                            {
+                                cause: 'email',
+                            },
+                        )
+                    }
+                    throw new ReferenceError(PASSWORD_WRONG, {
+                        cause: 'password',
+                    })
+
+                default:
+                    throw error
             }
         }
         throw error
     }
 }
 
-function createUserForFirestore(
+async function createUserForFirestore(
     response: UserCredential,
     username: string,
     fullname: string,
 ) {
-    return getUserByUsername(username).then(
-        () => {
-            return deleteAuthUser(response.user).then((err) => {
-                throw new ReferenceError('Username Already exists', {
-                    cause: err,
-                })
+    return await getUserByUsername(username).then(
+        async () => {
+            await deleteAuthUser(response.user)
+            throw new ReferenceError(USERNAME_ALREADY_EXISTS, {
+                cause: 'username',
             })
         },
-        (err) => {
-            if (err instanceof ReferenceError) {
-                return createUser({
-                    username,
-                    docId: response.user.uid,
-                    profile: {
-                        fullname,
-                        email: response.user.email!,
-                    },
-                }).catch(() => deleteAuthUser(response.user))
+        async (err) => {
+            if (
+                err instanceof ReferenceError &&
+                err.message === USER_NOT_FOUND
+            ) {
+                try {
+                    await createUser({
+                        username,
+                        docId: response.user.uid,
+                        profile: {
+                            fullname,
+                            email: response.user.email!,
+                        },
+                    })
+                    return { success: true }
+                } catch (err) {
+                    await deleteAuthUser(response.user)
+                    throw err
+                }
             }
             throw err
         },
     )
 }
 
-function createUserForAuth(email: string, password: string) {
-    return createUserWithEmailAndPassword(auth, email, password)
+async function createUserForAuth(email: string, password: string) {
+    try {
+        return await createUserWithEmailAndPassword(auth, email, password)
+    } catch (error) {
+        if (error instanceof FirebaseError) {
+            switch (error.code) {
+                case FIREBASE_EMAIL_ALREADY_EXISTS:
+                    throw new ReferenceError(EMAIL_ALREADY_EXISTS, {
+                        cause: 'email',
+                    })
+
+                default:
+                    throw error
+            }
+        }
+        throw error
+    }
 }
 
 const Provider = new GoogleAuthProvider()
@@ -95,8 +146,27 @@ async function changePassword(
     oldPassword: string,
     newPassword: string,
 ) {
-    const { user } = await signInWithEmailAndPassword(auth, email, oldPassword)
-    return await updatePassword(user, newPassword)
+    try {
+        const { user } = await signInWithEmailAndPassword(
+            auth,
+            email,
+            oldPassword,
+        )
+        return await updatePassword(user, newPassword)
+    } catch (error) {
+        if (error instanceof FirebaseError) {
+            switch (error.code) {
+                case FIREBASE_WRONG_PASSWORD:
+                    throw new ReferenceError(PASSWORD_WRONG, {
+                        cause: 'oldPassword',
+                    })
+
+                default:
+                    throw error
+            }
+        }
+        throw error
+    }
 }
 
 export {
