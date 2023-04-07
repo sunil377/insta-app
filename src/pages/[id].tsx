@@ -17,9 +17,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { z } from 'zod'
 import { NextPageWithLayout } from './_app'
 
-const Profile: NextPageWithLayout<
-    InferGetServerSidePropsType<typeof getServerSideProps>
-> = (props) => {
+const Profile: IPage = (props) => {
     const router = useRouter()
     const [user, setUser] = useState<UserServer>(props.profileUser)
 
@@ -47,23 +45,25 @@ const Profile: NextPageWithLayout<
         followings,
     } = user
 
+    const profilePic = photo ? (
+        <Image
+            src={photo}
+            alt={username}
+            fill
+            className="rounded-full border border-gray-300 object-contain"
+        />
+    ) : (
+        <div className="inline-flex h-full w-full items-center justify-center rounded-full bg-gray-200 text-5xl capitalize">
+            {username.at(0)}
+        </div>
+    )
+
     return (
         <main className="mx-auto mt-16 max-w-3xl bg-white text-sm sm:mt-10">
             <section className="grid max-w-sm grid-cols-4 px-4 sm:max-w-none">
                 <div className="col-span-1">
                     <div className="relative aspect-square w-20 sm:mx-auto sm:w-28 lg:w-36">
-                        {photo ? (
-                            <Image
-                                src={photo}
-                                alt={username}
-                                fill
-                                className="rounded-full border border-gray-300 object-contain"
-                            />
-                        ) : (
-                            <div className="inline-flex h-full w-full items-center justify-center rounded-full bg-gray-200 text-5xl capitalize">
-                                {username.at(0)}
-                            </div>
-                        )}
+                        {profilePic}
                     </div>
                 </div>
 
@@ -191,9 +191,14 @@ Profile.getLayout = function getLayout(page) {
 
 export default Profile
 
+type IPage = NextPageWithLayout<
+    InferGetServerSidePropsType<typeof getServerSideProps>
+>
+
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const cookies = nookies.get(ctx)
     const token = cookies?.token
+    console.log('hitting server')
 
     if (!token) {
         return {

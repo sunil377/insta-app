@@ -22,6 +22,7 @@ export const USERNAME_ALREADY_EXISTS = 'Username Already Exists.'
 export const USERID_REQUIRED = required('Userid')
 
 export const USER_NOT_FOUND = 'User Not Found.'
+export const POP_UP_CLOSED_BY_USER = 'Signin Popup Closed'
 
 export const USER_SIGNIN_WITH_DIFF_PROVIDER =
     "You'r previously login with Google."

@@ -2,12 +2,14 @@ import { auth } from '@/config/firebase'
 import {
     EMAIL_ALREADY_EXISTS,
     PASSWORD_WRONG,
+    POP_UP_CLOSED_BY_USER,
     USERNAME_ALREADY_EXISTS,
     USER_NOT_FOUND,
     USER_SIGNIN_WITH_DIFF_PROVIDER,
 } from '@/constants/errors'
 import {
     FIREBASE_EMAIL_ALREADY_EXISTS,
+    FIREBASE_POPUP_CLOSED_BY_USER,
     FIREBASE_USER_NOT_FOUND,
     FIREBASE_WRONG_PASSWORD,
 } from '@/constants/firebase-auth-errors'
@@ -124,17 +126,27 @@ Provider.setCustomParameters({
 })
 
 async function googleSigninWithPopup() {
-    const response = await signInWithPopup(auth, Provider)
-    const username = response.user.email?.replace(/\@.+/g, '')!
-    const fullname = response.user.displayName ?? ''
+    try {
+        const response = await signInWithPopup(auth, Provider)
+        const username = response.user.email?.replace(/\@.+/g, '')!
+        const fullname = response.user.displayName ?? ''
 
-    const info = getAdditionalUserInfo(response)
+        const info = getAdditionalUserInfo(response)
 
-    if (info?.isNewUser) {
-        return createUserForFirestore(response, username, fullname)
+        if (info?.isNewUser) {
+            return createUserForFirestore(response, username, fullname)
+        }
+
+        return response
+    } catch (error) {
+        if (
+            error instanceof FirebaseError &&
+            error.code === FIREBASE_POPUP_CLOSED_BY_USER
+        ) {
+            throw new Error(POP_UP_CLOSED_BY_USER, { cause: error })
+        }
+        throw error
     }
-
-    return response
 }
 
 function logout() {
