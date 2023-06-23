@@ -5,9 +5,7 @@ function convertZodErrorToFormikError<A, B extends z.Schema>(
     schema: B,
 ) {
     const response = schema.safeParse(values)
-    if (response.success) {
-        return {}
-    }
+    if (response.success) return {}
     const { path, message } = response.error.errors[0]
     return {
         [path[0]]: message,

@@ -1,68 +1,67 @@
 import {
-    AddPostIcon,
     ExploreIcon,
     HeartIcon,
     HomeIcon,
     InstagramTextIcon,
     InstaIcon,
+    MenuIcon,
     MessengerIcon,
     ReelsIcon,
     SearchIcon,
 } from '@/assets'
-import { useAuth } from '@/context/AuthContext'
-import { Popover, Transition } from '@headlessui/react'
+import { BaseProfileLink } from '@/components/links'
+import { UserAvatarIcon } from '@/components/UserAvatar'
+import { Menu, Popover, Transition } from '@headlessui/react'
 import clsx from 'clsx'
-import Image from 'next/image'
 import Link from 'next/link'
-import { Fragment, ReactNode, useState } from 'react'
-import SettingButton from './SettingButton'
+import { Fragment, lazy, ReactNode, useState } from 'react'
+
+import CreatePost from './CreatePost'
+import NotificationContent from './NotificationContent'
+import SearchContent from './SearchContent'
+import SettingMenu from './SettingMenu'
 import ToolTip from './Tooltip'
+const CreatePostDialog = lazy(() => import('./CreatePostDialog'))
 
 function LaptopLayout({ children }: { children: ReactNode }) {
-    const [isSpread, setSpread] = useState(true)
-    const currentUser = useAuth()
+    const [isPopoverOpened, setPopoverOpen] = useState(false)
 
     return (
-        <div>
+        <Fragment>
             <nav
                 className={clsx(
-                    'fixed inset-y-0 left-0 z-40 flex w-16 flex-col border-r border-r-gray-300 bg-white px-2 py-4 text-gray-800 transition-all duration-300 ease-linear',
+                    'fixed inset-y-0 left-0 z-40 flex w-16 flex-col border-r border-r-gray-300 bg-white px-2 py-4 text-gray-800',
                     {
-                        'lg:w-56': isSpread,
+                        'lg:w-56': !isPopoverOpened,
                     },
                 )}
             >
-                <div className="h-11">
-                    <Link
-                        href="/"
-                        className={clsx(
-                            'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100',
-                            {
-                                'lg:w-full lg:rounded-l-full lg:rounded-r-full lg:px-0 lg:hover:bg-transparent ':
-                                    isSpread,
-                            },
-                        )}
-                        title="Instagram"
-                    >
-                        {isSpread ? (
-                            <Fragment>
-                                <InstaIcon className="transfrom scale-90 transition-transform group-hover:scale-100 lg:hidden" />
-                                <InstagramTextIcon className="transfrom hidden scale-90 lg:inline" />
-                            </Fragment>
-                        ) : (
-                            <InstaIcon className="transfrom scale-90 transition-transform group-hover:scale-100 " />
-                        )}
-                    </Link>
-                </div>
+                {/* Instagram link  */}
+
+                <Link
+                    href="/"
+                    className="group flex h-11 items-center rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100"
+                    title="Instagram"
+                >
+                    {isPopoverOpened ? (
+                        <InstaIcon className="transfrom scale-90 transition-transform group-hover:scale-100" />
+                    ) : (
+                        <Fragment>
+                            <InstaIcon className="transfrom scale-90 transition-transform group-hover:scale-100 lg:hidden" />
+                            <InstagramTextIcon className="transfrom hidden scale-90 lg:inline" />
+                        </Fragment>
+                    )}
+                </Link>
 
                 <div className="mt-5 space-y-2 text-sm">
+                    {/* Home Link */}
+
                     <Link
                         href="/"
                         className={clsx(
                             'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-black',
                             {
-                                'lg:w-full lg:rounded-l-full lg:rounded-r-full':
-                                    isSpread,
+                                'lg:w-full': !isPopoverOpened,
                             },
                         )}
                     >
@@ -71,55 +70,49 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                             className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100"
                         />
 
-                        <ToolTip isSpread={isSpread}>Home</ToolTip>
+                        <ToolTip isOpen={isPopoverOpened}>Home</ToolTip>
                     </Link>
-                    <Popover>
-                        {({ open }) => (
-                            <Fragment>
-                                <Popover.Button
-                                    className={clsx(
-                                        'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-all hover:bg-gray-100',
-                                        {
-                                            'lg:w-full lg:rounded-l-full lg:rounded-r-full':
-                                                isSpread,
-                                        },
-                                    )}
-                                    onClick={() => {
-                                        setSpread(open)
-                                    }}
-                                >
-                                    <SearchIcon
-                                        aria-label="Search"
-                                        className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100"
-                                    />
 
-                                    <ToolTip isSpread={isSpread}>
-                                        Search
-                                    </ToolTip>
-                                </Popover.Button>
-                                <Transition
-                                    enter="transition duration-300 ease-linear"
-                                    enterFrom="transform -translate-x-10 opacity-0"
-                                    enterTo="transform translate-x-0 opacity-100"
-                                    leave="transition duration-300 ease-linear"
-                                    leaveFrom="transform translate-x-0 opacity-100"
-                                    leaveTo="transform -translate-x-10 opacity-0"
-                                    as={Fragment}
-                                >
-                                    <Popover.Panel className="fixed inset-y-0 left-16 z-30 w-64 origin-left border border-l-0 bg-white">
-                                        <h4>Search</h4>
-                                    </Popover.Panel>
-                                </Transition>
-                            </Fragment>
-                        )}
+                    {/* Search Button With Popover */}
+                    <Popover>
+                        <Popover.Button
+                            className={clsx(
+                                'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100',
+                                {
+                                    'lg:w-full': !isPopoverOpened,
+                                },
+                            )}
+                        >
+                            <SearchIcon
+                                aria-label="Search"
+                                className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100"
+                            />
+
+                            <ToolTip isOpen={isPopoverOpened}>Search</ToolTip>
+                        </Popover.Button>
+
+                        <Transition
+                            show={isPopoverOpened}
+                            enter="transition duration-100 ease-out"
+                            enterFrom="transform -translate-x-2 opacity-0"
+                            enterTo="transform translate-x-0 opacity-100"
+                            leave="transition duration-75 ease-out"
+                            leaveFrom="transform translate-x-0 opacity-100"
+                            leaveTo="transform -translate-x-2 opacity-0"
+                            as={Fragment}
+                        >
+                            <Popover.Panel className="fixed inset-y-0 left-16 z-30 w-64 origin-left border border-l-0 bg-white">
+                                <SearchContent />
+                            </Popover.Panel>
+                        </Transition>
                     </Popover>
 
-                    <button
+                    <Link
+                        href="/"
                         className={clsx(
-                            'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100',
+                            'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-black',
                             {
-                                'lg:w-full lg:rounded-l-full lg:rounded-r-full':
-                                    isSpread,
+                                'lg:w-full': !isPopoverOpened,
                             },
                         )}
                     >
@@ -128,14 +121,15 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                             className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100"
                         />
 
-                        <ToolTip isSpread={isSpread}>Explore</ToolTip>
-                    </button>
-                    <button
+                        <ToolTip isOpen={isPopoverOpened}>Explore</ToolTip>
+                    </Link>
+
+                    <Link
+                        href="/"
                         className={clsx(
-                            'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100',
+                            'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-black',
                             {
-                                'lg:w-full lg:rounded-l-full lg:rounded-r-full':
-                                    isSpread,
+                                'lg:w-full': !isPopoverOpened,
                             },
                         )}
                     >
@@ -144,14 +138,15 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                             className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100"
                         />
 
-                        <ToolTip isSpread={isSpread}>Reels</ToolTip>
-                    </button>
-                    <button
+                        <ToolTip isOpen={isPopoverOpened}>Reels</ToolTip>
+                    </Link>
+
+                    <Link
+                        href="/"
                         className={clsx(
-                            'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100',
+                            'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-black',
                             {
-                                'lg:w-full lg:rounded-l-full lg:rounded-r-full':
-                                    isSpread,
+                                'lg:w-full': !isPopoverOpened,
                             },
                         )}
                     >
@@ -160,56 +155,50 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                             className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100"
                         />
 
-                        <ToolTip isSpread={isSpread}>Messenger</ToolTip>
-                    </button>
+                        <ToolTip isOpen={isPopoverOpened}>Messenger</ToolTip>
+                    </Link>
 
                     <Popover>
-                        {({ close, open }) => (
-                            <Fragment>
-                                <Popover.Button
-                                    className={clsx(
-                                        'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100',
-                                        {
-                                            'lg:w-full lg:rounded-l-full lg:rounded-r-full':
-                                                isSpread,
-                                        },
-                                    )}
-                                    onClick={() => {
-                                        setSpread(open)
-                                    }}
-                                >
-                                    <HeartIcon
-                                        aria-label="Notifications"
-                                        className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100"
-                                    />
+                        <Popover.Button
+                            className={clsx(
+                                'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100',
+                                {
+                                    'lg:w-full': !isPopoverOpened,
+                                },
+                            )}
+                        >
+                            <HeartIcon
+                                aria-label="Notifications"
+                                className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100"
+                            />
 
-                                    <ToolTip isSpread={isSpread}>
-                                        Notifications
-                                    </ToolTip>
-                                </Popover.Button>
-                                <Transition
-                                    enter="transition duration-300 ease-linear"
-                                    enterFrom="transform -translate-x-10 opacity-0"
-                                    enterTo="transform translate-x-0 opacity-100"
-                                    leave="transition duration-300 ease-linear"
-                                    leaveFrom="transform translate-x-0 opacity-100"
-                                    leaveTo="transform -translate-x-10 opacity-0"
-                                    as={Fragment}
-                                >
-                                    <Popover.Panel className="fixed inset-y-0 left-16 z-30 w-64 origin-left border border-l-0 bg-white">
-                                        <h4> Notification </h4>
-                                    </Popover.Panel>
-                                </Transition>
-                            </Fragment>
-                        )}
+                            <ToolTip isOpen={isPopoverOpened}>
+                                Notifications
+                            </ToolTip>
+                        </Popover.Button>
+
+                        <Transition
+                            show={isPopoverOpened}
+                            enter="transition duration-100 ease-out"
+                            enterFrom="transform -translate-x-2 opacity-0"
+                            enterTo="transform translate-x-0 opacity-100"
+                            leave="transition duration-75 ease-out"
+                            leaveFrom="transform translate-x-0 opacity-100"
+                            leaveTo="transform -translate-x-2 opacity-0"
+                            as={Fragment}
+                        >
+                            <Popover.Panel className="fixed inset-y-0 left-16 z-30 w-64 origin-left border border-l-0 bg-white">
+                                <NotificationContent />
+                            </Popover.Panel>
+                        </Transition>
                     </Popover>
-
+                    {/* 
                     <button
+                        onClick={() => setPopoverOpen(true)}
                         className={clsx(
                             'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100',
                             {
-                                'lg:w-full lg:rounded-l-full lg:rounded-r-full':
-                                    isSpread,
+                                'lg:w-full': !isPopoverOpened,
                             },
                         )}
                     >
@@ -218,49 +207,64 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                             className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100"
                         />
 
-                        <ToolTip isSpread={isSpread}>Create</ToolTip>
+                        <ToolTip isOpen={isPopoverOpened}>Create</ToolTip>
                     </button>
-                    <Link
-                        href={{
-                            pathname: '/[id]',
-                            query: {
-                                id: currentUser?.uid,
-                            },
-                        }}
+
+                    <Transition show={isPopoverOpened}>
+                        <Suspense
+                            fallback={
+                                <div className="fixed left-1/2 top-1/2 z-50">
+                                    <InlineLoader />
+                                </div>
+                            }
+                        >
+                            <CreatePostDialog
+                                onClose={() => setPopoverOpen(false)}
+                            />
+                        </Suspense>
+                    </Transition> */}
+
+                    <CreatePost isDrawerOpen={isPopoverOpened} />
+
+                    <BaseProfileLink
                         className={clsx(
                             'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-black',
                             {
-                                'lg:w-full lg:rounded-l-full lg:rounded-r-full':
-                                    isSpread,
+                                'lg:w-full': !isPopoverOpened,
                             },
                         )}
                     >
-                        <div className="shrink-0">
-                            {currentUser?.photoURL ? (
-                                <Image
-                                    src={currentUser.photoURL}
-                                    width={24}
-                                    height={24}
-                                    alt="username"
-                                    className="h-6 w-6 rounded-full object-cover"
-                                />
-                            ) : (
-                                <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xl font-semibold capitalize">
-                                    {currentUser?.email?.at(0) ?? 'R'}
-                                </div>
-                            )}
+                        <div className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100">
+                            <UserAvatarIcon />
                         </div>
 
-                        <ToolTip isSpread={isSpread}>Profile</ToolTip>
-                    </Link>
+                        <ToolTip isOpen={isPopoverOpened}>Profile</ToolTip>
+                    </BaseProfileLink>
                 </div>
 
-                <div className="relative mt-auto">
-                    <SettingButton isSpread={isSpread} />
-                </div>
+                <Menu as="div" className="relative mt-auto">
+                    <Menu.Button
+                        className={clsx(
+                            'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100',
+                            {
+                                'lg:w-full': !isPopoverOpened,
+                            },
+                        )}
+                    >
+                        <MenuIcon
+                            aria-label="Settings"
+                            className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100"
+                        />
+
+                        <ToolTip isOpen={isPopoverOpened}>Menu</ToolTip>
+                    </Menu.Button>
+                    <SettingMenu />
+                </Menu>
             </nav>
+
             <main className="ml-16 bg-white px-2 lg:ml-56">{children}</main>
-        </div>
+        </Fragment>
     )
 }
+
 export default LaptopLayout

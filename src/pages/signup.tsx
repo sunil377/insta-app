@@ -1,20 +1,18 @@
+import { InlineLoader } from '@/components'
 import {
     CustomPasswordTextField,
     CustomTextField,
 } from '@/components/form/TextField'
-import { adminAuth } from '@/config/firebase-admin'
 import GoogleSignIn from '@/feature/GoogleSignIn'
+import { publicRoute } from '@/helpers/routes'
 import { SignupSchema } from '@/helpers/schema'
 import { convertZodErrorToFormikError } from '@/helpers/util'
 import { createUserForAuth, createUserForFirestore } from '@/services/auth'
 import type { FormikHelpers, FormikProps } from 'formik'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
-import type { GetServerSidePropsContext } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import nookies from 'nookies'
-import { BiLoaderCircle } from 'react-icons/bi'
 import Instagram from '../../public/images/instagram.png'
 
 const initialValues = {
@@ -109,14 +107,7 @@ function signupform({
     isValid,
     errors,
 }: FormikProps<typeof initialValues>) {
-    const buttonText = isSubmitting ? (
-        <BiLoaderCircle
-            className="mx-auto animate-spin text-xl"
-            aria-label="loading"
-        />
-    ) : (
-        'Signup'
-    )
+    const buttonText = isSubmitting ? <InlineLoader /> : 'Signup'
 
     const errorText =
         submitCount > 0 &&
@@ -151,27 +142,4 @@ function signupform({
     )
 }
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const cookies = nookies.get(ctx)
-    const token = cookies.token ?? ''
-
-    if (!token) {
-        return {
-            props: {},
-        }
-    }
-
-    try {
-        await adminAuth.verifyIdToken(token)
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        } as never
-    } catch (error) {
-        return {
-            props: {},
-        }
-    }
-}
+export const getServerSideProps = publicRoute

@@ -1,9 +1,10 @@
+import { InlineLoader } from '@/components'
 import {
     CustomPasswordTextField,
     CustomTextField,
 } from '@/components/form/TextField'
-import { adminAuth } from '@/config/firebase-admin'
 import GoogleSignIn from '@/feature/GoogleSignIn'
+import { publicRoute } from '@/helpers/routes'
 import { LoginSchema } from '@/helpers/schema'
 import { convertZodErrorToFormikError } from '@/helpers/util'
 import { login } from '@/services/auth'
@@ -15,12 +16,9 @@ import {
     FormikHelpers,
     FormikProps,
 } from 'formik'
-import { GetServerSidePropsContext } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import nookies from 'nookies'
-import { BiLoaderCircle } from 'react-icons/bi'
 import Instagram from '../../public/images/instagram.png'
 
 const initialValues = {
@@ -57,7 +55,7 @@ export default function Login() {
     const router = useRouter()
 
     return (
-        <main className="mx-auto w-full max-w-sm py-10 px-4 text-sm">
+        <main className="mx-auto w-full max-w-sm px-4 py-10 text-sm">
             <section className="space-y-5 bg-white px-2 pb-2 text-center xs:border xs:border-gray-300 xs:px-10 xs:pb-6 xs:pt-10">
                 <Image src={Instagram} alt="instagram" className="mx-auto" />
                 <Formik
@@ -114,14 +112,7 @@ function loginform({
     isValid,
     errors,
 }: FormikProps<typeof initialValues>) {
-    const buttonText = isSubmitting ? (
-        <BiLoaderCircle
-            className="mx-auto animate-spin text-xl"
-            aria-label="loading"
-        />
-    ) : (
-        'Login'
-    )
+    const buttonText = isSubmitting ? <InlineLoader /> : 'Log In'
 
     const errorText =
         submitCount > 0 &&
@@ -140,7 +131,7 @@ function loginform({
                 <Field name="email">{CustomTextField}</Field>
                 <Field name="password">{CustomPasswordTextField}</Field>
                 <button
-                    className="block w-full rounded-md bg-blue-500 px-4 py-2 text-center font-medium text-white transition-colors hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
+                    className="inline-flex w-full justify-center rounded-md bg-blue-500 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
                     type="submit"
                     disabled={!isValid || isSubmitting}
                 >
@@ -154,27 +145,4 @@ function loginform({
     )
 }
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const cookies = nookies.get(ctx)
-    const token = cookies.token ?? ''
-
-    if (!token) {
-        return {
-            props: {},
-        }
-    }
-
-    try {
-        await adminAuth.verifyIdToken(token)
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        } as never
-    } catch (error) {
-        return {
-            props: {},
-        }
-    }
-}
+export const getServerSideProps = publicRoute

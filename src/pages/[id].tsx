@@ -1,10 +1,17 @@
 import { SettingsIcon } from '@/assets'
+import { InlineLoader } from '@/components'
+import { db } from '@/config/firebase'
 import { adminAuth } from '@/config/firebase-admin'
+import { USER_NOT_FOUND } from '@/constants/errors'
+import { IPost } from '@/helpers/post-schema'
 import MainLayout from '@/layout/main-layout'
 import { parseSnapshot } from '@/services/helper'
+import { getPost } from '@/services/post'
 import { getServerUser } from '@/services/server'
 import { getUserDocRef, UserServer } from '@/services/user'
-import { onSnapshot } from 'firebase/firestore'
+import { Tab } from '@headlessui/react'
+import clsx from 'clsx'
+import { collection, onSnapshot, query, where } from 'firebase/firestore'
 import type {
     GetServerSidePropsContext,
     InferGetServerSidePropsType,
@@ -13,29 +20,45 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import nookies from 'nookies'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { z } from 'zod'
 import { NextPageWithLayout } from './_app'
 
-const Profile: IPage = (props) => {
+function useRouterId() {
     const router = useRouter()
+    const autherId = useMemo(
+        () =>
+            z
+                .object({
+                    id: z.string(),
+                })
+                .safeParse(router.query),
+        [router.query],
+    )
+
+    return autherId.success ? autherId.data.id : null
+}
+
+const Profile: IPage = (props) => {
     const [user, setUser] = useState<UserServer>(props.profileUser)
+    const autherId = useRouterId()
+    const router = useRouter()
 
     useEffect(() => {
-        const response = z
-            .object({
-                id: z.string(),
-            })
-            .safeParse(router.query)
+        if (!autherId) return
 
-        if (!response.success) return
-
-        return onSnapshot(getUserDocRef(response.data.id), (snapshot) => {
-            const response = parseSnapshot<UserServer>(snapshot)
-            if (!response) return router.replace('/login')
-            setUser(response)
+        return onSnapshot(getUserDocRef(autherId), (snapshot) => {
+            try {
+                const response = parseSnapshot<UserServer>(
+                    snapshot,
+                    USER_NOT_FOUND,
+                )
+                setUser(response)
+            } catch (error) {
+                router.replace('/login')
+            }
         })
-    }, [router])
+    }, [autherId, router])
 
     const {
         profile: { photo, fullname, bio },
@@ -43,6 +66,7 @@ const Profile: IPage = (props) => {
         posts,
         followers,
         followings,
+        saved,
     } = user
 
     const profilePic = photo ? (
@@ -56,6 +80,38 @@ const Profile: IPage = (props) => {
         <div className="inline-flex h-full w-full items-center justify-center rounded-full bg-gray-200 text-5xl capitalize">
             {username.at(0)}
         </div>
+    )
+
+    const userBio = (
+        <p>
+            {bio || (
+                <Link
+                    href="/accounts/edit#bio"
+                    className="leading-5 text-blue-500 hover:underline"
+                >
+                    Tell them about your self...
+                </Link>
+            )}
+        </p>
+    )
+
+    const userInfo = (
+        <Fragment>
+            <button className="sm:flex sm:gap-x-2">
+                <div className="font-bold">{posts.length}</div>
+                <div className="text-gray-500">posts</div>
+            </button>
+
+            <button className="sm:flex sm:gap-x-2">
+                <div className="font-bold">{followers.length}</div>
+                <div className="text-gray-500">followers</div>
+            </button>
+
+            <button className="sm:flex sm:gap-x-2">
+                <div className="font-bold">{followings.length}</div>
+                <div className="text-gray-500">followings</div>
+            </button>
+        </Fragment>
     )
 
     return (
@@ -73,7 +129,7 @@ const Profile: IPage = (props) => {
                         <div className="basis-full xs:order-last sm:basis-auto">
                             <Link
                                 href="/accounts/edit"
-                                className="block w-full rounded-md bg-gray-100 py-1.5 px-4 text-center text-sm font-medium sm:w-auto"
+                                className="block w-full rounded-md bg-gray-100 px-4 py-1.5 text-center text-sm font-medium sm:w-auto"
                             >
                                 Edit Profile
                             </Link>
@@ -83,21 +139,15 @@ const Profile: IPage = (props) => {
                         </button>
                     </div>
 
-                    <div className="hidden sm:flex sm:gap-x-6">
-                        <UserInfo
-                            postCount={posts.length}
-                            followerCount={followers.length}
-                            followingsCount={followings.length}
-                        />
-                    </div>
+                    <div className="hidden sm:flex sm:gap-x-6">{userInfo}</div>
                     <div className="hidden leading-4 sm:block">
                         <p className="font-semibold capitalize">{fullname}</p>
-                        <UserBio bio={bio} />
+                        {userBio}
                     </div>
                 </div>
                 <div className="col-span-4 mt-6 pl-2 leading-4 sm:hidden">
                     <p className="font-semibold capitalize">{fullname}</p>
-                    <UserBio bio={bio} />
+                    {userBio}
                 </div>
             </section>
 
@@ -110,78 +160,167 @@ const Profile: IPage = (props) => {
             </section>
 
             <section className="grid grid-cols-3 justify-items-center border-t py-2 sm:hidden">
-                <UserInfo
-                    postCount={posts.length}
-                    followerCount={followers.length}
-                    followingsCount={followings.length}
-                />
+                {userInfo}
             </section>
 
-            <section className="border-t sm:flex sm:justify-center">
-                <div className="grid grid-cols-3 sm:block sm:space-x-4">
-                    <button className="border-t-2 border-t-blue-500 p-2">
-                        POSTS
-                    </button>
-                    <button className="border-t-2 border-t-transparent p-2">
-                        SAVED
-                    </button>
-                    <button className="border-t-2 border-t-transparent p-2">
-                        TAGED
-                    </button>
-                </div>
-            </section>
-
-            {/* posts */}
-            <section className="mt-4 grid grid-cols-3 gap-x-2 px-2 pb-2">
-                <div className="aspect-square rounded-sm border bg-white"></div>
-                <div className="aspect-square rounded-sm border bg-white"></div>
-                <div className="aspect-square rounded-sm border bg-white"></div>
-            </section>
+            <Tab.Group as="section">
+                <Tab.List className="border-t sm:flex sm:justify-center">
+                    <div className="grid grid-cols-3 sm:block sm:space-x-4">
+                        <Tab as={Fragment}>
+                            {({ selected }) => (
+                                <button
+                                    className={clsx(
+                                        'border-t-2 p-2',
+                                        selected
+                                            ? 'border-t-blue-500'
+                                            : 'border-t-transparent',
+                                    )}
+                                >
+                                    POSTS
+                                </button>
+                            )}
+                        </Tab>
+                        <Tab as={Fragment}>
+                            {({ selected }) => (
+                                <button
+                                    className={clsx(
+                                        'border-t-2 p-2',
+                                        selected
+                                            ? 'border-t-blue-500'
+                                            : 'border-t-transparent',
+                                    )}
+                                >
+                                    SAVED
+                                </button>
+                            )}
+                        </Tab>
+                        <Tab as={Fragment}>
+                            {({ selected }) => (
+                                <button
+                                    className={clsx(
+                                        'border-t-2 p-2',
+                                        selected
+                                            ? 'border-t-blue-500'
+                                            : 'border-t-transparent',
+                                    )}
+                                >
+                                    TAGGED
+                                </button>
+                            )}
+                        </Tab>
+                    </div>
+                </Tab.List>
+                <Tab.Panels className="pb-4">
+                    <Tab.Panel>
+                        {autherId ? <Posts autherId={autherId} /> : null}
+                    </Tab.Panel>
+                    <Tab.Panel>
+                        <div className="mt-4 grid grid-cols-3 gap-x-2 px-2 pb-2">
+                            {saved.length === 0 ? (
+                                <h3 className="col-span-3 py-5 text-center text-lg">
+                                    No Saved Post
+                                </h3>
+                            ) : (
+                                saved.map((postId) => (
+                                    <Post key={postId} postId={postId} />
+                                ))
+                            )}
+                        </div>
+                    </Tab.Panel>
+                </Tab.Panels>
+            </Tab.Group>
         </main>
     )
 }
 
-function UserBio({ bio }: { bio: string }) {
-    if (!bio) {
-        return (
-            <Link
-                href="/accounts/edit#bio"
-                className="leading-5 text-blue-500 hover:underline"
-            >
-                Tell them about your self...
-            </Link>
-        )
-    }
+function Post({ postId }: { postId: string }) {
+    const [post, setPost] = useState<IPost | null>(null)
+    const [isLoading, setLoading] = useState(true)
 
-    return <p>{bio}</p>
+    useEffect(() => {
+        async function main() {
+            try {
+                const result = await getPost(postId)
+                setPost(result)
+            } catch (_) {
+                return
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        main()
+    }, [postId])
+
+    if (!post) return
+
+    const { photo } = post
+
+    return (
+        <div key={postId} className="rounded-sm border bg-white shadow-md">
+            <div className="flex h-full items-center justify-center">
+                {isLoading ? (
+                    <InlineLoader />
+                ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={photo} alt="" className="max-h-72" />
+                )}
+            </div>
+        </div>
+    )
 }
 
-function UserInfo({
-    postCount,
-    followerCount,
-    followingsCount,
-}: {
-    postCount: number
-    followerCount: number
-    followingsCount: number
-}) {
+function Posts({ autherId }: { autherId: string }) {
+    const [posts, setPosts] = useState<Array<IPost>>([])
+    const [isLoading, setLoading] = useState(true)
+
+    useEffect(() => {
+        return onSnapshot(
+            query(collection(db, 'posts'), where('userId', '==', autherId)),
+            (snapshot) => {
+                const content: IPost[] = []
+
+                snapshot.forEach((snap) => {
+                    if (snap.exists()) {
+                        content.push({
+                            docId: snap.id,
+                            ...snap.data(),
+                        } as IPost)
+                    }
+                })
+
+                setPosts(content)
+                setLoading(false)
+            },
+        )
+    }, [autherId])
+
     return (
-        <Fragment>
-            <button className="sm:flex sm:gap-x-2">
-                <div className="font-bold">{postCount}</div>
-                <div className="text-gray-500">posts</div>
-            </button>
-
-            <button className="sm:flex sm:gap-x-2">
-                <div className="font-bold">{followerCount}</div>
-                <div className="text-gray-500">followers</div>
-            </button>
-
-            <button className="sm:flex sm:gap-x-2">
-                <div className="font-bold">{followingsCount}</div>
-                <div className="text-gray-500">followings</div>
-            </button>
-        </Fragment>
+        <div className="mt-4 grid grid-cols-3 gap-x-2 px-2 pb-2">
+            {posts.length === 0 ? (
+                <h3 className="col-span-3 py-5 text-center text-lg">No Post</h3>
+            ) : (
+                posts.map((post) => (
+                    <article
+                        key={post.docId}
+                        className="rounded-sm border bg-white shadow-md"
+                    >
+                        <div className="flex h-full items-center justify-center">
+                            {isLoading ? (
+                                <InlineLoader />
+                            ) : (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                    src={post.photo}
+                                    alt=""
+                                    className="max-h-72"
+                                />
+                            )}
+                        </div>
+                    </article>
+                ))
+            )}
+        </div>
     )
 }
 
@@ -198,7 +337,6 @@ type IPage = NextPageWithLayout<
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const cookies = nookies.get(ctx)
     const token = cookies?.token
-    console.log('hitting server')
 
     if (!token) {
         return {

@@ -27,6 +27,9 @@ export const POP_UP_CLOSED_BY_USER = 'Signin Popup Closed'
 export const USER_SIGNIN_WITH_DIFF_PROVIDER =
     "You'r previously login with Google."
 
+//post constants
+export const POST_NOT_FOUND = 'Post Not Found.'
+
 /* helpers function */
 
 function required(field: string) {

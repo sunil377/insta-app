@@ -2,6 +2,8 @@ import { db } from '@/config/firebase'
 import { USER_NOT_FOUND } from '@/constants/errors'
 import { ProfileSchema, UserSchema } from '@/helpers/schema'
 import {
+    arrayRemove,
+    arrayUnion,
     collection,
     deleteDoc,
     doc,
@@ -28,15 +30,12 @@ export type UserProfileServer = z.infer<typeof ProfileSchema>
 
 function createUser(userData: UserClient) {
     const { docId, ...data } = UserSchema.parse(userData)
-    console.log('reached afetr', userData)
     return setDoc(getUserDocRef(docId), data)
 }
 
 async function getUser(docId: string) {
     const responseUser = await getDoc(getUserDocRef(docId))
-    const result = parseSnapshot<UserServer>(responseUser)
-    if (!result) throw new ReferenceError(USER_NOT_FOUND)
-    return result
+    return parseSnapshot<UserServer>(responseUser, USER_NOT_FOUND)
 }
 
 async function getUserByUsername(username: string) {
@@ -47,8 +46,10 @@ async function getUserByUsername(username: string) {
     const users: Array<UserServer> = []
 
     response.forEach((result) => {
-        const res = parseSnapshot<UserServer>(result)
-        if (res) users.push(res)
+        try {
+            const resUser = parseSnapshot<UserServer>(result, USER_NOT_FOUND)
+            users.push(resUser)
+        } catch (error) {}
     })
 
     if (response.empty || response.size === 0 || users.length === 0) {
@@ -65,11 +66,22 @@ function updateUser(docId: string, data: Partial<UserServer>) {
     return updateDoc(getUserDocRef(docId), data)
 }
 
+function updateUserSaved(
+    currentUser: string,
+    postId: string,
+    isSaved: boolean,
+) {
+    return updateDoc(getUserDocRef(currentUser), {
+        saved: isSaved ? arrayRemove(postId) : arrayUnion(postId),
+    })
+}
+
 export {
     createUser,
-    getUser,
     deleteUser,
-    updateUser,
+    getUser,
     getUserByUsername,
     getUserDocRef,
+    updateUser,
+    updateUserSaved,
 }

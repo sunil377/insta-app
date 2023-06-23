@@ -88,6 +88,8 @@ async function createUserForFirestore(
                         profile: {
                             fullname,
                             email: response.user.email!,
+                            photo: response.user.photoURL ?? '',
+                            phoneNumber: response.user.phoneNumber ?? '',
                         },
                     })
                     return { success: true }

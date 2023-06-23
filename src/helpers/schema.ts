@@ -81,4 +81,10 @@ const UserSchema = z.object({
     updatedAt: z.number().nullable().default(null),
 })
 
-export { LoginSchema, SignupSchema, UserSchema, ProfileSchema }
+export {
+    LoginSchema,
+    SignupSchema,
+    UserSchema,
+    ProfileSchema,
+    defaultArraySchema,
+}

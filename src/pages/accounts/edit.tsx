@@ -1,15 +1,13 @@
-import { adminAuth } from '@/config/firebase-admin'
+import UserAvatar from '@/components/UserAvatar'
+import { protectedRouteWithUser } from '@/helpers/routes'
 import { ProfileSchema } from '@/helpers/schema'
 import { convertZodErrorToFormikError } from '@/helpers/util'
 import useSuccess from '@/hooks/useSuccess'
 import AccountLayout from '@/layout/account-layout'
 import MainLayout from '@/layout/main-layout'
-import { getServerUser } from '@/services/server'
 import { UserServer, updateUser } from '@/services/user'
 import { Field, Form, Formik, FormikHelpers } from 'formik'
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
-import Image from 'next/image'
-import nookies from 'nookies'
+import { InferGetServerSidePropsType } from 'next'
 import { Fragment } from 'react'
 import { z } from 'zod'
 import { NextPageWithLayout } from '../_app'
@@ -50,7 +48,6 @@ const EditProfile: IPage = function EditProfile({ user }) {
 
     const {
         fullname,
-        photo,
         email,
         phoneNumber,
         bio,
@@ -67,20 +64,6 @@ const EditProfile: IPage = function EditProfile({ user }) {
             Profile Updated
         </div>
     ) : null
-
-    const profilePic = photo ? (
-        <Image
-            src={photo}
-            alt={fullname}
-            className="h-8 w-8 rounded-full border bg-contain"
-            width={32}
-            height={32}
-        />
-    ) : (
-        <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xl font-semibold capitalize">
-            {username.at(0)}
-        </div>
-    )
 
     return (
         <div className="py-10 px-4  text-sm sm:px-10">
@@ -106,8 +89,8 @@ const EditProfile: IPage = function EditProfile({ user }) {
                     <Fragment>
                         <Form noValidate className="space-y-4">
                             <section className="flex grid-cols-4 items-center gap-x-2 space-y-2 xs:grid xs:gap-x-6">
-                                <div className="col-span-1 items-center justify-end xs:inline-flex">
-                                    {profilePic}
+                                <div className="col-span-1 items-center justify-end pt-2 xs:inline-flex">
+                                    <UserAvatar />
                                 </div>
                                 <div className="col-span-3 leading-4">
                                     <h4>{user.username}</h4>
@@ -280,40 +263,6 @@ type IPage = NextPageWithLayout<
     InferGetServerSidePropsType<typeof getServerSideProps>
 >
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const cookies = nookies.get(ctx)
-    const token = cookies?.token
-
-    if (!token) {
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
-        } as never
-    }
-
-    let userId: string | null = null
-
-    try {
-        const response = await adminAuth.verifyIdToken(token)
-        userId = response.uid
-    } catch (error) {
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
-        } as never
-    }
-
-    const { user } = await getServerUser(userId)
-
-    return {
-        props: {
-            user,
-        },
-    }
-}
-
 export default EditProfile
+
+export const getServerSideProps = protectedRouteWithUser

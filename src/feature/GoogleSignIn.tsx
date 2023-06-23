@@ -1,7 +1,6 @@
 import { googleSigninWithPopup } from '@/services/auth'
 import { useRouter } from 'next/router'
-import { Fragment } from 'react'
-import { useMutation } from 'react-query'
+import { Fragment, useState } from 'react'
 
 interface Props {
     children: (onClick: () => void, isLoading: boolean) => JSX.Element
@@ -9,33 +8,38 @@ interface Props {
 
 function GoogleSignIn({ children }: Props) {
     const router = useRouter()
+    const [isLoading, setLoading] = useState(false)
+    const [error, setError] = useState('')
 
-    const {
-        mutate: handleGoogleSignin,
-        error,
-        isLoading,
-        reset,
-    } = useMutation(() => googleSigninWithPopup(), {
-        onSuccess: () => {
-            router.replace('/')
-        },
-    })
+    async function handleGoogleSignin() {
+        setLoading(true)
+        try {
+            await googleSigninWithPopup()
+            router.push('/')
+        } catch (error) {
+            setLoading(false)
+            setError((error as Error).message)
+        }
+    }
 
-    const onClick = () => handleGoogleSignin()
+    function onReset() {
+        setError('')
+        setLoading(false)
+    }
 
     return (
         <Fragment>
-            {children(onClick, isLoading)}
+            {children(handleGoogleSignin, isLoading)}
             {error ? (
                 <div
                     role="alert"
                     className="fixed bottom-5 left-1/2 flex -translate-x-1/2 items-center justify-between rounded-md bg-red-500 px-4 py-2 text-sm capitalize text-white shadow-md shadow-red-300"
                 >
-                    {(error as Error).message}
+                    {error}
                     <button
                         title="close"
                         className="rounded-full p-0.5 text-xl text-white"
-                        onClick={reset}
+                        onClick={onReset}
                     >
                         &times;
                     </button>

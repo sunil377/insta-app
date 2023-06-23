@@ -5,12 +5,10 @@ import {
     HomeIcon,
     InstagramTextIcon,
     MessengerIcon,
-    PlaceholderImage,
     ReelsIcon,
     UserPlusIcon,
 } from '@/assets'
-import { useAuth } from '@/context/AuthContext'
-import Image from 'next/image'
+import UserAvatar from '@/components/UserAvatar'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Fragment, ReactNode } from 'react'
@@ -35,8 +33,6 @@ function TopNavbar() {
 }
 
 function MobileLayout({ children }: { children: ReactNode }) {
-    const currentUser = useAuth()
-
     return (
         <Fragment>
             <TopNavbar />
@@ -55,24 +51,7 @@ function MobileLayout({ children }: { children: ReactNode }) {
                     <MessengerIcon aria-label="Messenger" />
                 </button>
 
-                <Link
-                    href={`/${currentUser?.uid ?? ''}`}
-                    className="group relative rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
-                >
-                    {currentUser?.photoURL ? (
-                        <Image
-                            src={currentUser?.photoURL ?? PlaceholderImage.src}
-                            alt={currentUser?.displayName ?? ''}
-                            width={24}
-                            height={24}
-                            className="h-6 w-6 rounded-full object-cover"
-                        />
-                    ) : (
-                        <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-2xl capitalize">
-                            {(currentUser?.displayName ?? 'R').at(0)}
-                        </div>
-                    )}
-                </Link>
+                <UserAvatar />
             </footer>
 
             <div className="mt-14 mb-12">{children}</div>

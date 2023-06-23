@@ -1,4 +1,3 @@
-import MainLayout from '@/layout/main-layout'
 import Link from 'next/link'
 import { NextPageWithLayout } from './_app'
 
@@ -16,10 +15,6 @@ const Custom404: NextPageWithLayout = () => {
             </div>
         </div>
     )
-}
-
-Custom404.getLayout = function getLayout(page) {
-    return <MainLayout>{page}</MainLayout>
 }
 
 export default Custom404

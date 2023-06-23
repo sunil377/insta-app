@@ -1,6 +1,7 @@
-import { adminAuth } from '@/config/firebase-admin'
+import UserAvatar from '@/components/UserAvatar'
 import { PASSWORD_DONT_MATCH } from '@/constants/errors'
 import { useAuth } from '@/context/AuthContext'
+import { protectedRouteWithUser } from '@/helpers/routes'
 import { Password_Schema } from '@/helpers/schema'
 import { convertZodErrorToFormikError } from '@/helpers/util'
 import useSuccess from '@/hooks/useSuccess'
@@ -8,12 +9,9 @@ import AccountLayout from '@/layout/account-layout'
 import MainLayout from '@/layout/main-layout'
 import { NextPageWithLayout } from '@/pages/_app'
 import { changePassword } from '@/services/auth'
-import { getServerUser } from '@/services/server'
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik'
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
-import Image from 'next/image'
+import { InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
-import nookies from 'nookies'
 import { Fragment } from 'react'
 import { z } from 'zod'
 
@@ -59,8 +57,7 @@ const ChangePassword: IPage = function ChangePassword({ user }) {
         currentUser?.providerData[0].providerId === 'google.com'
 
     const {
-        profile: { photo, fullname, email },
-        username,
+        profile: { fullname, email },
     } = user
 
     return (
@@ -76,19 +73,7 @@ const ChangePassword: IPage = function ChangePassword({ user }) {
             ) : null}
             <div className="flex grid-cols-4 items-center gap-x-2 xs:grid  xs:gap-x-6">
                 <div className="col-span-1 flex xs:justify-end">
-                    {photo ? (
-                        <Image
-                            src={photo}
-                            alt={fullname}
-                            className="h-8 w-8 rounded-full border object-contain"
-                            width={32}
-                            height={32}
-                        />
-                    ) : (
-                        <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-3xl capitalize">
-                            {username.at(0)}
-                        </div>
-                    )}
+                    <UserAvatar />
                 </div>
                 <div className="col-span-3">{fullname}</div>
             </div>
@@ -241,40 +226,6 @@ type IPage = NextPageWithLayout<
     InferGetServerSidePropsType<typeof getServerSideProps>
 >
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const cookies = nookies.get(ctx)
-    const token = cookies?.token
-
-    if (!token) {
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
-        } as never
-    }
-
-    let userId: string | null = null
-
-    try {
-        const response = await adminAuth.verifyIdToken(token)
-        userId = response.uid
-    } catch (error) {
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
-        } as never
-    }
-
-    const { user } = await getServerUser(userId)
-
-    return {
-        props: {
-            user,
-        },
-    }
-}
-
 export default ChangePassword
+
+export const getServerSideProps = protectedRouteWithUser
