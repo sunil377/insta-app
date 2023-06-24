@@ -8,9 +8,9 @@ function UserAvatarIcon() {
 
     switch (status) {
         case 'loading':
-            return 'loading...'
+            return <p>loading...</p>
         case 'error':
-            return 'error has accur'
+            return <h2>error has accur</h2>
         case 'success':
             return user.profile.photo ? (
                 <Image
