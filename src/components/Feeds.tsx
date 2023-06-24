@@ -22,7 +22,13 @@ export default function Feeds() {
         case 'loading':
             return <p>loading...</p>
         case 'success':
-            return posts.map((post) => <Feed key={post.docId} {...post} />)
+            return (
+                <>
+                    {posts.map((post) => (
+                        <Feed key={post.docId} {...post} />
+                    ))}
+                </>
+            )
         default:
             return null
     }
