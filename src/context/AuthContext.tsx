@@ -1,5 +1,4 @@
 import { auth } from '@/config/firebase'
-import type { User } from 'firebase/auth'
 import { onAuthStateChanged } from 'firebase/auth'
 import nookies from 'nookies'
 import {
@@ -10,16 +9,26 @@ import {
     useState,
 } from 'react'
 
-type contextType = User | null
+type contextType = string | null
 
 const AuthContext = createContext<contextType>(null)
 
-function useAuth() {
-    return useContext(AuthContext)
+export function useAuth() {
+    const context = useContext(AuthContext)
+    if (!context) {
+        throw new Error('context is used outside of its boundary')
+    }
+    return context
 }
 
-function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<contextType>(null)
+export default function AuthProvider({
+    initialState,
+    children,
+}: {
+    children: ReactNode
+    initialState: string
+}) {
+    const [user, setUser] = useState<contextType>(initialState)
 
     useEffect(() => {
         return onAuthStateChanged(auth, async (user) => {
@@ -32,12 +41,13 @@ function AuthProvider({ children }: { children: ReactNode }) {
                 console.error(error)
             }
             nookies.set(null, 'token', token, { path: '/' })
-            setUser(user)
+            setUser(user?.uid ?? null)
         })
     }, [])
 
-    return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>
+    return (
+        <AuthContext.Provider value={initialState}>
+            {children}
+        </AuthContext.Provider>
+    )
 }
-
-export default AuthProvider
-export { useAuth }

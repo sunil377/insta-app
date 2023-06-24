@@ -9,22 +9,21 @@ import {
     ReelsIcon,
     SearchIcon,
 } from '@/assets'
-import { BaseProfileLink } from '@/components/links'
 import { UserAvatarIcon } from '@/components/UserAvatar'
+import { useAuth } from '@/context/AuthContext'
 import { Menu, Popover, Transition } from '@headlessui/react'
 import clsx from 'clsx'
 import Link from 'next/link'
-import { Fragment, lazy, ReactNode, useState } from 'react'
-
+import { Fragment, ReactNode, useState } from 'react'
 import CreatePost from './CreatePost'
 import NotificationContent from './NotificationContent'
 import SearchContent from './SearchContent'
 import SettingMenu from './SettingMenu'
 import ToolTip from './Tooltip'
-const CreatePostDialog = lazy(() => import('./CreatePostDialog'))
 
 function LaptopLayout({ children }: { children: ReactNode }) {
     const [isPopoverOpened, setPopoverOpen] = useState(false)
+    const currentUser = useAuth()
 
     return (
         <Fragment>
@@ -36,8 +35,6 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                     },
                 )}
             >
-                {/* Instagram link  */}
-
                 <Link
                     href="/"
                     className="group flex h-11 items-center rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100"
@@ -54,8 +51,6 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                 </Link>
 
                 <div className="mt-5 space-y-2 text-sm">
-                    {/* Home Link */}
-
                     <Link
                         href="/"
                         className={clsx(
@@ -73,7 +68,6 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                         <ToolTip isOpen={isPopoverOpened}>Home</ToolTip>
                     </Link>
 
-                    {/* Search Button With Popover */}
                     <Popover>
                         <Popover.Button
                             className={clsx(
@@ -192,41 +186,11 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                             </Popover.Panel>
                         </Transition>
                     </Popover>
-                    {/* 
-                    <button
-                        onClick={() => setPopoverOpen(true)}
-                        className={clsx(
-                            'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100',
-                            {
-                                'lg:w-full': !isPopoverOpened,
-                            },
-                        )}
-                    >
-                        <AddPostIcon
-                            aria-label="Create"
-                            className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100"
-                        />
-
-                        <ToolTip isOpen={isPopoverOpened}>Create</ToolTip>
-                    </button>
-
-                    <Transition show={isPopoverOpened}>
-                        <Suspense
-                            fallback={
-                                <div className="fixed left-1/2 top-1/2 z-50">
-                                    <InlineLoader />
-                                </div>
-                            }
-                        >
-                            <CreatePostDialog
-                                onClose={() => setPopoverOpen(false)}
-                            />
-                        </Suspense>
-                    </Transition> */}
 
                     <CreatePost isDrawerOpen={isPopoverOpened} />
 
-                    <BaseProfileLink
+                    <Link
+                        href={'/' + currentUser}
                         className={clsx(
                             'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-black',
                             {
@@ -239,7 +203,7 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                         </div>
 
                         <ToolTip isOpen={isPopoverOpened}>Profile</ToolTip>
-                    </BaseProfileLink>
+                    </Link>
                 </div>
 
                 <Menu as="div" className="relative mt-auto">

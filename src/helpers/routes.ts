@@ -1,5 +1,6 @@
 import { adminAuth } from '@/config/firebase-admin'
 import { getServerUser } from '@/services/server'
+import { QueryClient, dehydrate } from '@tanstack/react-query'
 import { GetServerSidePropsContext } from 'next'
 import nookies from 'nookies'
 
@@ -41,11 +42,11 @@ async function protectedRouteWithUser(ctx: GetServerSidePropsContext) {
         } as never
     }
 
-    let userId: string | null = null
+    let currentUser: string | null = null
 
     try {
         const response = await adminAuth.verifyIdToken(token)
-        userId = response.uid
+        currentUser = response.uid
     } catch (error) {
         return {
             redirect: {
@@ -55,13 +56,22 @@ async function protectedRouteWithUser(ctx: GetServerSidePropsContext) {
         } as never
     }
 
-    const { user } = await getServerUser(userId)
+    const queryClient = new QueryClient()
+
+    if (!currentUser) {
+        throw new Error('Invalid User')
+    }
+
+    await queryClient.prefetchQuery(['users', currentUser], () =>
+        getServerUser(currentUser!),
+    )
 
     return {
         props: {
-            user,
+            dehydratedState: dehydrate(queryClient),
+            currentUser,
         },
     }
 }
 
-export { publicRoute, protectedRouteWithUser }
+export { protectedRouteWithUser, publicRoute }

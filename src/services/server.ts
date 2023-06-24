@@ -7,11 +7,9 @@ async function getServerUser(docId: string) {
 
     if (response.exists) {
         return {
-            user: {
-                docId: response.id,
-                ...response.data(),
-            } as UserServer,
-        }
+            docId: response.id,
+            ...response.data(),
+        } as UserServer
     }
 
     throw new ReferenceError(USER_NOT_FOUND, { cause: 'email' })

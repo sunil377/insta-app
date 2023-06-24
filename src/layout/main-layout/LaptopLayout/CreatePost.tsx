@@ -14,7 +14,7 @@ function CreatePost({ isDrawerOpen }: { isDrawerOpen: boolean }) {
             <button
                 onClick={() => setIsOpen(true)}
                 className={clsx(
-                    'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100 outline',
+                    'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100',
                     {
                         'lg:w-full lg:rounded-l-full lg:rounded-r-full':
                             !isDrawerOpen,

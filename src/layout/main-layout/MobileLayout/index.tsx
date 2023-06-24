@@ -95,13 +95,11 @@ function ProfileMobileNav() {
 }
 
 function EditPageMobileNav({ title }: { title: string }) {
-    const router = useRouter()
-
     return (
         <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center justify-between border-y border-y-gray-300 bg-white px-2 text-sm xs:px-4">
-            <button className="rounded-full p-1" onClick={() => router.back()}>
+            <Link href=".." className="rounded-full p-1">
                 <HiChevronLeft className="text-2xl" aria-label="back" />
-            </button>
+            </Link>
 
             <button className="px-2 py-0.5">
                 <b>{title}</b>

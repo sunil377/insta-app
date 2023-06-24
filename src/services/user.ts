@@ -15,7 +15,7 @@ import {
     where,
 } from 'firebase/firestore'
 import { z } from 'zod'
-import { parseSnapshot } from './helper'
+import { parseQuerySnapshot, parseSnapshot } from './helper'
 
 export const user_collection_name = 'users'
 const user_collection_ref = collection(db, user_collection_name)
@@ -42,15 +42,7 @@ async function getUserByUsername(username: string) {
     const response = await getDocs(
         query(user_collection_ref, where('username', '==', username)),
     )
-
-    const users: Array<UserServer> = []
-
-    response.forEach((result) => {
-        try {
-            const resUser = parseSnapshot<UserServer>(result, USER_NOT_FOUND)
-            users.push(resUser)
-        } catch (error) {}
-    })
+    const users = parseQuerySnapshot<UserServer>(response)
 
     if (response.empty || response.size === 0 || users.length === 0) {
         throw new ReferenceError(USER_NOT_FOUND, { cause: 'username' })

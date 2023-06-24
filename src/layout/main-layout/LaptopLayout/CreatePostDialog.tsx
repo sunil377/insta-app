@@ -2,7 +2,7 @@ import { filterImage } from '@/assets'
 import { AlertMessage, InlineLoader } from '@/components'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import UserAvatar from '@/components/UserAvatar'
-import { useUser } from '@/context/UserContext'
+import { useAuth } from '@/context/AuthContext'
 import useFileReader from '@/hooks/useFileReader'
 import { createpost } from '@/services/post'
 import { Dialog, Transition } from '@headlessui/react'
@@ -49,7 +49,7 @@ function CreatePostDialog({
     const [activeFIlter, setActiveFilter] = useState(FILTER_OPTIONS[0])
     const [isCaptionStepActive, setCaptionStep] = useState(false)
     const [caption, setCaption] = useState('')
-    const currentUser = useUser()
+    const currentUser = useAuth()
     const [err, setErr] = useState('')
 
     const {
@@ -61,11 +61,14 @@ function CreatePostDialog({
     async function handleSubmitPost() {
         try {
             if (!dataURL) return
-            await createpost({
-                caption,
-                userId: currentUser.docId,
-                photo: dataURL,
-            })
+            await createpost(
+                {
+                    caption,
+                    userId: currentUser,
+                    photo: dataURL,
+                },
+                currentUser,
+            )
             onClose()
         } catch (err) {
             setErr((err as Error).message)
@@ -183,9 +186,7 @@ function CreatePostDialog({
                         <div className="space-y-2">
                             <div className="flex items-center gap-2">
                                 <UserAvatar />
-                                <span className="text-sm">
-                                    {currentUser.profile.fullname}
-                                </span>
+                                <span className="text-sm">{currentUser}</span>
                             </div>
                             <div>
                                 <textarea

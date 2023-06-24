@@ -8,25 +8,39 @@ import {
     collection,
     doc,
     getDoc,
+    getDocs,
+    query,
     updateDoc,
+    where,
 } from 'firebase/firestore'
-import { parseSnapshot } from './helper'
+import { parseQuerySnapshot, parseSnapshot } from './helper'
+import { getUserDocRef } from './user'
 
-export const post_collection_name = 'posts'
-const post_collection_ref = collection(db, post_collection_name)
+export const POST_COLLECTION = 'posts'
 
-function getPostDocRef(docId: string) {
-    return doc(db, post_collection_name, docId)
-}
-
-function createpost(postData: Omit<IClientPost, 'docId'>) {
-    const data = postSchemaWithoutId.parse(postData)
-    return addDoc(post_collection_ref, data)
+async function createpost(
+    postData: Omit<IClientPost, 'docId'>,
+    currentUser: string,
+) {
+    const validatedData = postSchemaWithoutId.parse(postData)
+    const post = await addDoc(collection(db, POST_COLLECTION), validatedData)
+    const postId = post.id
+    await updateDoc(getUserDocRef(currentUser), {
+        posts: arrayUnion(postId),
+    })
+    return post
 }
 
 async function getPost(docId: string) {
-    const responseUser = await getDoc(getPostDocRef(docId))
+    const responseUser = await getDoc(doc(db, POST_COLLECTION, docId))
     return parseSnapshot<IPost>(responseUser, POST_NOT_FOUND)
+}
+
+async function getPosts(userId: string) {
+    const responseUsers = await getDocs(
+        query(collection(db, POST_COLLECTION), where('userId', '!=', userId)),
+    )
+    return parseQuerySnapshot<IPost>(responseUsers)
 }
 
 async function updatePostLike(
@@ -34,9 +48,9 @@ async function updatePostLike(
     currentUser: string,
     isLiked: boolean,
 ) {
-    await updateDoc(doc(db, post_collection_name, docId), {
+    await updateDoc(doc(db, POST_COLLECTION, docId), {
         likes: isLiked ? arrayRemove(currentUser) : arrayUnion(currentUser),
     })
 }
 
-export { createpost, getPost, updatePostLike }
+export { createpost, getPost, getPosts, updatePostLike }
