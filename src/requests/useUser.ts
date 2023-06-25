@@ -7,9 +7,13 @@ import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { z } from 'zod'
 
+export function useUserById(id: string) {
+    return useQuery<UserServer>(['users', id], () => getUser(id))
+}
+
 export default function useUser() {
     const currentUser = useAuth()
-    return useQuery(['users', currentUser], () => getUser(currentUser))
+    return useUserById(currentUser)
 }
 
 export function useProfileUser() {
@@ -21,7 +25,7 @@ export function useProfileUser() {
         })
         .parse(router.query)
 
-    return useQuery(['users', id], () => getUser(id))
+    return useUserById(id)
 }
 
 export function useRealTimeUser() {

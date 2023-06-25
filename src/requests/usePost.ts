@@ -21,7 +21,7 @@ export function useRealTimePost(postId: string) {
         return onSnapshot(doc(db, POST_COLLECTION, postId), (snapshot) => {
             const result = parseSnapshot<IPost>(snapshot)
             queryClient.setQueryData<IPost[]>(['posts'], (oldData) => {
-                if (oldData && oldData instanceof Array) {
+                if (oldData) {
                     return oldData.map((d) =>
                         d.docId === result.docId ? result : d,
                     )

@@ -13,9 +13,10 @@ module.exports = {
             zIndex: {
                 dialog: '1000',
             },
-            colors:{
-                overlay:"rgb(55 65 81 / 0.5)"
-            }
+            colors: {
+                overlay: 'rgb(55 65 81 / 0.5)',
+                skeleton: 'rgb(209 213 219)',
+            },
         },
     },
     plugins: [],
