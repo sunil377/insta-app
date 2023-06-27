@@ -15,7 +15,14 @@ module.exports = {
             },
             colors: {
                 overlay: 'rgb(55 65 81 / 0.5)',
-                skeleton: 'rgb(209 213 219)',
+                skeleton: '#d1d5db',
+                primary: {
+                    main: '#0ea5e9',
+                    dark: '#1e40af',
+                },
+                secondary: {
+                    light: '#6b7280',
+                },
             },
         },
     },

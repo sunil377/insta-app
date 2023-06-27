@@ -30,6 +30,8 @@ export const USER_SIGNIN_WITH_DIFF_PROVIDER =
 //post constants
 export const POST_NOT_FOUND = 'Post Not Found.'
 
+export const ERROR_COMMENT_MIN_LENGTH = min_length('comment', 1)
+
 /* helpers function */
 
 function required(field: string) {

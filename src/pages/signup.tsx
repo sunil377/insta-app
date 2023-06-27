@@ -56,7 +56,7 @@ export default function Signup() {
             <section className="space-y-4 bg-white px-2 pb-2 text-center xs:border xs:border-gray-300 xs:px-10 xs:pb-6 xs:pt-10">
                 <Image src={Instagram} alt="instagram" className="mx-auto" />
 
-                <h2 className="text-base font-medium leading-5 text-gray-400">
+                <h2 className="text-base font-medium leading-5 text-secondary-light">
                     Sign up to see photos and videos from your friends.
                 </h2>
 

@@ -20,7 +20,7 @@ const Home: NextPageWithLayout = () => {
             return (
                 <>
                     <div className="grid lg:mx-16 lg:grid-cols-6 lg:gap-x-10">
-                        <section className="lg:col-span-4">
+                        <section className="lg:col-span-4 mb-10">
                             <main>
                                 {/* stories section */}
                                 <section className="flex max-w-[calc(100vw-2rem)] flex-nowrap overflow-x-auto border-b bg-white xs:border-b-0 xs:py-5 sm:py-8">

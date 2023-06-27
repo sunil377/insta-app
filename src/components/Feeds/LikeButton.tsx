@@ -25,7 +25,7 @@ function LikeButton({ postId, likes }: { postId: string; likes: string[] }) {
             {isLiked ? (
                 <AiFillHeart className="fill-red-500 hover:transform hover:scale-105 transition-transform" />
             ) : (
-                <AiOutlineHeart className="transition-colors hover:text-gray-400 " />
+                <AiOutlineHeart className="transition-colors hover:text-secondary-light " />
             )}
         </button>
     )

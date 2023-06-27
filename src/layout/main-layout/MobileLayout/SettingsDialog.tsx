@@ -112,7 +112,7 @@ function LogOutDialog() {
                             <Dialog.Title className="text-xl">
                                 Log Out?
                             </Dialog.Title>
-                            <p className="px-5 text-gray-400">
+                            <p className="px-5 text-secondary-light">
                                 Are you sure that you want to log out of your
                                 Account?
                             </p>
@@ -124,7 +124,10 @@ function LogOutDialog() {
                                     try {
                                         await logout()
                                     } catch (error) {
-                                        alert((error as Error | FirebaseError).message)
+                                        alert(
+                                            (error as Error | FirebaseError)
+                                                .message,
+                                        )
                                     }
                                 }}
                             >

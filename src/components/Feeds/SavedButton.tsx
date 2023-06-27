@@ -25,7 +25,7 @@ function SavedButton({ postId }: { postId: string }) {
             {isSaved ? (
                 <SavedFillIcon className="fill-black transition-transform hover:transform hover:scale-105" />
             ) : (
-                <SavedIcon className="transition-colors hover:text-gray-400" />
+                <SavedIcon className="transition-colors hover:text-secondary-light" />
             )}
         </button>
     )
