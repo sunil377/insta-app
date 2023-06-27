@@ -10,7 +10,7 @@ const sleep = () => new Promise((res) => setTimeout(res, 3000))
 
 function CommentForm({ postId }: { postId: string }) {
     const currentUser = useAuth()
-    const { mutate, isSuccess } = useCreateComment(postId)
+    const { mutateAsync } = useCreateComment(postId)
 
     const {
         handleSubmit,
@@ -19,6 +19,7 @@ function CommentForm({ postId }: { postId: string }) {
         values,
         handleBlur,
         handleChange,
+        setSubmitting,
     } = useFormik({
         initialValues: { caption: '' },
         validate: (values) => {
@@ -31,7 +32,7 @@ function CommentForm({ postId }: { postId: string }) {
         },
         validateOnMount: true,
         onSubmit: async (values, helpers) => {
-            mutate({
+            await mutateAsync({
                 caption: values.caption,
                 userId: currentUser,
             })
