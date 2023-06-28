@@ -1,11 +1,15 @@
-import { ThreeDotIcon } from '@/assets'
 import { IPost } from '@/helpers/post-schema'
 import { useUserById } from '@/requests/useUser'
 import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/image'
 import Link from 'next/link'
+import MenuDialog from './MenuDialog'
 
-function UserInfo({ userId, createdAt }: Pick<IPost, 'userId' | 'createdAt'>) {
+function UserInfo({
+    userId,
+    createdAt,
+    docId: postId,
+}: Pick<IPost, 'userId' | 'createdAt' | 'docId'>) {
     const { data: user, status } = useUserById(userId)
 
     switch (status) {
@@ -35,18 +39,22 @@ function UserInfo({ userId, createdAt }: Pick<IPost, 'userId' | 'createdAt'>) {
                             {user.username.at(0)}
                         </div>
                     )}
+
                     <Link href={`/${userId}`} className="font-semibold">
                         {user.username}
                     </Link>
-                    <div className="w-1.5 h-1.5 bg-blue-200 rounded-full"></div>
+
+                    <div
+                        className="w-1.5 h-1.5 bg-primary-main bg-opacity-50 rounded-full"
+                        aria-hidden
+                    />
+
                     <p className="text-gray-700 text-xs">
                         {formatDistanceToNow(createdAt, {
                             addSuffix: true,
                         })}
                     </p>
-                    <button className="ml-auto aspect-square rounded-full p-2 text-xl">
-                        <ThreeDotIcon />
-                    </button>
+                    <MenuDialog postId={postId} />
                 </div>
             )
         default:

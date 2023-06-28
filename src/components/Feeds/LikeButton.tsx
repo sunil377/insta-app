@@ -9,7 +9,7 @@ function LikeButton({ postId, likes }: { postId: string; likes: string[] }) {
     return (
         <button
             className="rounded-full disabled:pointer-events-none disabled:opacity-50"
-            title={isLiked ? 'liked' : 'like'}
+            title={isLiked ? 'Unlike' : 'Like'}
             disabled={!isSuccess}
             onClick={async () => {
                 if (!isSuccess) {

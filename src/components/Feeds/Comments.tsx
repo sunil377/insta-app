@@ -4,6 +4,7 @@ import { convertZodErrorToFormikError } from '@/helpers/util'
 import { useComments, useCreateComment } from '@/requests/useComment'
 import clsx from 'clsx'
 import { useFormik } from 'formik'
+import Link from 'next/link'
 import { z } from 'zod'
 
 const sleep = () => new Promise((res) => setTimeout(res, 3000))
@@ -84,9 +85,12 @@ function Comments({ postId }: { postId: string }) {
             return (
                 <>
                     {comments.length != 0 ? (
-                        <button className="text-secondary-light">
+                        <Link
+                            href={`/post/${postId}`}
+                            className="text-secondary-light block"
+                        >
                             View all {comments.length} comments
-                        </button>
+                        </Link>
                     ) : null}
                     <CommentForm postId={postId} />
                 </>

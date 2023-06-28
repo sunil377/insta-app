@@ -21,7 +21,9 @@ module.exports = {
                     dark: '#1e40af',
                 },
                 secondary: {
+                    lighter: '#d1d5db',
                     light: '#6b7280',
+                    dark: '#1f2937',
                 },
             },
         },

@@ -9,7 +9,7 @@ function SavedButton({ postId }: { postId: string }) {
     return (
         <button
             className="ml-auto rounded-full"
-            title={isSaved ? 'saved' : 'save'}
+            title={isSaved ? 'Unsave' : 'Save'}
             disabled={!isSuccess}
             onClick={async () => {
                 if (!isSuccess) {
