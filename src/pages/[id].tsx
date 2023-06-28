@@ -1,5 +1,6 @@
 import { SettingsIcon } from '@/assets'
 import { InlineLoader } from '@/components'
+import MiniPost from '@/components/MiniPost'
 import { adminAuth } from '@/config/firebase-admin'
 import MainLayout from '@/layout/main-layout'
 import { usePost } from '@/requests/usePost'
@@ -81,7 +82,7 @@ const Profile: IPage = () => {
                 </Fragment>
             )
             return (
-                <main className="mx-auto mt-16 max-w-3xl bg-white text-sm sm:mt-10">
+                <main className="mx-auto mt-16 max-w-4xl bg-white text-sm sm:mt-10">
                     <section className="grid max-w-sm grid-cols-4 px-4 sm:max-w-none">
                         <div className="col-span-1">
                             <div className="relative aspect-square w-20 sm:mx-auto sm:w-28 lg:w-36">
@@ -249,11 +250,8 @@ function Post({ postId }: { postId: string }) {
             )
         case 'success':
             return (
-                <div className="rounded-sm border bg-white shadow-md">
-                    <div className="flex h-full items-center justify-center">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={data.photo} alt="" className="max-h-72" />
-                    </div>
+                <div className="rounded-sm border aspect-square shadow-md">
+                    <MiniPost {...data} />
                 </div>
             )
         default:

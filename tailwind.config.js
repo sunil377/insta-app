@@ -14,7 +14,7 @@ module.exports = {
                 dialog: '1000',
             },
             colors: {
-                overlay: 'rgb(55 65 81 / 0.5)',
+                overlay: 'rgb(0 0 0 / 0.3)',
                 skeleton: '#d1d5db',
                 primary: {
                     main: '#0ea5e9',

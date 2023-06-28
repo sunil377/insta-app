@@ -88,7 +88,7 @@ async function createUserForFirestore(
                         profile: {
                             fullname,
                             email: response.user.email!,
-                            photo: response.user.photoURL ?? '',
+                            photo: response.user.photoURL ?? null,
                             phoneNumber: response.user.phoneNumber ?? '',
                         },
                     })
@@ -184,10 +184,10 @@ async function changePassword(
 }
 
 export {
-    login,
-    createUserForAuth,
-    logout,
-    googleSigninWithPopup,
     changePassword,
+    createUserForAuth,
     createUserForFirestore,
+    googleSigninWithPopup,
+    login,
+    logout,
 }

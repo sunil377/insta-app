@@ -128,7 +128,7 @@ function signupform({
                 <Field name="username">{CustomTextField}</Field>
                 <Field name="password">{CustomPasswordTextField}</Field>
                 <button
-                    className="block w-full rounded-md bg-blue-500 px-4 py-2 text-center font-medium text-white transition-colors hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
+                    className="w-full flex justify-center rounded-md bg-blue-500 px-4 py-2 text-center font-medium text-white transition-colors hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
                     type="submit"
                     disabled={!isValid || isSubmitting}
                 >

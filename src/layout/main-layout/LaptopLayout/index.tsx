@@ -102,7 +102,7 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                     </Popover>
 
                     <Link
-                        href="/"
+                        href="/explore"
                         className={clsx(
                             'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-black',
                             {
