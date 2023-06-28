@@ -7,9 +7,7 @@ import { useFormik } from 'formik'
 import Link from 'next/link'
 import { z } from 'zod'
 
-const sleep = () => new Promise((res) => setTimeout(res, 3000))
-
-function CommentForm({ postId }: { postId: string }) {
+export function CommentForm({ postId }: { postId: string }) {
     const currentUser = useAuth()
     const { mutateAsync } = useCreateComment(postId)
 
@@ -57,6 +55,7 @@ function CommentForm({ postId }: { postId: string }) {
                 onBlur={handleBlur}
                 aria-invalid={!isValid}
                 autoComplete="off"
+                id="comment"
                 required
             />
             <button

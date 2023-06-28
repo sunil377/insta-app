@@ -6,9 +6,8 @@ import useUser, { useRealTimeUser } from '@/requests/useUser'
 import Head from 'next/head'
 import Image from 'next/image'
 import { MdAdd } from 'react-icons/md'
-import { NextPageWithLayout } from './_app'
 
-const Home: NextPageWithLayout = () => {
+const Home: w = () => {
     const { data: user, status } = useUser()
     useRealTimeUser()
 

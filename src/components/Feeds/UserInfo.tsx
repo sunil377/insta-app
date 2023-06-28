@@ -3,13 +3,8 @@ import { useUserById } from '@/requests/useUser'
 import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/image'
 import Link from 'next/link'
-import MenuDialog from './MenuDialog'
 
-function UserInfo({
-    userId,
-    createdAt,
-    docId: postId,
-}: Pick<IPost, 'userId' | 'createdAt' | 'docId'>) {
+function UserInfo({ userId, createdAt }: Pick<IPost, 'userId' | 'createdAt'>) {
     const { data: user, status } = useUserById(userId)
 
     switch (status) {
@@ -25,7 +20,7 @@ function UserInfo({
             return <h2>Error has accur</h2>
         case 'success':
             return (
-                <div className="flex items-center gap-2">
+                <>
                     {user.profile.photo ? (
                         <Image
                             src={user.profile.photo}
@@ -54,8 +49,7 @@ function UserInfo({
                             addSuffix: true,
                         })}
                     </p>
-                    <MenuDialog postId={postId} />
-                </div>
+                </>
             )
         default:
             return null
