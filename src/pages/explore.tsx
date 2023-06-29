@@ -13,7 +13,7 @@ const Explore: NextPageWithLayout = () => {
     switch (status) {
         case 'loading':
             return (
-                <div className="grid place-items-center w-full h-screen">
+                <div className="grid h-screen w-full place-items-center">
                     <InlineLoader />
                 </div>
             )
@@ -21,7 +21,7 @@ const Explore: NextPageWithLayout = () => {
             return <div>Something went wrong</div>
         case 'success':
             return (
-                <div className="max-w-4xl mx-auto mt-10 px-4">
+                <div className="mx-auto mt-10 max-w-4xl px-4">
                     <div className="grid grid-cols-3 gap-4">
                         {posts.map((post) => (
                             <MiniPost key={post.docId} {...post} />

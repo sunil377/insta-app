@@ -1,5 +1,4 @@
 import { IPost } from '@/helpers/post-schema'
-import { useRealTimePost } from '@/requests/usePost'
 import Image from 'next/image'
 import { Fragment } from 'react'
 import Caption from './Caption'
@@ -19,8 +18,6 @@ function Feed({
     likes,
     docId: postId,
 }: IPost) {
-    useRealTimePost(postId)
-
     return (
         <Fragment>
             <div className="space-y-2 pt-4 text-sm">

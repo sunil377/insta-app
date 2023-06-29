@@ -2,8 +2,6 @@ import { db } from '@/config/firebase'
 import { USER_NOT_FOUND } from '@/constants/errors'
 import { ProfileSchema, UserSchema } from '@/helpers/schema'
 import {
-    arrayRemove,
-    arrayUnion,
     collection,
     deleteDoc,
     doc,
@@ -50,6 +48,18 @@ async function getUserByUsername(username: string) {
     return users
 }
 
+async function getUsers(username: string) {
+    const response = await getDocs(
+        query(user_collection_ref, where('username', '!=', username)),
+    )
+    const users = parseQuerySnapshot<UserServer>(response)
+
+    if (response.empty || response.size === 0 || users.length === 0) {
+        throw new ReferenceError(USER_NOT_FOUND, { cause: 'username' })
+    }
+    return users
+}
+
 function deleteUser(docId: string) {
     return deleteDoc(getUserDocRef(docId))
 }
@@ -58,22 +68,12 @@ function updateUser(docId: string, data: Partial<UserServer>) {
     return updateDoc(getUserDocRef(docId), data)
 }
 
-function updateUserSaved(
-    currentUser: string,
-    postId: string,
-    isSaved: boolean,
-) {
-    return updateDoc(getUserDocRef(currentUser), {
-        saved: isSaved ? arrayRemove(postId) : arrayUnion(postId),
-    })
-}
-
 export {
     createUser,
     deleteUser,
     getUser,
     getUserByUsername,
     getUserDocRef,
+    getUsers,
     updateUser,
-    updateUserSaved,
 }

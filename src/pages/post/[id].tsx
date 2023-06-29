@@ -22,10 +22,10 @@ const PostPage: NextPageWithLayout<
             return <div>somwthing went wrong</div>
         case 'success':
             return (
-                <div className="max-w-4xl mx-auto mt-10 px-4">
-                    <div className="border rounded-md bg-white shadow-md h-screen max-h-[min(580px,100vh-2rem)]">
-                        <div className="grid h-full w-full overflow-auto grid-cols-2">
-                            <div className="bg-black relative">
+                <div className="mx-auto mt-10 max-w-4xl px-4">
+                    <div className="rounded-md border bg-white shadow-md sm:h-screen sm:max-h-[min(580px,100vh-2rem)]">
+                        <div className="grid h-full w-full overflow-auto sm:grid-cols-2">
+                            <div className="relative aspect-square bg-black sm:aspect-auto">
                                 <Image
                                     src={post.photo}
                                     alt={post.caption}

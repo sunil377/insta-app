@@ -26,7 +26,7 @@ function Post({ postId }: { postId: string }) {
                         />
                         <MenuDialog postId={postId} />
                     </header>
-                    <div className="px-4 py-2 h-full max-h-[24rem] overflow-y-auto">
+                    <div className="px-4 py-2 h-full max-h-[24rem] overflow-y-auto space-y-2">
                         <Comments postId={postId} />
                     </div>
 
@@ -35,9 +35,12 @@ function Post({ postId }: { postId: string }) {
                         <CommentLink postId={postId} />
                         <SavedButton postId={postId} />
                     </div>
-                    <div className="flex px-4 py-2 gap-x-3">
-                        <LikeDialog likes={post.likes} docId={postId} />
-                    </div>
+                    {post.likes.length > 0 ? (
+                        <div className="flex px-4 py-2 gap-x-3">
+                            <LikeDialog likes={post.likes} docId={postId} />
+                        </div>
+                    ) : null}
+
                     <div className="py-2 px-4">
                         <CommentForm postId={postId} />
                     </div>

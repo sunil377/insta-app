@@ -1,16 +1,17 @@
 import { PlaceholderImage } from '@/assets'
 import Feeds from '@/components/Feeds'
+import { Avatar } from '@/components/UserAvatar'
 import { protectedRouteWithUser } from '@/helpers/routes'
 import MainLayout from '@/layout/main-layout'
-import useUser, { useRealTimeUser } from '@/requests/useUser'
+import useUser, { useUsers } from '@/requests/useUser'
 import Head from 'next/head'
-import Image from 'next/image'
+import Link from 'next/link'
 import { MdAdd } from 'react-icons/md'
 import { NextPageWithLayout } from './_app'
 
 const Home: NextPageWithLayout = () => {
-    const { data: user, status } = useUser()
-    useRealTimeUser()
+    const { data: currentUser, status } = useUser()
+    const { data: users, isSuccess } = useUsers(currentUser?.username ?? null)
 
     switch (status) {
         case 'loading':
@@ -20,7 +21,7 @@ const Home: NextPageWithLayout = () => {
             return (
                 <>
                     <div className="grid lg:mx-16 lg:grid-cols-6 lg:gap-x-10">
-                        <section className="lg:col-span-4 mb-10">
+                        <section className="mb-10 lg:col-span-4">
                             <main>
                                 {/* stories section */}
                                 <section className="flex max-w-[calc(100vw-2rem)] flex-nowrap overflow-x-auto border-b bg-white xs:border-b-0 xs:py-5 sm:py-8">
@@ -62,28 +63,20 @@ const Home: NextPageWithLayout = () => {
                         <section className="mt-10 hidden px-2 lg:col-span-2 lg:block">
                             <div className="flex items-center py-2 text-xs">
                                 <div className="flex items-center gap-2">
-                                    {user.profile.photo ? (
-                                        <Image
-                                            src={user.profile.photo}
-                                            alt=""
-                                            width={40}
-                                            height={40}
-                                            className="h-10 w-10 rounded-full border object-contain"
-                                        />
-                                    ) : (
-                                        <div className="h-10 w-10 rounded-full border text-3xl capitalize inline-flex items-center justify-center">
-                                            {user.username.at(0)}
-                                        </div>
-                                    )}
+                                    <Avatar
+                                        photo={currentUser.profile.photo}
+                                        username={currentUser.username}
+                                        sizes="h-8 w-8"
+                                    />
 
                                     <div>
                                         <p>
                                             <b className="font-semibold">
-                                                {user.username}
+                                                {currentUser.username}
                                             </b>
                                         </p>
                                         <p className="capitalize text-gray-700">
-                                            {user.profile.fullname}
+                                            {currentUser.profile.fullname}
                                         </p>
                                     </div>
                                 </div>
@@ -100,38 +93,46 @@ const Home: NextPageWithLayout = () => {
                                         See All
                                     </button>
                                 </div>
-
-                                {Array.from({ length: 4 }, (_, i) => i + 1).map(
-                                    (val) => (
-                                        <div
-                                            key={val}
-                                            className="flex items-center py-2 text-xs"
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                <Image
-                                                    src={PlaceholderImage}
-                                                    alt=""
-                                                    width={40}
-                                                    height={40}
-                                                    className="h-10 w-10 rounded-full border object-contain"
-                                                />
-                                                <div>
-                                                    <p>
-                                                        <b className="font-semibold">
-                                                            sunil.panwar.ts
-                                                        </b>
-                                                    </p>
-                                                    <p className="capitalize text-gray-700">
-                                                        sunil panwar
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <button className="ml-auto font-semibold text-blue-700">
-                                                follow
-                                            </button>
-                                        </div>
-                                    ),
-                                )}
+                                {isSuccess
+                                    ? users.map(
+                                          ({
+                                              docId,
+                                              username,
+                                              profile: { photo, fullname },
+                                          }) => (
+                                              <div
+                                                  key={docId}
+                                                  className="flex items-center py-2 text-xs"
+                                              >
+                                                  <Link
+                                                      href={`/${docId}`}
+                                                      className="flex items-center gap-2"
+                                                  >
+                                                      <Avatar
+                                                          photo={photo}
+                                                          username={username}
+                                                          sizes="h-8 w-8"
+                                                      />
+                                                      <div>
+                                                          <p className="font-semibold">
+                                                              {username}
+                                                          </p>
+                                                          <p className="capitalize text-gray-700">
+                                                              {fullname}
+                                                          </p>
+                                                      </div>
+                                                  </Link>
+                                                  <button className="ml-auto font-semibold text-blue-700">
+                                                      {currentUser.followings.includes(
+                                                          docId,
+                                                      )
+                                                          ? 'unfollow'
+                                                          : 'follow'}
+                                                  </button>
+                                              </div>
+                                          ),
+                                      )
+                                    : null}
                             </div>
                         </section>
                     </div>

@@ -1,26 +1,19 @@
 import { SavedFillIcon, SavedIcon } from '@/assets'
-import useUser from '@/requests/useUser'
-import { updateUserSaved } from '@/services/user'
+import useUser, { useUpdateUserSaved } from '@/requests/useUser'
 
 function SavedButton({ postId }: { postId: string }) {
     const { data: currentUser, isSuccess } = useUser()
     const isSaved = isSuccess && currentUser.saved.includes(postId)
+
+    const { mutate } = useUpdateUserSaved(postId)
+    const handleClick = () => mutate({ isSaved })
 
     return (
         <button
             className="ml-auto rounded-full"
             title={isSaved ? 'Unsave' : 'Save'}
             disabled={!isSuccess}
-            onClick={async () => {
-                if (!isSuccess) {
-                    return
-                }
-                try {
-                    await updateUserSaved(currentUser.docId, postId, isSaved)
-                } catch (error) {
-                    console.log(error)
-                }
-            }}
+            onClick={handleClick}
         >
             {isSaved ? (
                 <SavedFillIcon className="fill-black transition-transform hover:transform hover:scale-105" />

@@ -14,6 +14,7 @@ const initialState = {
 
 function useFileReader() {
     const [state, setState] = useState<IState>(initialState)
+    const [file, setFile] = useState<null | File>(null)
 
     const handleResetState = useCallback(() => {
         setState(initialState)
@@ -22,6 +23,7 @@ function useFileReader() {
     const handleChange: ChangeEventHandler<HTMLInputElement> = useCallback(
         (e) => {
             const file = e.target.files && e.target.files[0]
+            setFile(file)
             if (!file) return
 
             const fileReader = new FileReader()
@@ -63,7 +65,7 @@ function useFileReader() {
         [],
     )
 
-    return { state, handleChange, handleResetState }
+    return { state, handleChange, handleResetState, file }
 }
 
 export default useFileReader

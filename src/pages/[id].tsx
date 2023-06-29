@@ -1,13 +1,18 @@
 import { SettingsIcon } from '@/assets'
 import { InlineLoader } from '@/components'
+import UserListDialog from '@/components/Feeds/UserListDialog'
 import MiniPost from '@/components/MiniPost'
 import { adminAuth } from '@/config/firebase-admin'
+import { useAuth } from '@/context/AuthContext'
 import MainLayout from '@/layout/main-layout'
 import { usePost } from '@/requests/usePost'
-import { useProfileUser } from '@/requests/useUser'
+import useUser, {
+    useProfileUser,
+    useUpdateUserFollowings,
+} from '@/requests/useUser'
 import { getServerUser } from '@/services/server'
 import { Tab } from '@headlessui/react'
-import { dehydrate, QueryClient } from '@tanstack/react-query'
+import { QueryClient, dehydrate } from '@tanstack/react-query'
 import clsx from 'clsx'
 import type {
     GetServerSidePropsContext,
@@ -16,12 +21,37 @@ import type {
 import Image from 'next/image'
 import Link from 'next/link'
 import nookies from 'nookies'
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { z } from 'zod'
 import { NextPageWithLayout } from './_app'
 
+function SavedButton({ userId }: { userId: string }) {
+    const { data: currentUser, isSuccess } = useUser()
+    const { mutate } = useUpdateUserFollowings(userId)
+    const isFollowing = isSuccess && currentUser?.followings.includes(userId)
+    const handleClick = () => mutate({ isFollowing })
+
+    return (
+        <button
+            className={clsx(
+                'ml-auto rounded-md px-4 py-2 font-semibold disabled:pointer-events-none disabled:opacity-50',
+                isFollowing
+                    ? 'bg-secondary-lighter bg-opacity-50 hover:bg-opacity-100'
+                    : 'bg-primary-main text-white',
+            )}
+            onClick={handleClick}
+            disabled={!isSuccess}
+        >
+            {isFollowing ? 'Following' : 'Follow'}
+        </button>
+    )
+}
+
 const Profile: IPage = () => {
     const { data, status } = useProfileUser()
+    const [isFollowingDialogOpen, setFollowingDialog] = useState(false)
+    const [isFollowerDialogOpen, setFollowerDialog] = useState(false)
+    const currentUser = useAuth()
 
     switch (status) {
         case 'loading':
@@ -36,7 +66,11 @@ const Profile: IPage = () => {
                 followers,
                 followings,
                 saved,
+                docId,
             } = data
+
+            const isOwner = docId === currentUser
+
             const profilePic = photo ? (
                 <Image
                     src={photo}
@@ -51,16 +85,18 @@ const Profile: IPage = () => {
             )
 
             const userBio = (
-                <p>
-                    {bio || (
+                <>
+                    {bio ? (
+                        <p>{bio}</p>
+                    ) : isOwner ? (
                         <Link
                             href="/accounts/edit#bio"
                             className="leading-5 text-blue-500 hover:underline"
                         >
                             Tell them about your self...
                         </Link>
-                    )}
-                </p>
+                    ) : null}
+                </>
             )
 
             const userInfo = (
@@ -70,15 +106,41 @@ const Profile: IPage = () => {
                         <div className="text-gray-500">posts</div>
                     </button>
 
-                    <button className="sm:flex sm:gap-x-2">
+                    <button
+                        onClick={() => setFollowerDialog(true)}
+                        disabled={!followers.length}
+                        className="sm:flex sm:gap-x-2"
+                    >
                         <div className="font-bold">{followers.length}</div>
                         <div className="text-gray-500">followers</div>
                     </button>
 
-                    <button className="sm:flex sm:gap-x-2">
+                    <UserListDialog
+                        title="Followers"
+                        list={followers}
+                        isOpen={isFollowerDialogOpen}
+                        onClose={() => {
+                            setFollowerDialog(false)
+                        }}
+                    />
+
+                    <button
+                        onClick={() => setFollowingDialog(true)}
+                        disabled={!followings.length}
+                        className="sm:flex sm:gap-x-2"
+                    >
                         <div className="font-bold">{followings.length}</div>
                         <div className="text-gray-500">followings</div>
                     </button>
+
+                    <UserListDialog
+                        title="Followings"
+                        list={followings}
+                        isOpen={isFollowingDialogOpen}
+                        onClose={() => {
+                            setFollowingDialog(false)
+                        }}
+                    />
                 </Fragment>
             )
             return (
@@ -96,16 +158,22 @@ const Profile: IPage = () => {
                                     {username}
                                 </h4>
                                 <div className="basis-full xs:order-last sm:basis-auto">
-                                    <Link
-                                        href="/accounts/edit"
-                                        className="block w-full rounded-md bg-gray-100 px-4 py-1.5 text-center text-sm font-medium sm:w-auto"
-                                    >
-                                        Edit Profile
-                                    </Link>
+                                    {isOwner ? (
+                                        <Link
+                                            href="/accounts/edit"
+                                            className="block w-full rounded-md bg-gray-100 px-4 py-1.5 text-center text-sm font-medium sm:w-auto"
+                                        >
+                                            Edit Profile
+                                        </Link>
+                                    ) : (
+                                        <SavedButton userId={docId} />
+                                    )}
                                 </div>
-                                <button className="hidden rounded-full p-1.5 xs:inline-block sm:order-last">
-                                    <SettingsIcon aria-label="setttings" />
-                                </button>
+                                {isOwner ? (
+                                    <button className="hidden rounded-full p-1.5 xs:inline-block sm:order-last">
+                                        <SettingsIcon aria-label="setttings" />
+                                    </button>
+                                ) : null}
                             </div>
 
                             <div className="hidden sm:flex sm:gap-x-6">
@@ -236,7 +304,7 @@ function Post({ postId }: { postId: string }) {
             return (
                 <div className="rounded-sm border bg-white shadow-md">
                     <div className="flex h-full items-center justify-center">
-                        Error has Accor
+                        Something went Wrong
                     </div>
                 </div>
             )
@@ -250,7 +318,7 @@ function Post({ postId }: { postId: string }) {
             )
         case 'success':
             return (
-                <div className="rounded-sm border aspect-square shadow-md">
+                <div className="aspect-square rounded-sm border shadow-md">
                     <MiniPost {...data} />
                 </div>
             )

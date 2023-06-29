@@ -5,8 +5,10 @@ import UserAvatar from '@/components/UserAvatar'
 import { useAuth } from '@/context/AuthContext'
 import useFileReader from '@/hooks/useFileReader'
 import { createpost } from '@/services/post'
+import { uploadPostImage } from '@/services/storage'
 import { Dialog, Transition } from '@headlessui/react'
 import clsx from 'clsx'
+import { getDownloadURL } from 'firebase/storage'
 import Image from 'next/image'
 import { Fragment, useState } from 'react'
 import { HiChevronLeft } from 'react-icons/hi'
@@ -56,19 +58,24 @@ function CreatePostDialog({
         state: { dataURL, error, isloading },
         handleChange,
         handleResetState,
+        file,
     } = useFileReader()
 
     async function handleSubmitPost() {
         try {
-            if (!dataURL) return
+            if (!dataURL || !file) return
+            const { ref } = await uploadPostImage(currentUser, file)
+            const url = await getDownloadURL(ref)
+
             await createpost(
                 {
                     caption,
                     userId: currentUser,
-                    photo: dataURL,
+                    photo: url,
                 },
                 currentUser,
             )
+
             onClose()
         } catch (err) {
             setErr((err as Error).message)
@@ -197,7 +204,7 @@ function CreatePostDialog({
                                     value={caption}
                                     onChange={(e) =>
                                         setCaption((prev) =>
-                                            e.target.value.length <= 20
+                                            e.target.value.length <= 2000
                                                 ? e.target.value
                                                 : prev,
                                         )

@@ -11,7 +11,7 @@ const getCommentCol = (postId: string) =>
 const SchemaWithoutId = z.object({
     userId: z.string().nonempty(),
     caption: z.string().nonempty(),
-    createdAt: z.number().default(Date.now()),
+    createdAt: z.number().default(new Date().getTime()),
     updatedAt: z.number().nullable().default(null),
 })
 

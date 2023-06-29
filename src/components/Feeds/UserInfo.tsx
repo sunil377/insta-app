@@ -1,8 +1,8 @@
 import { IPost } from '@/helpers/post-schema'
 import { useUserById } from '@/requests/useUser'
 import { formatDistanceToNow } from 'date-fns'
-import Image from 'next/image'
 import Link from 'next/link'
+import { Avatar } from '../UserAvatar'
 
 function UserInfo({ userId, createdAt }: Pick<IPost, 'userId' | 'createdAt'>) {
     const { data: user, status } = useUserById(userId)
@@ -21,19 +21,10 @@ function UserInfo({ userId, createdAt }: Pick<IPost, 'userId' | 'createdAt'>) {
         case 'success':
             return (
                 <>
-                    {user.profile.photo ? (
-                        <Image
-                            src={user.profile.photo}
-                            alt={user.username}
-                            width={32}
-                            height={32}
-                            className="aspect-square rounded-full border object-contain"
-                        />
-                    ) : (
-                        <div className="aspect-square rounded-full border w-8 h-8 inline-flex justify-center items-center">
-                            {user.username.at(0)}
-                        </div>
-                    )}
+                    <Avatar
+                        photo={user.profile.photo}
+                        username={user.username}
+                    />
 
                     <Link href={`/${userId}`} className="font-semibold">
                         {user.username}

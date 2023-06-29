@@ -5,7 +5,7 @@ import { defaultArraySchema } from './schema'
 const postSchemaWithoutId = z.object({
     userId: z.string().min(1, { message: USERID_REQUIRED }),
     caption: z.string(),
-    photo: z.string(),
+    photo: z.string().url(),
     likes: defaultArraySchema,
     comments: defaultArraySchema,
     createdAt: z.number().default(new Date().getTime()),

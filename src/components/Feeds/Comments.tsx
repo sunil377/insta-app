@@ -18,7 +18,6 @@ export function CommentForm({ postId }: { postId: string }) {
         values,
         handleBlur,
         handleChange,
-        setSubmitting,
     } = useFormik({
         initialValues: { caption: '' },
         validate: (values) => {

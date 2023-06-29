@@ -53,4 +53,4 @@ async function updatePostLike(
     })
 }
 
-export { createpost, getPost, getPosts, updatePostLike }
+export { createpost, getPost, getPosts }

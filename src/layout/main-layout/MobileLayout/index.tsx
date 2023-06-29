@@ -8,10 +8,12 @@ import {
     ReelsIcon,
     UserPlusIcon,
 } from '@/assets'
+import UserListDialog from '@/components/Feeds/UserListDialog'
 import UserAvatar from '@/components/UserAvatar'
+import useUser, { useUsers } from '@/requests/useUser'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Fragment, ReactNode } from 'react'
+import { Fragment, ReactNode, useState } from 'react'
 import { HiChevronDown, HiChevronLeft } from 'react-icons/hi'
 import SettingsDialog from './SettingsDialog'
 
@@ -40,9 +42,9 @@ function MobileLayout({ children }: { children: ReactNode }) {
                 <Link href="/" className="group rounded-full p-1">
                     <HomeIcon aria-label="Home" />
                 </Link>
-                <button className="group rounded-full p-1">
+                <Link href="/explore" className="group rounded-full p-1">
                     <ExploreIcon aria-label="Explore" />
-                </button>
+                </Link>
                 <button className="group rounded-full p-1">
                     <ReelsIcon aria-label="Reels" />
                 </button>
@@ -54,7 +56,7 @@ function MobileLayout({ children }: { children: ReactNode }) {
                 <UserAvatar />
             </footer>
 
-            <div className="mt-14 mb-12">{children}</div>
+            <div className="mb-12 mt-14">{children}</div>
         </Fragment>
     )
 }
@@ -78,18 +80,32 @@ function HomeMobileNav() {
 }
 
 function ProfileMobileNav() {
+    const { data: currentUser } = useUser()
+    const { data: users, isSuccess } = useUsers(currentUser?.username ?? null)
+    const [isOpen, setOpen] = useState(false)
+
     return (
         <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center justify-between border-y border-y-gray-300 bg-white px-2 text-sm xs:px-4">
             <SettingsDialog />
 
             <button className="flex items-center px-2 py-0.5">
-                <b>sunil.panwar.ts</b>
+                <b>{currentUser?.username}</b>
                 <HiChevronDown className="text-xl" />
             </button>
 
-            <button className="rounded-full p-1">
+            <button onClick={() => setOpen(true)} className="rounded-full p-1">
                 <UserPlusIcon aria-label="Discover People" />
             </button>
+            {isSuccess ? (
+                <UserListDialog
+                    list={users?.map((user) => user.docId)}
+                    isOpen={isOpen}
+                    onClose={() => {
+                        setOpen(false)
+                    }}
+                    title="People"
+                />
+            ) : null}
         </nav>
     )
 }

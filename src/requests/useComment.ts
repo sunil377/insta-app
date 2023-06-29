@@ -4,7 +4,7 @@ import {
     createComment,
     getComments,
 } from '@/services/comment'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export function useComments(postId: string) {
     return useQuery<ICommentServer[]>(['comments', postId], () =>
@@ -13,5 +13,10 @@ export function useComments(postId: string) {
 }
 
 export function useCreateComment(postId: string) {
-    return useMutation((data: ICommentClient) => createComment(postId, data))
+    const queryClient = useQueryClient()
+    return useMutation((data: ICommentClient) => createComment(postId, data), {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['comments', postId])
+        },
+    })
 }

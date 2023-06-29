@@ -1,10 +1,14 @@
 import { CommentIcon } from '@/assets'
 import { IPost } from '@/helpers/post-schema'
+import { useComments } from '@/requests/useComment'
 import Image from 'next/image'
 import Link from 'next/link'
 import { AiFillHeart } from 'react-icons/ai'
+import { InlineLoader } from '.'
 
 function MiniPost({ caption, comments, docId: postId, likes, photo }: IPost) {
+    const { data, isSuccess, isLoading } = useComments(postId)
+
     return (
         <Link
             href={`/post/${postId}`}
@@ -16,10 +20,14 @@ function MiniPost({ caption, comments, docId: postId, likes, photo }: IPost) {
                     <AiFillHeart className="text-3xl" />
                     <p>{likes.length}</p>
                 </div>
-                <div className="space-x-2 inline-flex items-center">
-                    <CommentIcon />
-                    <p>{likes.length}</p>
-                </div>
+                {isSuccess && data.length > 0 ? (
+                    <div className="space-x-2 inline-flex items-center">
+                        <CommentIcon />
+                        <p>{data.length}</p>
+                    </div>
+                ) : isLoading ? (
+                    <InlineLoader />
+                ) : null}
             </div>
         </Link>
     )

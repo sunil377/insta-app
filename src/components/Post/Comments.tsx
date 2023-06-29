@@ -1,7 +1,45 @@
+import { IPost } from '@/helpers/post-schema'
 import { useComments } from '@/requests/useComment'
+import { useUserById } from '@/requests/useUser'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 import { AiOutlineHeart } from 'react-icons/ai'
+import { Avatar } from '../UserAvatar'
+
+function UserPic({ userId }: Pick<IPost, 'userId'>) {
+    const { data: user, status } = useUserById(userId)
+
+    switch (status) {
+        case 'loading':
+            return <div>loading..</div>
+        case 'error':
+            return <h2>Error has accur</h2>
+        case 'success':
+            return (
+                <Avatar photo={user.profile.photo} username={user.username} />
+            )
+        default:
+            return null
+    }
+}
+function Username({ userId }: Pick<IPost, 'userId'>) {
+    const { data: user, status } = useUserById(userId)
+
+    switch (status) {
+        case 'loading':
+            return <div>loading..</div>
+        case 'error':
+            return <h2>Error has accur</h2>
+        case 'success':
+            return (
+                <Link href={`/${userId}`} className="font-semibold">
+                    {user.username}
+                </Link>
+            )
+        default:
+            return null
+    }
+}
 
 function Comments({ postId }: { postId: string }) {
     const { data: comments, status } = useComments(postId)
@@ -15,19 +53,14 @@ function Comments({ postId }: { postId: string }) {
             return (
                 <>
                     {comments.map((comment) => (
-                        <div key={comment.docId} className="flex gap-x-4">
-                            <div className="w-8 h-8 rounded-full bg-blue-500 shrink-0"></div>
+                        <article key={comment.docId} className="flex gap-x-4">
+                            <UserPic userId={comment.userId} />
                             <div className="flex flex-col justify-between">
                                 <p className="space-x-1 line-clamp-3">
-                                    <Link
-                                        href={`/${comment.userId}`}
-                                        className="font-semibold"
-                                    >
-                                        {comment.userId}
-                                    </Link>
+                                    <Username userId={comment.userId} />
                                     <span>{comment.caption}</span>
                                 </p>
-                                <p className="text-xs">
+                                <p className="text-xs text-secondary-light">
                                     {formatDistanceToNow(comment.createdAt)}
                                 </p>
                             </div>
@@ -35,7 +68,7 @@ function Comments({ postId }: { postId: string }) {
                             <button className="text-xs ml-auto">
                                 <AiOutlineHeart />
                             </button>
-                        </div>
+                        </article>
                     ))}
                 </>
             )
