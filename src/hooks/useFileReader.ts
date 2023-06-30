@@ -1,4 +1,10 @@
-import { ChangeEventHandler, useCallback, useState } from 'react'
+import {
+    ChangeEventHandler,
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from 'react'
 
 interface IState {
     dataURL: string | null
@@ -15,6 +21,51 @@ const initialState = {
 function useFileReader() {
     const [state, setState] = useState<IState>(initialState)
     const [file, setFile] = useState<null | File>(null)
+    const fileReaderRef = useRef(new FileReader())
+
+    useEffect(() => {
+        const fileReader = fileReaderRef.current
+
+        function handleLoadStart() {
+            setState({ isloading: true, error: null, dataURL: null })
+        }
+        function handleError(err: ProgressEvent<FileReader>) {
+            setState({
+                isloading: false,
+                error: err.target?.error?.message ?? null,
+                dataURL: null,
+            })
+        }
+
+        function handleLoad(fileReaderEvent: ProgressEvent<FileReader>) {
+            const response = fileReaderEvent.target?.result ?? null
+
+            if (typeof response === 'string') {
+                setState({
+                    isloading: false,
+                    error: null,
+                    dataURL: response,
+                })
+                return
+            }
+
+            setState({
+                isloading: false,
+                error: 'Unknown FileType',
+                dataURL: null,
+            })
+        }
+
+        fileReader.addEventListener('loadstart', handleLoadStart)
+        fileReader.addEventListener('error', handleError)
+        fileReader.addEventListener('load', handleLoad)
+
+        return () => {
+            fileReader.removeEventListener('loadstart', handleLoadStart)
+            fileReader.removeEventListener('error', handleError)
+            fileReader.removeEventListener('load', handleLoad)
+        }
+    }, [])
 
     const handleResetState = useCallback(() => {
         setState(initialState)
@@ -26,41 +77,7 @@ function useFileReader() {
             setFile(file)
             if (!file) return
 
-            const fileReader = new FileReader()
-
-            fileReader.addEventListener('loadstart', () => {
-                setState({ isloading: true, error: null, dataURL: null })
-            })
-
-            fileReader.addEventListener('error', (err) => {
-                setState({
-                    isloading: false,
-                    error: err.target?.error?.message ?? null,
-                    dataURL: null,
-                })
-            })
-
-            fileReader.addEventListener('load', (fileReaderEvent) => {
-                const response = fileReaderEvent.target?.result ?? null
-
-                if (typeof response === 'string') {
-                    // setStep('Crop')
-                    setState({
-                        isloading: false,
-                        error: null,
-                        dataURL: response,
-                    })
-                    return
-                }
-
-                setState({
-                    isloading: false,
-                    error: 'Unknown FileType',
-                    dataURL: null,
-                })
-            })
-
-            fileReader.readAsDataURL(file)
+            fileReaderRef.current.readAsDataURL(file)
         },
         [],
     )
