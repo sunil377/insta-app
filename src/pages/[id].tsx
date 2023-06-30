@@ -115,6 +115,18 @@ const Profile: IPage = () => {
                         <div className="text-gray-500">followers</div>
                     </button>
 
+                    <button
+                        onClick={() => setFollowingDialog(true)}
+                        disabled={!followings.length}
+                        className="sm:flex sm:gap-x-2"
+                    >
+                        <div className="font-bold">{followings.length}</div>
+                        <div className="text-gray-500">followings</div>
+                    </button>
+                </Fragment>
+            )
+            return (
+                <>
                     <UserListDialog
                         title="Followers"
                         list={followers}
@@ -124,15 +136,6 @@ const Profile: IPage = () => {
                         }}
                     />
 
-                    <button
-                        onClick={() => setFollowingDialog(true)}
-                        disabled={!followings.length}
-                        className="sm:flex sm:gap-x-2"
-                    >
-                        <div className="font-bold">{followings.length}</div>
-                        <div className="text-gray-500">followings</div>
-                    </button>
-
                     <UserListDialog
                         title="Followings"
                         list={followings}
@@ -141,154 +144,153 @@ const Profile: IPage = () => {
                             setFollowingDialog(false)
                         }}
                     />
-                </Fragment>
-            )
-            return (
-                <main className="mx-auto mt-16 max-w-4xl bg-white text-sm sm:mt-10">
-                    <section className="grid max-w-sm grid-cols-4 px-4 sm:max-w-none">
-                        <div className="col-span-1">
-                            <div className="relative aspect-square w-20 sm:mx-auto sm:w-28 lg:w-36">
-                                {profilePic}
-                            </div>
-                        </div>
 
-                        <div className="col-span-3 flex flex-col justify-center gap-y-4 px-4 sm:justify-start">
-                            <div className="flex-wrap space-y-2 xs:flex xs:items-center xs:gap-x-4">
-                                <h4 className="text-xl font-light">
-                                    {username}
-                                </h4>
-                                <div className="basis-full xs:order-last sm:basis-auto">
-                                    {isOwner ? (
-                                        <Link
-                                            href="/accounts/edit"
-                                            className="block w-full rounded-md bg-gray-100 px-4 py-1.5 text-center text-sm font-medium sm:w-auto"
-                                        >
-                                            Edit Profile
-                                        </Link>
-                                    ) : (
-                                        <SavedButton userId={docId} />
-                                    )}
+                    <main className="mx-auto mt-16 max-w-4xl bg-white text-sm sm:mt-10">
+                        <section className="grid max-w-sm grid-cols-4 px-4 sm:max-w-none">
+                            <div className="col-span-1">
+                                <div className="relative aspect-square w-20 sm:mx-auto sm:w-28 lg:w-36">
+                                    {profilePic}
                                 </div>
-                                {isOwner ? (
-                                    <button className="hidden rounded-full p-1.5 xs:inline-block sm:order-last">
-                                        <SettingsIcon aria-label="setttings" />
-                                    </button>
-                                ) : null}
                             </div>
 
-                            <div className="hidden sm:flex sm:gap-x-6">
-                                {userInfo}
+                            <div className="col-span-3 flex flex-col justify-center gap-y-4 px-4 sm:justify-start">
+                                <div className="flex-wrap space-y-2 xs:flex xs:items-center xs:gap-x-4">
+                                    <h4 className="text-xl font-light">
+                                        {username}
+                                    </h4>
+                                    <div className="basis-full xs:order-last sm:basis-auto">
+                                        {isOwner ? (
+                                            <Link
+                                                href="/accounts/edit"
+                                                className="block w-full rounded-md bg-gray-100 px-4 py-1.5 text-center text-sm font-medium sm:w-auto"
+                                            >
+                                                Edit Profile
+                                            </Link>
+                                        ) : (
+                                            <SavedButton userId={docId} />
+                                        )}
+                                    </div>
+                                    {isOwner ? (
+                                        <button className="hidden rounded-full p-1.5 xs:inline-block sm:order-last">
+                                            <SettingsIcon aria-label="setttings" />
+                                        </button>
+                                    ) : null}
+                                </div>
+
+                                <div className="hidden sm:flex sm:gap-x-6">
+                                    {userInfo}
+                                </div>
+                                <div className="hidden leading-4 sm:block">
+                                    <p className="font-semibold capitalize">
+                                        {fullname}
+                                    </p>
+                                    {userBio}
+                                </div>
                             </div>
-                            <div className="hidden leading-4 sm:block">
+                            <div className="col-span-4 mt-6 pl-2 leading-4 sm:hidden">
                                 <p className="font-semibold capitalize">
                                     {fullname}
                                 </p>
                                 {userBio}
                             </div>
-                        </div>
-                        <div className="col-span-4 mt-6 pl-2 leading-4 sm:hidden">
-                            <p className="font-semibold capitalize">
-                                {fullname}
-                            </p>
-                            {userBio}
-                        </div>
-                    </section>
+                        </section>
 
-                    {/* stories */}
-                    <section className="my-6 flex gap-x-3 px-4 sm:my-10">
-                        <div className="aspect-square w-20 rounded-full border bg-white lg:w-28"></div>
-                        <div className="aspect-square w-20 rounded-full border bg-white lg:w-28"></div>
-                        <div className="aspect-square w-20 rounded-full border bg-white lg:w-28"></div>
-                        <div className="aspect-square w-20 rounded-full border bg-white lg:w-28"></div>
-                    </section>
+                        {/* stories */}
+                        <section className="my-6 flex gap-x-3 px-4 sm:my-10">
+                            <div className="aspect-square w-20 rounded-full border bg-white lg:w-28"></div>
+                            <div className="aspect-square w-20 rounded-full border bg-white lg:w-28"></div>
+                            <div className="aspect-square w-20 rounded-full border bg-white lg:w-28"></div>
+                            <div className="aspect-square w-20 rounded-full border bg-white lg:w-28"></div>
+                        </section>
 
-                    <section className="grid grid-cols-3 justify-items-center border-t py-2 sm:hidden">
-                        {userInfo}
-                    </section>
+                        <section className="grid grid-cols-3 justify-items-center border-t py-2 sm:hidden">
+                            {userInfo}
+                        </section>
 
-                    <Tab.Group as="section">
-                        <Tab.List className="border-t sm:flex sm:justify-center">
-                            <div className="grid grid-cols-3 sm:block sm:space-x-4">
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={clsx(
-                                                'border-t-2 p-2',
-                                                selected
-                                                    ? 'border-t-blue-500'
-                                                    : 'border-t-transparent',
-                                            )}
-                                        >
-                                            POSTS
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={clsx(
-                                                'border-t-2 p-2',
-                                                selected
-                                                    ? 'border-t-blue-500'
-                                                    : 'border-t-transparent',
-                                            )}
-                                        >
-                                            SAVED
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={clsx(
-                                                'border-t-2 p-2',
-                                                selected
-                                                    ? 'border-t-blue-500'
-                                                    : 'border-t-transparent',
-                                            )}
-                                        >
-                                            TAGGED
-                                        </button>
-                                    )}
-                                </Tab>
-                            </div>
-                        </Tab.List>
-                        <Tab.Panels className="pb-4">
-                            <Tab.Panel>
-                                <div className="mt-4 grid grid-cols-3 gap-x-2 px-2 pb-2">
-                                    {posts.length === 0 ? (
-                                        <h3 className="col-span-3 py-5 text-center text-lg">
-                                            No Post Found
-                                        </h3>
-                                    ) : (
-                                        posts.map((postId) => (
-                                            <Post
-                                                key={postId}
-                                                postId={postId}
-                                            />
-                                        ))
-                                    )}
+                        <Tab.Group as="section">
+                            <Tab.List className="border-t sm:flex sm:justify-center">
+                                <div className="grid grid-cols-3 sm:block sm:space-x-4">
+                                    <Tab as={Fragment}>
+                                        {({ selected }) => (
+                                            <button
+                                                className={clsx(
+                                                    'border-t-2 p-2',
+                                                    selected
+                                                        ? 'border-t-blue-500'
+                                                        : 'border-t-transparent',
+                                                )}
+                                            >
+                                                POSTS
+                                            </button>
+                                        )}
+                                    </Tab>
+                                    <Tab as={Fragment}>
+                                        {({ selected }) => (
+                                            <button
+                                                className={clsx(
+                                                    'border-t-2 p-2',
+                                                    selected
+                                                        ? 'border-t-blue-500'
+                                                        : 'border-t-transparent',
+                                                )}
+                                            >
+                                                SAVED
+                                            </button>
+                                        )}
+                                    </Tab>
+                                    <Tab as={Fragment}>
+                                        {({ selected }) => (
+                                            <button
+                                                className={clsx(
+                                                    'border-t-2 p-2',
+                                                    selected
+                                                        ? 'border-t-blue-500'
+                                                        : 'border-t-transparent',
+                                                )}
+                                            >
+                                                TAGGED
+                                            </button>
+                                        )}
+                                    </Tab>
                                 </div>
-                            </Tab.Panel>
-                            <Tab.Panel>
-                                <div className="mt-4 grid grid-cols-3 gap-x-2 px-2 pb-2">
-                                    {saved.length === 0 ? (
-                                        <h3 className="col-span-3 py-5 text-center text-lg">
-                                            No Saved Post Found
-                                        </h3>
-                                    ) : (
-                                        saved.map((postId) => (
-                                            <Post
-                                                key={postId}
-                                                postId={postId}
-                                            />
-                                        ))
-                                    )}
-                                </div>
-                            </Tab.Panel>
-                        </Tab.Panels>
-                    </Tab.Group>
-                </main>
+                            </Tab.List>
+                            <Tab.Panels className="pb-4">
+                                <Tab.Panel>
+                                    <div className="mt-4 grid grid-cols-3 gap-x-2 px-2 pb-2">
+                                        {posts.length === 0 ? (
+                                            <h3 className="col-span-3 py-5 text-center text-lg">
+                                                No Post Found
+                                            </h3>
+                                        ) : (
+                                            posts.map((postId) => (
+                                                <Post
+                                                    key={postId}
+                                                    postId={postId}
+                                                />
+                                            ))
+                                        )}
+                                    </div>
+                                </Tab.Panel>
+                                <Tab.Panel>
+                                    <div className="mt-4 grid grid-cols-3 gap-x-2 px-2 pb-2">
+                                        {saved.length === 0 ? (
+                                            <h3 className="col-span-3 py-5 text-center text-lg">
+                                                No Saved Post Found
+                                            </h3>
+                                        ) : (
+                                            saved.map((postId) => (
+                                                <Post
+                                                    key={postId}
+                                                    postId={postId}
+                                                />
+                                            ))
+                                        )}
+                                    </div>
+                                </Tab.Panel>
+                            </Tab.Panels>
+                        </Tab.Group>
+                    </main>
+                </>
             )
 
         default:

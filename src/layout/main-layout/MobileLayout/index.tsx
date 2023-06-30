@@ -9,7 +9,7 @@ import {
     UserPlusIcon,
 } from '@/assets'
 import UserListDialog from '@/components/Feeds/UserListDialog'
-import UserAvatar from '@/components/UserAvatar'
+import { UserAvatar } from '@/components/UserAvatar'
 import useUser, { useUsers } from '@/requests/useUser'
 import Link from 'next/link'
 import { useRouter } from 'next/router'

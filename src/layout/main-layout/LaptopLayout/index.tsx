@@ -9,13 +9,13 @@ import {
     ReelsIcon,
     SearchIcon,
 } from '@/assets'
-import { UserAvatarIcon } from '@/components/UserAvatar'
+import CreatePost from '@/components/CreatePost/CreatePostButton'
+import { UserAvatar } from '@/components/UserAvatar'
 import { useAuth } from '@/context/AuthContext'
 import { Menu, Popover, Transition } from '@headlessui/react'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { Fragment, ReactNode, useState } from 'react'
-import CreatePost from './CreatePost'
 import NotificationContent from './NotificationContent'
 import SearchContent from './SearchContent'
 import SettingMenu from './SettingMenu'
@@ -199,7 +199,7 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                         )}
                     >
                         <div className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100">
-                            <UserAvatarIcon />
+                            <UserAvatar />
                         </div>
 
                         <ToolTip isOpen={isPopoverOpened}>Profile</ToolTip>

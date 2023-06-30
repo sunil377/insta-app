@@ -16,7 +16,11 @@ function UserPic({ userId }: Pick<IPost, 'userId'>) {
             return <h2>Error has accur</h2>
         case 'success':
             return (
-                <Avatar photo={user.profile.photo} username={user.username} />
+                <Avatar
+                    photo={user.profile.photo}
+                    username={user.username}
+                    sizes="w-8 h-8 text-lg"
+                />
             )
         default:
             return null
@@ -56,7 +60,7 @@ function Comments({ postId }: { postId: string }) {
                         <article key={comment.docId} className="flex gap-x-4">
                             <UserPic userId={comment.userId} />
                             <div className="flex flex-col justify-between">
-                                <p className="space-x-1 line-clamp-3">
+                                <p className="line-clamp-3 space-x-1">
                                     <Username userId={comment.userId} />
                                     <span>{comment.caption}</span>
                                 </p>
@@ -65,7 +69,7 @@ function Comments({ postId }: { postId: string }) {
                                 </p>
                             </div>
 
-                            <button className="text-xs ml-auto">
+                            <button className="ml-auto text-xs">
                                 <AiOutlineHeart />
                             </button>
                         </article>

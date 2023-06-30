@@ -1,4 +1,3 @@
-import { useAuth } from '@/context/AuthContext'
 import useUser from '@/requests/useUser'
 import clsx from 'clsx'
 import Image from 'next/image'
@@ -10,16 +9,16 @@ interface IAvatar extends React.HTMLAttributes<HTMLDivElement> {
     sizes?: string
 }
 
-export function Avatar({
+function Avatar({
     photo,
     username,
     className,
-    sizes = 'h-6 w-6',
+    sizes = 'h-6 w-6 text-base',
 }: IAvatar) {
     return (
         <div
             className={clsx(
-                'relative aspect-square inline-flex items-center justify-center rounded-full overflow-hidden text-xl text-white shrink-0 odd:bg-primary-main even:bg-primary-dark',
+                'relative inline-flex aspect-square shrink-0 items-center justify-center overflow-hidden rounded-full text-white odd:bg-primary-main even:bg-primary-dark',
                 sizes,
                 className,
             )}
@@ -32,13 +31,13 @@ export function Avatar({
                     className="object-cover"
                 />
             ) : (
-                <span className="font-semibold">{username.at(0)}</span>
+                <span className="font-medium capitalize">{username.at(0)}</span>
             )}
         </div>
     )
 }
 
-function UserAvatarIcon() {
+function UserAvatar(props: Omit<IAvatar, 'photo' | 'username'>) {
     const { data: user, status } = useUser()
 
     switch (status) {
@@ -48,23 +47,17 @@ function UserAvatarIcon() {
             return <h2>error has accur</h2>
         case 'success':
             return (
-                <Avatar photo={user.profile.photo} username={user.username} />
+                <Link href={`/${user.docId}`}>
+                    <Avatar
+                        photo={user.profile.photo}
+                        username={user.username}
+                        {...props}
+                    />
+                </Link>
             )
         default:
             return null
     }
 }
 
-function UserAvatar() {
-    const currentUser = useAuth()
-
-    return (
-        <Link
-            href={`/${currentUser}`}
-            className="rounded-full border border-gray-300 bg-gray-200 capitalize focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
-        >
-            <UserAvatarIcon />
-        </Link>
-    )
-}
-export { UserAvatarIcon, UserAvatar as default }
+export { Avatar, UserAvatar }

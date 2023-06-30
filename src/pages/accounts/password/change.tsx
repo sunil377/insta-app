@@ -1,4 +1,4 @@
-import UserAvatar from '@/components/UserAvatar'
+import { UserAvatar } from '@/components/UserAvatar'
 import { PASSWORD_DONT_MATCH } from '@/constants/errors'
 import { protectedRouteWithUser } from '@/helpers/routes'
 import { Password_Schema } from '@/helpers/schema'
@@ -63,12 +63,12 @@ const ChangePassword: IPage = function ChangePassword() {
             return <p>loading...</p>
         case 'success':
             return (
-                <div className="py-10 px-5 xs:px-10">
+                <div className="px-5 py-10 xs:px-10">
                     {isSuccess ? (
                         <div
                             role="alert"
                             aria-live="polite"
-                            className="fixed left-1/2 bottom-5 -translate-x-1/2 rounded-md bg-green-700 px-6 py-2 text-sm text-white"
+                            className="fixed bottom-5 left-1/2 -translate-x-1/2 rounded-md bg-green-700 px-6 py-2 text-sm text-white"
                         >
                             Password Updated
                         </div>
@@ -117,7 +117,7 @@ const ChangePassword: IPage = function ChangePassword() {
                                                 type="password"
                                                 disabled={isGoogleSignin}
                                                 id={`old-pass`}
-                                                className="block w-full rounded-md border bg-gray-100 py-2 px-4 focus:outline-none focus-visible:border-gray-500 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                                                className="block w-full rounded-md border bg-gray-100 px-4 py-2 focus:outline-none focus-visible:border-gray-500 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
                                                 placeholder="Enter your Old password here..."
                                                 aria-invalid={
                                                     !!errors.oldPassword
@@ -144,7 +144,7 @@ const ChangePassword: IPage = function ChangePassword() {
                                                 type="password"
                                                 disabled={isGoogleSignin}
                                                 id={`new-pass`}
-                                                className="block w-full rounded-md border bg-gray-100 py-2 px-4 focus:outline-none focus-visible:border-gray-500 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                                                className="block w-full rounded-md border bg-gray-100 px-4 py-2 focus:outline-none focus-visible:border-gray-500 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
                                                 placeholder="Enter your new password here..."
                                                 aria-invalid={
                                                     !!errors.newPassword
@@ -171,7 +171,7 @@ const ChangePassword: IPage = function ChangePassword() {
                                                 type="password"
                                                 disabled={isGoogleSignin}
                                                 id={`confirm-pass`}
-                                                className="block w-full rounded-md border bg-gray-100 py-2 px-4 focus:outline-none focus-visible:border-gray-500 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                                                className="block w-full rounded-md border bg-gray-100 px-4 py-2 focus:outline-none focus-visible:border-gray-500 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
                                                 placeholder="ReEnter your password..."
                                                 aria-invalid={!!errors.confirm}
                                                 aria-label={

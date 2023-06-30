@@ -66,7 +66,7 @@ const Home: NextPageWithLayout = () => {
                                     <Avatar
                                         photo={currentUser.profile.photo}
                                         username={currentUser.username}
-                                        sizes="h-8 w-8"
+                                        sizes="h-8 w-8 text-lg"
                                     />
 
                                     <div>
@@ -111,7 +111,7 @@ const Home: NextPageWithLayout = () => {
                                                       <Avatar
                                                           photo={photo}
                                                           username={username}
-                                                          sizes="h-8 w-8"
+                                                          sizes="h-8 w-8 text-lg"
                                                       />
                                                       <div>
                                                           <p className="font-semibold">

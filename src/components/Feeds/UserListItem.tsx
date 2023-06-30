@@ -22,16 +22,16 @@ function UserListItem({ userId }: { userId: string }) {
             return <p>Error</p>
         case 'success':
             return (
-                <div className="flex py-2 px-4 gap-x-2 text-xsm items-center">
+                <div className="flex items-center gap-x-2 px-4 py-2 text-xsm">
                     <Avatar
                         username={user.username}
                         photo={user.profile.photo}
-                        sizes="w-8 h-8"
+                        sizes="w-8 h-8 text-lg"
                     />
                     <div>
                         <Link
                             href={`/${userId}`}
-                            className="font-semibold block"
+                            className="block font-semibold"
                         >
                             {user.username}
                         </Link>
@@ -42,7 +42,7 @@ function UserListItem({ userId }: { userId: string }) {
                     {isSamePerson ? null : (
                         <button
                             className={clsx(
-                                'ml-auto  py-2 px-4 rounded-md font-semibold disabled:pointer-events-none disabled:opacity-50',
+                                'ml-auto  rounded-md px-4 py-2 font-semibold disabled:pointer-events-none disabled:opacity-50',
                                 isFollowing
                                     ? 'bg-secondary-lighter bg-opacity-50 hover:bg-opacity-100'
                                     : 'bg-primary-main text-white',

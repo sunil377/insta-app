@@ -19,7 +19,7 @@ function UserPic({ userId }: Pick<IPost, 'userId'>) {
                 <Avatar
                     photo={user.profile.photo}
                     username={user.username}
-                    className="ring-white ring-2"
+                    className="ring-2 ring-white"
                 />
             )
 
