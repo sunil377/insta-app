@@ -1,9 +1,11 @@
 import { db } from '@/config/firebase'
 import { useAuth } from '@/context/AuthContext'
 import { IPost } from '@/helpers/post-schema'
-import { POST_COLLECTION, getPost, getPosts } from '@/services/post'
+import { POST_COLLECTION, createpost, getPost, getPosts } from '@/services/post'
+import { uploadPostImage } from '@/services/storage'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore'
+import { getDownloadURL } from 'firebase/storage'
 
 const __query__ = 'posts'
 
@@ -50,6 +52,26 @@ export function useUpdatePostLike(postId: string) {
                     return oldPosts
                 })
             },
+        },
+    )
+}
+
+export function useCreatePost() {
+    const currentUser = useAuth()
+
+    return useMutation(
+        async ({ file, caption }: { file: File; caption: string }) => {
+            const { ref } = await uploadPostImage(currentUser, file)
+            const url = await getDownloadURL(ref)
+
+            await createpost(
+                {
+                    caption,
+                    userId: currentUser,
+                    photo: url,
+                },
+                currentUser,
+            )
         },
     )
 }

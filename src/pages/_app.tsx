@@ -10,6 +10,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode, useState } from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
     getLayout?: (page: ReactElement) => ReactNode
@@ -36,10 +37,14 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         <QueryClientProvider client={queryClient}>
             <ReactQueryDevtools initialIsOpen={false} />
             <Hydrate state={pageProps.dehydratedState}>
-                <AuthContext initialState={pageProps.currentUser}>
-                    <PageLoader />
-                    {getLayout(<Component {...pageProps} />)}
-                </AuthContext>
+                <ErrorBoundary
+                    fallback={<div role="alert">something went wrong</div>}
+                >
+                    <AuthContext initialState={pageProps.currentUser}>
+                        <PageLoader />
+                        {getLayout(<Component {...pageProps} />)}
+                    </AuthContext>
+                </ErrorBoundary>
             </Hydrate>
         </QueryClientProvider>
     )

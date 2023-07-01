@@ -1,18 +1,16 @@
 import { AddPostIcon } from '@/assets'
 import useFileReader from '@/hooks/useFileReader'
 import ToolTip from '@/layout/main-layout/LaptopLayout/Tooltip'
+import { useCreatePost } from '@/requests/usePost'
 import useUser from '@/requests/useUser'
-import { createpost } from '@/services/post'
-import { uploadPostImage } from '@/services/storage'
 import { Dialog } from '@headlessui/react'
-import { useMutation } from '@tanstack/react-query'
 import clsx from 'clsx'
-import { getDownloadURL } from 'firebase/storage'
 import Image from 'next/image'
 import { Fragment, useState } from 'react'
 import { HiChevronLeft } from 'react-icons/hi'
 import Modal from '../Modal'
 import { UserAvatar } from '../UserAvatar'
+import useCaption from './useCaption'
 
 function Content({ onClose }: { onClose: () => void }) {
     const {
@@ -21,33 +19,10 @@ function Content({ onClose }: { onClose: () => void }) {
         handleResetState,
         file,
     } = useFileReader()
-    const [caption, setCaption] = useState('')
     const isNextStep = !!dataURL
     const { data: currentUser, isSuccess } = useUser()
-
-    const mutation = useMutation(
-        async ({ userId }: { userId: string }) => {
-            if (!file) {
-                return
-            }
-            const { ref } = await uploadPostImage(userId, file)
-            const url = await getDownloadURL(ref)
-
-            await createpost(
-                {
-                    caption,
-                    userId,
-                    photo: url,
-                },
-                userId,
-            )
-        },
-        {
-            onSuccess: () => {
-                onClose()
-            },
-        },
-    )
+    const [caption, handleCaptionChange] = useCaption()
+    const mutation = useCreatePost()
 
     return (
         <Fragment>
@@ -74,10 +49,13 @@ function Content({ onClose }: { onClose: () => void }) {
                     <button
                         className="px-0.5 text-sm font-semibold text-primary-main hover:text-primary-dark disabled:pointer-events-none disabled:opacity-50"
                         disabled={mutation.isLoading}
-                        onClick={() => {
-                            mutation.mutate({
-                                userId: currentUser.docId,
+                        onClick={async () => {
+                            if (!file) return
+                            await mutation.mutateAsync({
+                                caption,
+                                file,
                             })
+                            onClose()
                         }}
                     >
                         {mutation.isLoading ? 'Posting...' : 'Share'}
@@ -109,14 +87,8 @@ function Content({ onClose }: { onClose: () => void }) {
                                     placeholder="Write a caption..."
                                     maxLength={2000}
                                     value={caption}
-                                    onChange={(e) =>
-                                        setCaption((prev) =>
-                                            e.target.value.length <= 2000
-                                                ? e.target.value
-                                                : prev,
-                                        )
-                                    }
-                                ></textarea>
+                                    onChange={handleCaptionChange}
+                                />
                                 <div className="text-right text-xs">
                                     <span>{caption.length}/2000</span>
                                 </div>

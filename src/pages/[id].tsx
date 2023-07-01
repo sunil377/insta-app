@@ -79,7 +79,7 @@ const Profile: IPage = () => {
                     className="rounded-full border border-gray-300 object-contain"
                 />
             ) : (
-                <div className="inline-flex h-full w-full items-center justify-center rounded-full bg-gray-200 text-5xl capitalize">
+                <div className="inline-flex h-full w-full items-center justify-center rounded-full bg-primary-main bg-opacity-50 text-5xl capitalize text-white">
                     {username.at(0)}
                 </div>
             )

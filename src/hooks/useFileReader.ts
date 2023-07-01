@@ -1,3 +1,4 @@
+import { BASE64_KEY } from '@/constants/util'
 import {
     ChangeEventHandler,
     useCallback,
@@ -46,6 +47,7 @@ function useFileReader() {
                     error: null,
                     dataURL: response,
                 })
+                window.localStorage.setItem(BASE64_KEY, response)
                 return
             }
 

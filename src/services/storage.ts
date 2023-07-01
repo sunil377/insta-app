@@ -1,18 +1,23 @@
 import { storage } from '@/config/firebase'
 import { UploadMetadata, ref, uploadBytes } from 'firebase/storage'
 
-const profileRef = ref(storage, 'profile')
-
-function uploadUserProfile(userId: string, file: File) {
-    return uploadBytes(ref(profileRef, userId), file)
+function uploadUserProfile(
+    currentUser: string,
+    file: File,
+    metaData?: UploadMetadata,
+) {
+    const imageRef = ref(storage, `profile/${currentUser}`)
+    return uploadBytes(imageRef, file, metaData)
 }
 
 function uploadPostImage(
-    userId: string,
+    currentUser: string,
     file: Blob,
     metaData?: UploadMetadata,
 ) {
-    return uploadBytes(ref(storage, `${userId}/${file.name}`), file, metaData)
+    const uuid = new Date().getTime().toString()
+    const imageRef = ref(storage, `${currentUser}/${uuid}`)
+    return uploadBytes(imageRef, file, metaData)
 }
 
 export { uploadPostImage, uploadUserProfile }

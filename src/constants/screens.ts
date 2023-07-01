@@ -1,4 +1,5 @@
 export const SCREEN_SM = '(max-width:640px)'
+export const SCREEN_LG = '(min-width:1024px)'
 
 // 'sm': '640px',
 // // => @media (min-width: 640px) { ... }

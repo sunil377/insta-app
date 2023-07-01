@@ -20,7 +20,7 @@ function Feed({
 }: IPost) {
     return (
         <Fragment>
-            <div className="space-y-2 pt-4 text-sm">
+            <div className="space-y-2 pt-4 text-sm first:pt-0">
                 <div className="flex items-center gap-2">
                     <UserInfo userId={userId} createdAt={createdAt} />
                     <MenuDialog postId={postId} />

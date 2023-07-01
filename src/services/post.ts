@@ -3,7 +3,6 @@ import { POST_NOT_FOUND } from '@/constants/errors'
 import { IClientPost, IPost, postSchemaWithoutId } from '@/helpers/post-schema'
 import {
     addDoc,
-    arrayRemove,
     arrayUnion,
     collection,
     doc,
@@ -41,16 +40,6 @@ async function getPosts(userId: string) {
         query(collection(db, POST_COLLECTION), where('userId', '!=', userId)),
     )
     return parseQuerySnapshot<IPost>(responseUsers)
-}
-
-async function updatePostLike(
-    docId: string,
-    currentUser: string,
-    isLiked: boolean,
-) {
-    await updateDoc(doc(db, POST_COLLECTION, docId), {
-        likes: isLiked ? arrayRemove(currentUser) : arrayUnion(currentUser),
-    })
 }
 
 export { createpost, getPost, getPosts }

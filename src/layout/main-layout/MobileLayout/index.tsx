@@ -1,9 +1,6 @@
 import {
-    AddPostIcon,
     ExploreIcon,
-    HeartIcon,
     HomeIcon,
-    InstagramTextIcon,
     MessengerIcon,
     ReelsIcon,
     UserPlusIcon,
@@ -15,6 +12,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Fragment, ReactNode, useState } from 'react'
 import { HiChevronDown, HiChevronLeft } from 'react-icons/hi'
+import HomeNavigation from './HomeNavigation'
 import SettingsDialog from './SettingsDialog'
 
 function TopNavbar() {
@@ -22,7 +20,7 @@ function TopNavbar() {
 
     switch (router.pathname) {
         case '/':
-            return <HomeMobileNav />
+            return <HomeNavigation />
         case '/[id]':
             return <ProfileMobileNav />
         case '/accounts/edit':
@@ -30,7 +28,7 @@ function TopNavbar() {
         case '/accounts/password/change':
             return <EditPageMobileNav title="Change Password" />
         default:
-            return <HomeMobileNav />
+            return <HomeNavigation />
     }
 }
 
@@ -61,36 +59,18 @@ function MobileLayout({ children }: { children: ReactNode }) {
     )
 }
 
-function HomeMobileNav() {
-    return (
-        <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center border-y border-y-gray-300 bg-white px-4">
-            <Link href="/">
-                <InstagramTextIcon />
-            </Link>
-
-            <button className="group ml-auto rounded-full p-1">
-                <AddPostIcon aria-label="New post" />
-            </button>
-
-            <button className="group ml-4 rounded-full p-1">
-                <HeartIcon aria-label="activity" />
-            </button>
-        </nav>
-    )
-}
-
 function ProfileMobileNav() {
     const { data: currentUser } = useUser()
     const { data: users, isSuccess } = useUsers(currentUser?.username ?? null)
     const [isOpen, setOpen] = useState(false)
 
     return (
-        <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center justify-between border-y border-y-gray-300 bg-white px-2 text-sm xs:px-4">
+        <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center justify-between border-y border-y-gray-300 bg-white px-2 xs:px-4">
             <SettingsDialog />
 
-            <button className="flex items-center px-2 py-0.5">
-                <b>{currentUser?.username}</b>
-                <HiChevronDown className="text-xl" />
+            <button className="flex items-center px-2 py-0.5 font-semibold">
+                {currentUser?.username}
+                <HiChevronDown className="text-2xl" />
             </button>
 
             <button onClick={() => setOpen(true)} className="rounded-full p-1">
@@ -112,14 +92,12 @@ function ProfileMobileNav() {
 
 function EditPageMobileNav({ title }: { title: string }) {
     return (
-        <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center justify-between border-y border-y-gray-300 bg-white px-2 text-sm xs:px-4">
-            <Link href=".." className="rounded-full p-1">
-                <HiChevronLeft className="text-2xl" aria-label="back" />
+        <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center justify-between border-y border-y-gray-300 bg-white px-2 xs:px-4">
+            <Link href=".." className="rounded-full">
+                <HiChevronLeft className="text-3xl" aria-label="back" />
             </Link>
 
-            <button className="px-2 py-0.5">
-                <b>{title}</b>
-            </button>
+            <button className="px-2 py-0.5 font-semibold">{title}</button>
 
             <span aria-hidden></span>
         </nav>
