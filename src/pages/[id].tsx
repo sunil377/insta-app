@@ -2,6 +2,7 @@ import Header from '@/components/Profile/Header'
 import TabButton from '@/components/Profile/TabButton'
 import TabPanel from '@/components/Profile/TabPanel'
 import { adminAuth } from '@/config/firebase-admin'
+import { USER_QUERY_KEY } from '@/constants/util'
 import useGetSearchQuery from '@/hooks/useGetSearchQuery'
 import MainLayout from '@/layout/main-layout'
 import { useProfileUser } from '@/requests/useUser'
@@ -102,9 +103,11 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     }
 
     const queryClient = new QueryClient()
-    await queryClient.prefetchQuery(['users', currentUser], () =>
-        getServerUser(currentUser!),
-    )
+
+    await queryClient.prefetchQuery({
+        queryKey: [USER_QUERY_KEY, currentUser],
+        queryFn: () => getServerUser(currentUser!),
+    })
 
     const { id } = z
         .object({
@@ -113,7 +116,16 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         .parse(ctx.query)
 
     if (id !== currentUser) {
-        await queryClient.prefetchQuery(['users', id], () => getServerUser(id))
+        try {
+            await queryClient.fetchQuery({
+                queryKey: [USER_QUERY_KEY, id],
+                queryFn: () => getServerUser(id),
+            })
+        } catch (error) {
+            return {
+                notFound: true,
+            } as never
+        }
     }
 
     return {

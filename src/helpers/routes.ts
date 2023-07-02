@@ -1,4 +1,5 @@
 import { adminAuth } from '@/config/firebase-admin'
+import { USER_QUERY_KEY } from '@/constants/util'
 import { getServerUser } from '@/services/server'
 import { QueryClient, dehydrate } from '@tanstack/react-query'
 import { GetServerSidePropsContext } from 'next'
@@ -62,9 +63,10 @@ async function protectedRouteWithUser(ctx: GetServerSidePropsContext) {
         throw new Error('Invalid User')
     }
 
-    await queryClient.prefetchQuery(['users', currentUser], () =>
-        getServerUser(currentUser!),
-    )
+    await queryClient.prefetchQuery({
+        queryKey: [USER_QUERY_KEY, currentUser],
+        queryFn: () => getServerUser(currentUser!),
+    })
 
     return {
         props: {

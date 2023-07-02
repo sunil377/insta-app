@@ -1,5 +1,6 @@
 import Post from '@/components/Post'
 import { adminAuth } from '@/config/firebase-admin'
+import { POST_QUERY_KEY, USER_QUERY_KEY } from '@/constants/util'
 import MainLayout from '@/layout/main-layout'
 import { usePost } from '@/requests/usePost'
 import { getServerPost, getServerUser } from '@/services/server'
@@ -79,9 +80,11 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     }
 
     const queryClient = new QueryClient()
-    await queryClient.prefetchQuery(['users', currentUser], () =>
-        getServerUser(currentUser!),
-    )
+
+    await queryClient.prefetchQuery({
+        queryKey: [USER_QUERY_KEY, currentUser],
+        queryFn: () => getServerUser(currentUser!),
+    })
 
     const { id } = z
         .object({
@@ -89,7 +92,16 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         })
         .parse(ctx.query)
 
-    await queryClient.prefetchQuery(['posts', id], () => getServerPost(id))
+    try {
+        await queryClient.fetchQuery({
+            queryKey: [POST_QUERY_KEY, id],
+            queryFn: () => getServerPost(id),
+        })
+    } catch (error) {
+        return {
+            notFound: true,
+        } as never
+    }
 
     return {
         props: {

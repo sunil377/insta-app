@@ -1,5 +1,6 @@
 import { IPost } from '@/helpers/post-schema'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Fragment } from 'react'
 import Caption from './Caption'
 import CommentButton from './CommentLink'
@@ -27,14 +28,17 @@ function Feed({
                     <MenuDialog postId={postId} />
                 </div>
 
-                <div className="relative h-[min(20rem,100vh)] bg-black">
+                <Link
+                    href={`/post/${postId}`}
+                    className="relative block h-[min(20rem,100vh)] bg-black"
+                >
                     <Image
                         src={photo}
                         alt={caption}
                         fill
                         className="object-contain"
                     />
-                </div>
+                </Link>
 
                 <div className="flex items-center gap-x-4 text-3xl">
                     <LikeButton likes={likes} postId={postId} />
