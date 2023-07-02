@@ -16,6 +16,7 @@ function Feed({
     caption,
     createdAt,
     likes,
+    comments,
     docId: postId,
 }: IPost) {
     return (
@@ -42,7 +43,7 @@ function Feed({
                 </div>
                 <LikeDialog likes={likes} docId={postId} />
                 <Caption userId={userId} caption={caption} />
-                <Comments postId={postId} />
+                <Comments postId={postId} comments={comments} />
             </div>
         </Fragment>
     )

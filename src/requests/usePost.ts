@@ -1,23 +1,24 @@
-import { db } from '@/config/firebase'
+import { POST_QUERY_KEY } from '@/constants/util'
 import { useAuth } from '@/context/AuthContext'
 import { IPost } from '@/helpers/post-schema'
-import { POST_COLLECTION, createpost, getPost, getPosts } from '@/services/post'
+import { createpost, getPost, getPosts, updatePost } from '@/services/post'
 import { uploadPostImage } from '@/services/storage'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore'
+import { arrayRemove, arrayUnion } from 'firebase/firestore'
 import { getDownloadURL } from 'firebase/storage'
-
-const QUERY_KEY = 'posts'
 
 export function usePost(postId: string) {
     return useQuery({
-        queryKey: [QUERY_KEY, postId],
+        queryKey: [POST_QUERY_KEY, postId],
         queryFn: () => getPost(postId),
     })
 }
 
 export function usePosts(userId: string) {
-    return useQuery({ queryKey: [QUERY_KEY], queryFn: () => getPosts(userId) })
+    return useQuery({
+        queryKey: [POST_QUERY_KEY],
+        queryFn: () => getPosts(userId),
+    })
 }
 
 export function useUpdatePostLike(postId: string) {
@@ -26,15 +27,17 @@ export function useUpdatePostLike(postId: string) {
 
     return useMutation({
         mutationFn: ({ isLiked }: { isLiked: boolean }) =>
-            updateDoc(doc(db, POST_COLLECTION, postId), {
+            updatePost(postId, {
                 likes: isLiked
                     ? arrayRemove(currentUser)
                     : arrayUnion(currentUser),
             }),
         onSuccess: (_, { isLiked }) => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, postId] })
+            queryClient.invalidateQueries({
+                queryKey: [POST_QUERY_KEY, postId],
+            })
 
-            queryClient.setQueryData<IPost[]>([QUERY_KEY], (oldPosts) => {
+            queryClient.setQueryData<IPost[]>([POST_QUERY_KEY], (oldPosts) => {
                 if (oldPosts) {
                     return oldPosts.map((oldPost) => {
                         if (oldPost.docId === postId) {

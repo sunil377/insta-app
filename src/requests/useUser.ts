@@ -1,3 +1,4 @@
+import { USER_QUERY_KEY } from '@/constants/util'
 import { useAuth } from '@/context/AuthContext'
 import { getUser, getUserDocRef, getUsers } from '@/services/user'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -5,11 +6,9 @@ import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore'
 import { useRouter } from 'next/router'
 import { z } from 'zod'
 
-const QUERY_KEY = 'users'
-
 export function useUserById(id: string) {
     return useQuery({
-        queryKey: [QUERY_KEY, id],
+        queryKey: [USER_QUERY_KEY, id],
         queryFn: () => getUser(id),
     })
 }
@@ -21,7 +20,7 @@ export default function useUser() {
 
 export function useUsers(username: string | null) {
     return useQuery({
-        queryKey: [QUERY_KEY],
+        queryKey: [USER_QUERY_KEY],
         queryFn: () => getUsers(username!),
         enabled: !!username,
     })
@@ -49,7 +48,7 @@ function useUpdateUserSaved(postId: string) {
             }),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [QUERY_KEY, currentUser],
+                queryKey: [USER_QUERY_KEY, currentUser],
             })
         },
     })
@@ -73,9 +72,11 @@ function useUpdateUserFollowings(userId: string) {
             })
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, userId] })
             queryClient.invalidateQueries({
-                queryKey: [QUERY_KEY, currentUser],
+                queryKey: [USER_QUERY_KEY, userId],
+            })
+            queryClient.invalidateQueries({
+                queryKey: [USER_QUERY_KEY, currentUser],
             })
         },
     })

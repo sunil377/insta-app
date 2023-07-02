@@ -1,7 +1,8 @@
 import { ERROR_COMMENT_MIN_LENGTH } from '@/constants/errors'
 import { useAuth } from '@/context/AuthContext'
+import { IPost } from '@/helpers/post-schema'
 import { convertZodErrorToFormikError } from '@/helpers/util'
-import { useComments, useCreateComment } from '@/requests/useComment'
+import { useCreateComment } from '@/requests/useComment'
 import clsx from 'clsx'
 import { useFormik } from 'formik'
 import Link from 'next/link'
@@ -43,11 +44,11 @@ export function CommentForm({ postId }: { postId: string }) {
     const isDisabled = isSubmitting || !isValid
 
     return (
-        <form className="text-sm flex gap-4" noValidate onSubmit={handleSubmit}>
+        <form className="flex gap-4 text-sm" noValidate onSubmit={handleSubmit}>
             <input
                 type="text"
                 placeholder="Add a Comment..."
-                className="w-full focus:outline-none placeholder:text-secondary-light"
+                className="w-full placeholder:text-secondary-light focus:outline-none"
                 name="caption"
                 value={values.caption}
                 onChange={handleChange}
@@ -60,7 +61,7 @@ export function CommentForm({ postId }: { postId: string }) {
             <button
                 type="submit"
                 className={clsx(
-                    'text-primary-main hover:text-primary-dark transition-colors font-semibold disabled:opacity-50 disabled:pointer-events-none',
+                    'font-semibold text-primary-main transition-colors hover:text-primary-dark disabled:pointer-events-none disabled:opacity-50',
                     { hidden: !isValid },
                 )}
                 disabled={isDisabled}
@@ -71,31 +72,23 @@ export function CommentForm({ postId }: { postId: string }) {
     )
 }
 
-function Comments({ postId }: { postId: string }) {
-    const { data: comments, status } = useComments(postId)
-
-    switch (status) {
-        case 'loading':
-            return <div>loading...</div>
-        case 'error':
-            return <p>Error has Accur</p>
-        case 'success':
-            return (
-                <>
-                    {comments.length != 0 ? (
-                        <Link
-                            href={`/post/${postId}`}
-                            className="text-secondary-light block"
-                        >
-                            View all {comments.length} comments
-                        </Link>
-                    ) : null}
-                    <CommentForm postId={postId} />
-                </>
-            )
-        default:
-            return null
-    }
+function Comments({
+    postId,
+    comments,
+}: { postId: string } & Pick<IPost, 'comments'>) {
+    return (
+        <>
+            {comments.length != 0 ? (
+                <Link
+                    href={`/post/${postId}`}
+                    className="block text-secondary-light"
+                >
+                    View all {comments.length} comments
+                </Link>
+            ) : null}
+            <CommentForm postId={postId} />
+        </>
+    )
 }
 
 export default Comments

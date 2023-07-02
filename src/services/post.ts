@@ -42,4 +42,13 @@ async function getPosts(userId: string) {
     return parseQuerySnapshot<IPost>(responseUsers)
 }
 
-export { createpost, getPost, getPosts }
+type postKeys = keyof Pick<IPost, 'comments' | 'likes'>
+
+async function updatePost(
+    postId: string,
+    data: Partial<Record<postKeys, any>>,
+) {
+    return await updateDoc(doc(db, POST_COLLECTION, postId), data)
+}
+
+export { createpost, getPost, getPosts, updatePost }

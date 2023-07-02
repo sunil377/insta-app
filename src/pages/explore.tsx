@@ -21,7 +21,7 @@ const Explore: NextPageWithLayout = () => {
             return <div>Something went wrong</div>
         case 'success':
             return (
-                <div className="mx-auto mt-10 max-w-4xl px-4">
+                <div className="mx-auto my-10 max-w-4xl px-4">
                     <div className="grid grid-cols-3 gap-4">
                         {posts.map((post) => (
                             <MiniPost key={post.docId} {...post} />

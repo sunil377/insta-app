@@ -1,11 +1,12 @@
+import { COMMENT_QUERY_KEY, POST_QUERY_KEY } from '@/constants/util'
 import { ICommentClient, createComment, getComments } from '@/services/comment'
+import { updatePost } from '@/services/post'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-
-const QUERY_KEY = 'comments'
+import { arrayUnion } from 'firebase/firestore'
 
 export function useComments(postId: string) {
     return useQuery({
-        queryKey: [QUERY_KEY, postId],
+        queryKey: [COMMENT_QUERY_KEY, postId],
         queryFn: () => getComments(postId),
     })
 }
@@ -13,10 +14,18 @@ export function useComments(postId: string) {
 export function useCreateComment(postId: string) {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: (data: ICommentClient) => createComment(postId, data),
+        mutationFn: async (data: ICommentClient) => {
+            const comment = await createComment(postId, data)
+            await updatePost(postId, {
+                comments: arrayUnion(comment.id),
+            })
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [QUERY_KEY, postId],
+                queryKey: [COMMENT_QUERY_KEY, postId],
+            })
+            queryClient.invalidateQueries({
+                queryKey: [POST_QUERY_KEY, postId],
             })
         },
     })

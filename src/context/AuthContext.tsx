@@ -1,13 +1,8 @@
+import FetchingIndicator from '@/components/FetchingIndicator'
 import { auth } from '@/config/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import nookies from 'nookies'
-import {
-    createContext,
-    ReactNode,
-    useContext,
-    useEffect,
-    useState,
-} from 'react'
+import { createContext, ReactNode, useContext, useEffect } from 'react'
 
 type contextType = string | null
 
@@ -22,31 +17,22 @@ export function useAuth() {
 }
 
 export default function AuthProvider({
-    initialState,
+    currentUser,
     children,
 }: {
     children: ReactNode
-    initialState: string
+    currentUser: string
 }) {
-    const [user, setUser] = useState<contextType>(initialState)
-
     useEffect(() => {
         return onAuthStateChanged(auth, async (user) => {
-            let token = ''
-            try {
-                if (user) {
-                    token = await user.getIdToken()
-                }
-            } catch (error) {
-                console.error(error)
-            }
+            const token = (await user?.getIdToken()) ?? ''
             nookies.set(null, 'token', token, { path: '/' })
-            setUser(user?.uid ?? null)
         })
     }, [])
 
     return (
-        <AuthContext.Provider value={initialState}>
+        <AuthContext.Provider value={currentUser}>
+            <FetchingIndicator />
             {children}
         </AuthContext.Provider>
     )

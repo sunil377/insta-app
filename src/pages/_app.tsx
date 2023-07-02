@@ -40,7 +40,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
                 <ErrorBoundary
                     fallback={<div role="alert">something went wrong</div>}
                 >
-                    <AuthContext initialState={pageProps.currentUser}>
+                    <AuthContext currentUser={pageProps.currentUser}>
                         <PageLoader />
                         {getLayout(<Component {...pageProps} />)}
                     </AuthContext>
