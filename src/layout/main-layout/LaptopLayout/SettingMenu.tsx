@@ -5,22 +5,25 @@ import {
     SavedIcon,
     SettingsIcon,
 } from '@/assets'
+import { useAuth } from '@/context/AuthContext'
 import useLogout from '@/hooks/useLogout'
 import { Menu, Transition } from '@headlessui/react'
 import clsx from 'clsx'
+import Link from 'next/link'
 import { Fragment } from 'react'
 
 function SettingMenu() {
     const { handleLogout, isLoading } = useLogout()
+    const currentUser = useAuth()
 
     return (
         <Transition
-            enter="transition duration-100 ease-out"
-            enterFrom="transform scale-95 opacity-0"
-            enterTo="transform scale-100 opacity-100"
-            leave="transition duration-75 ease-out"
-            leaveFrom="transform scale-100 opacity-100"
-            leaveTo="transform scale-95 opacity-0"
+            enter="duration-200 ease-in"
+            enterFrom="scale-75 opacity-0"
+            enterTo="scale-100 opacity-100"
+            leave="duration-100 ease-out"
+            leaveFrom="scale-100 opacity-100"
+            leaveTo="scale-75 opacity-0"
             as={Fragment}
         >
             <Menu.Items className="absolute bottom-full z-10 w-56 origin-bottom-left divide-y rounded-md border bg-white text-sm shadow-2xl shadow-gray-300">
@@ -62,7 +65,8 @@ function SettingMenu() {
                 </Menu.Item>
                 <Menu.Item>
                     {({ active }) => (
-                        <button
+                        <Link
+                            href={`/${currentUser}?search=saved`}
                             className={clsx(
                                 'flex w-full items-center justify-between px-4 py-2',
                                 {
@@ -75,7 +79,7 @@ function SettingMenu() {
                                 aria-label="saved"
                                 className="scale-90 transform"
                             />
-                        </button>
+                        </Link>
                     )}
                 </Menu.Item>
                 <Menu.Item>
