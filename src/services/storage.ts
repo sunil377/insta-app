@@ -1,5 +1,10 @@
 import { storage } from '@/config/firebase'
-import { UploadMetadata, ref, uploadBytes } from 'firebase/storage'
+import {
+    UploadMetadata,
+    ref,
+    uploadBytes,
+    uploadString,
+} from 'firebase/storage'
 
 function uploadUserProfile(
     currentUser: string,
@@ -20,4 +25,10 @@ function uploadPostImage(
     return uploadBytes(imageRef, file, metaData)
 }
 
-export { uploadPostImage, uploadUserProfile }
+function uploadPostBase64Image(currentUser: string, file: string) {
+    const uuid = new Date().getTime().toString()
+    const imageRef = ref(storage, `${currentUser}/${uuid}`)
+    return uploadString(imageRef, file, 'data_url')
+}
+
+export { uploadPostBase64Image, uploadPostImage, uploadUserProfile }

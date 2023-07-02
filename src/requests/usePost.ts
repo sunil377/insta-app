@@ -1,11 +1,14 @@
-import { POST_QUERY_KEY } from '@/constants/util'
+import { SCREEN_LG } from '@/constants/screens'
+import { BASE64_KEY, POST_QUERY_KEY } from '@/constants/util'
 import { useAuth } from '@/context/AuthContext'
 import { IPost } from '@/helpers/post-schema'
+import useMediaQuery from '@/hooks/useMediaQuery'
 import { createpost, getPost, getPosts, updatePost } from '@/services/post'
-import { uploadPostImage } from '@/services/storage'
+import { uploadPostBase64Image, uploadPostImage } from '@/services/storage'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { arrayRemove, arrayUnion } from 'firebase/firestore'
-import { getDownloadURL } from 'firebase/storage'
+import { UploadResult, getDownloadURL } from 'firebase/storage'
+import { useRouter } from 'next/router'
 
 export function usePost(postId: string) {
     return useQuery({
@@ -62,19 +65,30 @@ export function useUpdatePostLike(postId: string) {
 }
 
 interface IArg {
-    file: File
+    file: File | string
     caption: string
 }
 
 export function useCreatePost() {
     const currentUser = useAuth()
+    const isLaptop = useMediaQuery(SCREEN_LG)
+    const router = useRouter()
 
     return useMutation({
         mutationFn: async ({ file, caption }: IArg) => {
-            const { ref } = await uploadPostImage(currentUser, file)
-            const url = await getDownloadURL(ref)
+            let result: UploadResult | null = null
 
-            await createpost(
+            if (isLaptop && file instanceof File) {
+                result = await uploadPostImage(currentUser, file)
+            } else {
+                result = await uploadPostBase64Image(
+                    currentUser,
+                    file as string,
+                )
+            }
+
+            const url = await getDownloadURL(result.ref)
+            return await createpost(
                 {
                     caption,
                     userId: currentUser,
@@ -82,6 +96,12 @@ export function useCreatePost() {
                 },
                 currentUser,
             )
+        },
+        onSuccess: ({ id }) => {
+            if (!isLaptop) {
+                window.localStorage.setItem(BASE64_KEY, '')
+            }
+            router.push(`/post/${id}`)
         },
     })
 }

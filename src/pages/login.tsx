@@ -4,7 +4,6 @@ import {
     CustomTextField,
 } from '@/components/form/TextField'
 import GoogleSignIn from '@/feature/GoogleSignIn'
-import { publicRoute } from '@/helpers/routes'
 import { LoginSchema } from '@/helpers/schema'
 import { convertZodErrorToFormikError } from '@/helpers/util'
 import { login } from '@/services/auth'
@@ -144,5 +143,3 @@ function loginform({
         </div>
     )
 }
-
-export const getServerSideProps = publicRoute

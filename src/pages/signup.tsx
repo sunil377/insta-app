@@ -4,7 +4,6 @@ import {
     CustomTextField,
 } from '@/components/form/TextField'
 import GoogleSignIn from '@/feature/GoogleSignIn'
-import { publicRoute } from '@/helpers/routes'
 import { SignupSchema } from '@/helpers/schema'
 import { convertZodErrorToFormikError } from '@/helpers/util'
 import { createUserForAuth, createUserForFirestore } from '@/services/auth'
@@ -52,7 +51,7 @@ export default function Signup() {
     const router = useRouter()
 
     return (
-        <main className="mx-auto max-w-sm py-10 px-4 text-sm">
+        <main className="mx-auto max-w-sm px-4 py-10 text-sm">
             <section className="space-y-4 bg-white px-2 pb-2 text-center xs:border xs:border-gray-300 xs:px-10 xs:pb-6 xs:pt-10">
                 <Image src={Instagram} alt="instagram" className="mx-auto" />
 
@@ -128,7 +127,7 @@ function signupform({
                 <Field name="username">{CustomTextField}</Field>
                 <Field name="password">{CustomPasswordTextField}</Field>
                 <button
-                    className="w-full flex justify-center rounded-md bg-blue-500 px-4 py-2 text-center font-medium text-white transition-colors hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
+                    className="flex w-full justify-center rounded-md bg-blue-500 px-4 py-2 text-center font-medium text-white transition-colors hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
                     type="submit"
                     disabled={!isValid || isSubmitting}
                 >
@@ -141,5 +140,3 @@ function signupform({
         </div>
     )
 }
-
-export const getServerSideProps = publicRoute
