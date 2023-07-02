@@ -1,6 +1,7 @@
 import { useUsers } from '@/requests/useUser'
 import { UserServer } from '@/services/user'
 import Link from 'next/link'
+import Alert from '../Alert'
 import FollowButton from '../Feeds/FollowButton'
 import { Avatar } from '../UserAvatar'
 
@@ -11,19 +12,27 @@ function Suggestions(currentUser: Pick<UserServer, 'username' | 'followings'>) {
         case 'loading':
             return <p>loading...</p>
         case 'error':
-            return (
-                <p role="alert" aria-live="polite">
-                    someting went wrong
-                </p>
-            )
+            return <Alert type="failed" message="Something went wrong" />
 
         case 'success':
             const removeFollowingUsers = users.filter(
                 (val) => !currentUser.followings.includes(val.docId),
             )
 
+            if (removeFollowingUsers.length === 0) {
+                return <div className="text-sm">No user found</div>
+            }
+
             return (
-                <>
+                <div>
+                    <div className="mb-1.5 mt-3 flex justify-between ">
+                        <p className="text-sm text-gray-700">
+                            Suggested for you
+                        </p>
+                        <button className="text-xs font-semibold">
+                            See All
+                        </button>
+                    </div>
                     {removeFollowingUsers.map(
                         ({ docId, username, profile: { photo, fullname } }) => (
                             <div
@@ -52,7 +61,7 @@ function Suggestions(currentUser: Pick<UserServer, 'username' | 'followings'>) {
                             </div>
                         ),
                     )}
-                </>
+                </div>
             )
 
         default:

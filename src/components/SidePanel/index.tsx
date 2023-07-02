@@ -41,20 +41,11 @@ function SidePanel() {
                             switch
                         </button>
                     </div>
-                    <div>
-                        <div className="mb-1.5 mt-3 flex justify-between ">
-                            <p className="text-sm text-gray-700">
-                                Suggested for you
-                            </p>
-                            <button className="text-xs font-semibold">
-                                See All
-                            </button>
-                        </div>
-                        <Suggestions
-                            username={currentUser.username}
-                            followings={currentUser.followings}
-                        />
-                    </div>
+
+                    <Suggestions
+                        username={currentUser.username}
+                        followings={currentUser.followings}
+                    />
                 </section>
             )
 
