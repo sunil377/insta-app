@@ -1,22 +1,23 @@
-import {
-    ICommentClient,
-    ICommentServer,
-    createComment,
-    getComments,
-} from '@/services/comment'
+import { ICommentClient, createComment, getComments } from '@/services/comment'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
+const QUERY_KEY = 'comments'
+
 export function useComments(postId: string) {
-    return useQuery<ICommentServer[]>(['comments', postId], () =>
-        getComments(postId),
-    )
+    return useQuery({
+        queryKey: [QUERY_KEY, postId],
+        queryFn: () => getComments(postId),
+    })
 }
 
 export function useCreateComment(postId: string) {
     const queryClient = useQueryClient()
-    return useMutation((data: ICommentClient) => createComment(postId, data), {
+    return useMutation({
+        mutationFn: (data: ICommentClient) => createComment(postId, data),
         onSuccess: () => {
-            queryClient.invalidateQueries(['comments', postId])
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEY, postId],
+            })
         },
     })
 }

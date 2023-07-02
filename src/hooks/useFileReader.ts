@@ -30,16 +30,17 @@ function useFileReader() {
         function handleLoadStart() {
             setState({ isloading: true, error: null, dataURL: null })
         }
-        function handleError(err: ProgressEvent<FileReader>) {
+
+        function handleError(this: FileReader) {
             setState({
                 isloading: false,
-                error: err.target?.error?.message ?? null,
+                error: this.error?.message ?? null,
                 dataURL: null,
             })
         }
 
-        function handleLoad(fileReaderEvent: ProgressEvent<FileReader>) {
-            const response = fileReaderEvent.target?.result ?? null
+        function handleLoad(this: FileReader) {
+            const response = this.result
 
             if (typeof response === 'string') {
                 setState({

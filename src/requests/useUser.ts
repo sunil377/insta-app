@@ -1,14 +1,17 @@
 import { useAuth } from '@/context/AuthContext'
-import { UserServer, getUser, getUserDocRef, getUsers } from '@/services/user'
+import { getUser, getUserDocRef, getUsers } from '@/services/user'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore'
 import { useRouter } from 'next/router'
 import { z } from 'zod'
 
-const __query__ = 'users'
+const QUERY_KEY = 'users'
 
 export function useUserById(id: string) {
-    return useQuery<UserServer>([__query__, id], () => getUser(id))
+    return useQuery({
+        queryKey: [QUERY_KEY, id],
+        queryFn: () => getUser(id),
+    })
 }
 
 export default function useUser() {
@@ -17,7 +20,9 @@ export default function useUser() {
 }
 
 export function useUsers(username: string | null) {
-    return useQuery<UserServer[]>([__query__], () => getUsers(username!), {
+    return useQuery({
+        queryKey: [QUERY_KEY],
+        queryFn: () => getUsers(username!),
         enabled: !!username,
     })
 }
@@ -37,25 +42,25 @@ function useUpdateUserSaved(postId: string) {
     const currentUser = useAuth()
     const queryClient = useQueryClient()
 
-    return useMutation(
-        ({ isSaved }: { isSaved: boolean }) =>
+    return useMutation({
+        mutationFn: ({ isSaved }: { isSaved: boolean }) =>
             updateDoc(getUserDocRef(currentUser), {
                 saved: isSaved ? arrayRemove(postId) : arrayUnion(postId),
             }),
-        {
-            onSuccess: () => {
-                queryClient.invalidateQueries([__query__, currentUser])
-            },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEY, currentUser],
+            })
         },
-    )
+    })
 }
 
 function useUpdateUserFollowings(userId: string) {
     const currentUser = useAuth()
     const queryClient = useQueryClient()
 
-    return useMutation(
-        async ({ isFollowing }: { isFollowing: boolean }) => {
+    return useMutation({
+        mutationFn: async ({ isFollowing }: { isFollowing: boolean }) => {
             await updateDoc(getUserDocRef(currentUser), {
                 followings: isFollowing
                     ? arrayRemove(userId)
@@ -67,13 +72,13 @@ function useUpdateUserFollowings(userId: string) {
                     : arrayUnion(currentUser),
             })
         },
-        {
-            onSuccess: () => {
-                queryClient.invalidateQueries([__query__, userId])
-                queryClient.invalidateQueries([__query__, currentUser])
-            },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, userId] })
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEY, currentUser],
+            })
         },
-    )
+    })
 }
 
 export { useUpdateUserFollowings, useUpdateUserSaved }
