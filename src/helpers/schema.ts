@@ -77,14 +77,14 @@ const UserSchema = z.object({
     saved: defaultArraySchema,
     followings: defaultArraySchema,
     followers: defaultArraySchema,
-    createdAt: z.number().default(new Date().getTime()),
+    createdAt: z.number().default(() => new Date().getTime()),
     updatedAt: z.number().nullable().default(null),
 })
 
 export {
     LoginSchema,
+    ProfileSchema,
     SignupSchema,
     UserSchema,
-    ProfileSchema,
     defaultArraySchema,
 }

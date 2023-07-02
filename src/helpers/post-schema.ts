@@ -8,7 +8,7 @@ const postSchemaWithoutId = z.object({
     photo: z.string().url(),
     likes: defaultArraySchema,
     comments: defaultArraySchema,
-    createdAt: z.number().default(new Date().getTime()),
+    createdAt: z.number().default(() => new Date().getTime()),
     updatedAt: z.number().nullable().default(null),
 })
 
