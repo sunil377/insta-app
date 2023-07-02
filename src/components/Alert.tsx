@@ -17,8 +17,9 @@ function Alert({ message, type, className, ...rest }: IProps) {
     return (
         <p
             className={clsx(
-                'flex items-center gap-2 rounded-md border bg-white px-8 py-2 text-sm font-medium shadow-md',
+                'flex w-full items-center gap-2 rounded-md border bg-white px-8 py-3 text-sm font-medium shadow-md sm:max-w-sm',
                 type === 'success' ? 'text-green-500' : 'text-red-500',
+                className,
             )}
             {...defaultProps}
         >
@@ -29,7 +30,6 @@ function Alert({ message, type, className, ...rest }: IProps) {
                     <IoAlertCircle />
                 )}
             </i>
-
             {message}
         </p>
     )

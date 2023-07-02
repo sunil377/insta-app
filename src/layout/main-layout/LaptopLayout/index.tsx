@@ -10,7 +10,7 @@ import {
     SearchIcon,
 } from '@/assets'
 import CreatePost from '@/components/CreatePost/CreatePostButton'
-import { UserAvatar } from '@/components/UserAvatar'
+import { UserAvatarWithoutLink } from '@/components/UserAvatar'
 import { useAuth } from '@/context/AuthContext'
 import { Menu, Popover, Transition } from '@headlessui/react'
 import clsx from 'clsx'
@@ -199,7 +199,7 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                         )}
                     >
                         <div className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100">
-                            <UserAvatar />
+                            <UserAvatarWithoutLink />
                         </div>
 
                         <ToolTip isOpen={isPopoverOpened}>Profile</ToolTip>

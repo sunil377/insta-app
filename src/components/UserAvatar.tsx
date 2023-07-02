@@ -59,5 +59,25 @@ function UserAvatar(props: Omit<IAvatar, 'photo' | 'username'>) {
             return null
     }
 }
+function UserAvatarWithoutLink(props: Omit<IAvatar, 'photo' | 'username'>) {
+    const { data: user, status } = useUser()
 
-export { Avatar, UserAvatar }
+    switch (status) {
+        case 'loading':
+            return <p>loading...</p>
+        case 'error':
+            return <h2>error has accur</h2>
+        case 'success':
+            return (
+                <Avatar
+                    photo={user.profile.photo}
+                    username={user.username}
+                    {...props}
+                />
+            )
+        default:
+            return null
+    }
+}
+
+export { Avatar, UserAvatar, UserAvatarWithoutLink }
