@@ -8,8 +8,8 @@ import {
     USERNAME_MIN_LENGTH,
     USERNAME_REQUIRED,
 } from '@/constants/errors'
-import { LoginSchema, SignupSchema } from '@/helpers/schema'
 import { convertZodErrorToFormikError } from '@/helpers/util'
+import { LoginSchema, SignupSchema } from '@/schema/user-schema'
 
 describe('LoginSchema Email Schema', () => {
     test('No Email Field', () => {

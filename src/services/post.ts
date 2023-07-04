@@ -1,6 +1,6 @@
 import { db } from '@/config/firebase'
 import { POST_NOT_FOUND } from '@/constants/errors'
-import { IClientPost, IPost, postSchemaWithoutId } from '@/helpers/post-schema'
+import { IClientPost, IPost, postSchemaWithoutId } from '@/schema/post-schema'
 import {
     addDoc,
     arrayUnion,
@@ -12,8 +12,8 @@ import {
     updateDoc,
     where,
 } from 'firebase/firestore'
-import { parseQuerySnapshot, parseSnapshot } from './helper'
 import { getUserDocRef } from './user'
+import { parseQuerySnapshot, parseSnapshot } from './util'
 
 export const POST_COLLECTION = 'posts'
 
@@ -35,9 +35,9 @@ async function getPost(docId: string) {
     return parseSnapshot<IPost>(responseUser, POST_NOT_FOUND)
 }
 
-async function getPosts(userId: string) {
+async function getPosts(author: string) {
     const responseUsers = await getDocs(
-        query(collection(db, POST_COLLECTION), where('userId', '!=', userId)),
+        query(collection(db, POST_COLLECTION), where('author', '!=', author)),
     )
     return parseQuerySnapshot<IPost>(responseUsers)
 }

@@ -5,13 +5,15 @@ export default function useMediaQuery(query: string) {
 
     useEffect(() => {
         const win = window.matchMedia(query)
+
         setMatch(win.matches)
 
-        function handleChange(e: Event) {
+        function handleChange() {
             setMatch(win.matches)
         }
 
         win.addEventListener('change', handleChange)
+
         return () => {
             win.removeEventListener('change', handleChange)
         }

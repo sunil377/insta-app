@@ -1,32 +1,27 @@
 import { CommentIcon } from '@/assets'
-import { IPost } from '@/helpers/post-schema'
-import { useComments } from '@/requests/useComment'
+import { IPost } from '@/schema/post-schema'
 import Image from 'next/image'
 import Link from 'next/link'
 import { AiFillHeart } from 'react-icons/ai'
-import { InlineLoader } from '.'
 
 function MiniPost({ caption, comments, docId: postId, likes, photo }: IPost) {
-    const { data, isSuccess, isLoading } = useComments(postId)
-
     return (
         <Link
             href={`/post/${postId}`}
-            className="aspect-square relative block group"
+            className="group relative block aspect-square"
         >
             <Image src={photo} alt={caption} fill className="object-cover" />
-            <div className="absolute z-10 inset-0 flex items-center justify-center gap-1 sm:gap-4 fill-white text-white  font-semibold sm:text-lg sm:flex-row flex-col invisible group-hover:visible transition-all group-hover:bg-overlay">
-                <div className="space-x-2 inline-flex items-center">
+            <div className="invisible absolute inset-0 z-10 flex flex-col items-center justify-center gap-1 fill-white  font-semibold text-white transition-all group-hover:visible group-hover:bg-overlay sm:flex-row sm:gap-4 sm:text-lg">
+                <div className="inline-flex items-center space-x-2">
                     <AiFillHeart className="text-3xl" />
                     <p>{likes.length}</p>
                 </div>
-                {isSuccess && data.length > 0 ? (
-                    <div className="space-x-2 inline-flex items-center">
+
+                {comments.length > 0 ? (
+                    <div className="inline-flex items-center space-x-2">
                         <CommentIcon />
-                        <p>{data.length}</p>
+                        <p>{comments.length}</p>
                     </div>
-                ) : isLoading ? (
-                    <InlineLoader />
                 ) : null}
             </div>
         </Link>

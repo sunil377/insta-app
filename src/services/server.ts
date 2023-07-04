@@ -1,8 +1,9 @@
 import { adminDB } from '@/config/firebase-admin'
 import { POST_NOT_FOUND, USER_NOT_FOUND } from '@/constants/errors'
-import { IPost } from '@/helpers/post-schema'
+import { IPost } from '@/schema/post-schema'
+import { UserServer } from '@/schema/user-schema'
 import { POST_COLLECTION } from './post'
-import { UserServer, user_collection_name } from './user'
+import { user_collection_name } from './user'
 
 async function getServerUser(docId: string) {
     const response = await adminDB.doc(user_collection_name + '/' + docId).get()

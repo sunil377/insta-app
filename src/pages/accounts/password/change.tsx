@@ -1,13 +1,13 @@
 import { UserAvatar } from '@/components/UserAvatar'
 import { PASSWORD_DONT_MATCH } from '@/constants/errors'
 import { protectedRouteWithUser } from '@/helpers/routes'
-import { Password_Schema } from '@/helpers/schema'
 import { convertZodErrorToFormikError } from '@/helpers/util'
 import useSuccess from '@/hooks/useSuccess'
 import AccountLayout from '@/layout/account-layout'
 import MainLayout from '@/layout/main-layout'
 import { NextPageWithLayout } from '@/pages/_app'
 import useUser from '@/requests/useUser'
+import { passwordSchema } from '@/schema/util'
 import { changePassword } from '@/services/auth'
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik'
 import { InferGetServerSidePropsType } from 'next'
@@ -16,9 +16,9 @@ import { Fragment } from 'react'
 import { z } from 'zod'
 
 const Schema = z.object({
-    oldPassword: Password_Schema,
-    newPassword: Password_Schema,
-    confirm: Password_Schema,
+    oldPassword: passwordSchema,
+    newPassword: passwordSchema,
+    confirm: passwordSchema,
 })
 
 type initialValues = z.infer<typeof Schema>

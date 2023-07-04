@@ -18,51 +18,47 @@ import { z } from 'zod'
 import { NextPageWithLayout } from './_app'
 
 const ProfilePage: IPage = () => {
-    const { data, status } = useProfileUser()
+    const { data: profileUser, isLoading, isError } = useProfileUser()
     const [activeTab, setActiveTab] = useGetSearchQuery()
 
-    switch (status) {
-        case 'loading':
-            return <p>loading...</p>
-        case 'error':
-            return <h2>error has Accur</h2>
-        case 'success':
-            const { posts, saved, docId } = data
-
-            return (
-                <main className="mx-auto mt-16 max-w-4xl bg-white text-sm sm:mt-10">
-                    <Header {...data} />
-                    <Tab.Group
-                        as="section"
-                        className="mt-10"
-                        selectedIndex={activeTab}
-                        onChange={setActiveTab}
-                    >
-                        <Tab.List className="border-t sm:flex sm:justify-center">
-                            <div className="grid grid-cols-3 sm:block sm:space-x-4">
-                                <TabButton userId={docId} params="posts">
-                                    POSTS
-                                </TabButton>
-                                <TabButton userId={docId} params="saved">
-                                    SAVED
-                                </TabButton>
-                                <TabButton userId={docId} params="tagged">
-                                    TAGGED
-                                </TabButton>
-                            </div>
-                        </Tab.List>
-                        <Tab.Panels className="pb-4">
-                            <TabPanel list={posts} title="Post" />
-                            <TabPanel list={saved} title="Saved" />
-                            <TabPanel list={saved} title="Tagged" />
-                        </Tab.Panels>
-                    </Tab.Group>
-                </main>
-            )
-
-        default:
-            return null
+    if (isLoading) {
+        return <p>loading...</p>
     }
+
+    if (isError) {
+        return <p>error has Accur</p>
+    }
+
+    return (
+        <main className="mx-auto mt-16 max-w-4xl bg-white text-sm sm:mt-10">
+            <Header {...profileUser} />
+            <Tab.Group
+                as="section"
+                className="mt-10"
+                selectedIndex={activeTab}
+                onChange={setActiveTab}
+            >
+                <Tab.List className="border-t sm:flex sm:justify-center">
+                    <div className="grid grid-cols-3 sm:block sm:space-x-4">
+                        <TabButton userId={profileUser.docId} params="posts">
+                            POSTS
+                        </TabButton>
+                        <TabButton userId={profileUser.docId} params="saved">
+                            SAVED
+                        </TabButton>
+                        <TabButton userId={profileUser.docId} params="tagged">
+                            TAGGED
+                        </TabButton>
+                    </div>
+                </Tab.List>
+                <Tab.Panels className="pb-4">
+                    <TabPanel list={profileUser.posts} title="Post" />
+                    <TabPanel list={profileUser.saved} title="Saved" />
+                    <TabPanel list={profileUser.saved} title="Tagged" />
+                </Tab.Panels>
+            </Tab.Group>
+        </main>
+    )
 }
 
 ProfilePage.getLayout = function getLayout(page) {

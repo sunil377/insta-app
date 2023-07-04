@@ -13,6 +13,8 @@ import { useRouter } from 'next/router'
 import { Fragment, ReactNode, useState } from 'react'
 import { HiChevronDown, HiChevronLeft } from 'react-icons/hi'
 import HomeNavigation from './HomeNavigation'
+import PostLikesNavigation from './PostLikeNavigation'
+import PostNavigation from './PostNavigation'
 import SettingsDialog from './SettingsDialog'
 
 function TopNavbar() {
@@ -23,6 +25,10 @@ function TopNavbar() {
             return <HomeNavigation />
         case '/[id]':
             return <ProfileMobileNav />
+        case '/post/[id]':
+            return <PostNavigation />
+        case '/post/[id]/likes':
+            return <PostLikesNavigation />
         case '/accounts/edit':
             return <EditPageMobileNav title="Edit Profile" />
         case '/accounts/password/change':
@@ -54,7 +60,7 @@ function MobileLayout({ children }: { children: ReactNode }) {
                 <UserAvatar />
             </footer>
 
-            <div className="mb-12 mt-14">{children}</div>
+            <div className="my-12 pb-12">{children}</div>
         </Fragment>
     )
 }

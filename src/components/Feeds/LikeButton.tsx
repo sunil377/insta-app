@@ -1,6 +1,6 @@
+import { HeartFillIcon, HeartIcon } from '@/assets'
 import { useAuth } from '@/context/AuthContext'
 import { useUpdatePostLike } from '@/requests/usePost'
-import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
 
 function LikeButton({ postId, likes }: { postId: string; likes: string[] }) {
     const currentUser = useAuth()
@@ -15,9 +15,9 @@ function LikeButton({ postId, likes }: { postId: string; likes: string[] }) {
             onClick={handleClick}
         >
             {isLiked ? (
-                <AiFillHeart className="fill-red-500 hover:transform hover:scale-105 transition-transform" />
+                <HeartFillIcon className="fill-red-500 transition-transform hover:scale-105 hover:transform" />
             ) : (
-                <AiOutlineHeart className="transition-colors hover:text-secondary-light " />
+                <HeartIcon className="transition-colors hover:text-secondary-light " />
             )}
         </button>
     )

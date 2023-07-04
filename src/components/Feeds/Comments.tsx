@@ -1,8 +1,8 @@
 import { ERROR_COMMENT_MIN_LENGTH } from '@/constants/errors'
 import { useAuth } from '@/context/AuthContext'
-import { IPost } from '@/helpers/post-schema'
 import { convertZodErrorToFormikError } from '@/helpers/util'
 import { useCreateComment } from '@/requests/useComment'
+import { IPost } from '@/schema/post-schema'
 import clsx from 'clsx'
 import { useFormik } from 'formik'
 import Link from 'next/link'
@@ -33,7 +33,7 @@ export function CommentForm({ postId }: { postId: string }) {
         onSubmit: async (values, helpers) => {
             await mutateAsync({
                 caption: values.caption,
-                userId: currentUser,
+                criticId: currentUser,
             })
 
             helpers.setSubmitting(false)
@@ -76,16 +76,19 @@ function Comments({
     postId,
     comments,
 }: { postId: string } & Pick<IPost, 'comments'>) {
+    const commentText =
+        comments.length > 0 ? (
+            <Link
+                href={`/post/${postId}`}
+                className="block text-secondary-light"
+            >
+                View all {comments.length} comments
+            </Link>
+        ) : null
+
     return (
         <>
-            {comments.length != 0 ? (
-                <Link
-                    href={`/post/${postId}`}
-                    className="block text-secondary-light"
-                >
-                    View all {comments.length} comments
-                </Link>
-            ) : null}
+            {commentText}
             <CommentForm postId={postId} />
         </>
     )

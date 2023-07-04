@@ -1,4 +1,4 @@
-import { UserServer } from '@/services/user'
+import { UserServer } from '@/schema/user-schema'
 import { Fragment, useState } from 'react'
 import UserListDialog from '../Feeds/UserListDialog'
 

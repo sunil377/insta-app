@@ -4,9 +4,9 @@ import { CommentForm } from '../Feeds/Comments'
 import LikeButton from '../Feeds/LikeButton'
 import LikeDialog from '../Feeds/LikeDialog'
 import SavedButton from '../Feeds/SavedButton'
-import UserInfo from '../Feeds/UserInfo'
 import Comments from './Comments'
 import MenuDialog from './MenuDialog'
+import UserInfo from './UserInfo'
 
 function Post({ postId }: { postId: string }) {
     const { data: post, status } = usePost(postId)
@@ -18,30 +18,30 @@ function Post({ postId }: { postId: string }) {
             return <div>something went wrong</div>
         case 'success':
             return (
-                <section className="text-sm divide-y divide-secondary-lighter flex flex-col">
-                    <header className="flex gap-3 items-center p-4">
+                <section className="flex flex-col divide-y divide-secondary-lighter text-sm">
+                    <header className="flex items-center gap-3 p-4">
                         <UserInfo
-                            userId={post.userId}
+                            userId={post.authorId}
                             createdAt={post.createdAt}
                         />
                         <MenuDialog postId={postId} />
                     </header>
-                    <div className="px-4 py-2 h-full max-h-[24rem] overflow-y-auto space-y-2">
+                    <div className="h-full max-h-[24rem] space-y-2 overflow-y-auto px-4 py-2">
                         <Comments postId={postId} />
                     </div>
 
-                    <div className="flex items-center gap-x-4 text-3xl px-4 py-2 mt-auto">
+                    <div className="mt-auto flex items-center gap-x-4 px-4 py-2 text-3xl">
                         <LikeButton likes={post.likes} postId={postId} />
                         <CommentLink postId={postId} />
                         <SavedButton postId={postId} />
                     </div>
                     {post.likes.length > 0 ? (
-                        <div className="flex px-4 py-2 gap-x-3">
+                        <div className="flex gap-x-3 px-4 py-2">
                             <LikeDialog likes={post.likes} docId={postId} />
                         </div>
                     ) : null}
 
-                    <div className="py-2 px-4">
+                    <div className="px-4 py-2">
                         <CommentForm postId={postId} />
                     </div>
                 </section>

@@ -11,7 +11,7 @@ function MenuDialog({ postId }: { postId: string }) {
             <button
                 onClick={() => setOpen(true)}
                 aria-label="more info"
-                className="ml-auto aspect-square rounded-full p-2 text-xl"
+                className="ml-auto aspect-square rounded-full p-0.5 text-xl sm:p-2"
             >
                 <ThreeDotIcon />
             </button>

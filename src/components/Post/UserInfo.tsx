@@ -1,6 +1,6 @@
 import { useUserById } from '@/requests/useUser'
-import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
+import FollowButton from '../Feeds/FollowButton'
 import { Avatar } from '../UserAvatar'
 
 function UserInfo({
@@ -30,21 +30,14 @@ function UserInfo({
                         photo={user.profile.photo}
                         username={user.username}
                     />
-
                     <Link href={`/${userId}`} className="font-semibold">
                         {user.username}
                     </Link>
-
                     <div
                         className="h-1.5 w-1.5 rounded-full bg-primary-main bg-opacity-50"
                         aria-hidden
                     />
-
-                    <p className="text-xs text-gray-700">
-                        {formatDistanceToNow(createdAt, {
-                            addSuffix: true,
-                        })}
-                    </p>
+                    <FollowButton userId={userId} />
                 </>
             )
         default:

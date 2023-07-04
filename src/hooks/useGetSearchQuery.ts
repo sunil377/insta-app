@@ -28,8 +28,8 @@ function useGetSearchQuery() {
     const [state, setState] = useState(() => getParams(router))
 
     useEffect(() => {
-        const result = getParams(router)
-        setState(result)
+        const params = getParams(router)
+        setState(params)
     }, [router])
 
     return [state, setState] as const

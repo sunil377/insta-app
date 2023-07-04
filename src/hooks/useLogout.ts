@@ -1,23 +1,19 @@
 import { logout } from '@/services/auth'
+import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
 
 export default function useLogout() {
     const router = useRouter()
-    const [isLoading, setLoading] = useState(false)
 
-    async function handleLogout() {
-        setLoading(true)
-        try {
-            await logout()
-            router.push('/login')
-        } catch (error) {
-            setLoading(false)
-        }
+    const mutation = useMutation({
+        mutationFn: logout,
+        onSuccess: () => router.push('/login'),
+    })
+
+    const state = {
+        isLoading: mutation.isLoading,
+        handleLogout: mutation.mutate,
     }
 
-    return {
-        isLoading,
-        handleLogout,
-    }
+    return state
 }

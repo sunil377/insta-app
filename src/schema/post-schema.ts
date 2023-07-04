@@ -1,19 +1,24 @@
 import { USERID_REQUIRED } from '@/constants/errors'
 import { z } from 'zod'
-import { defaultArraySchema } from './schema'
+import {
+    createdAtSchema,
+    defaultArraySchema,
+    docIdSchema,
+    updatedAtSchema,
+} from './util'
 
 const postSchemaWithoutId = z.object({
-    userId: z.string().min(1, { message: USERID_REQUIRED }),
+    authorId: z.string().min(1, { message: USERID_REQUIRED }),
     caption: z.string(),
     photo: z.string().url(),
     likes: defaultArraySchema,
     comments: defaultArraySchema,
-    createdAt: z.number().default(() => new Date().getTime()),
-    updatedAt: z.number().nullable().default(null),
+    createdAt: createdAtSchema,
+    updatedAt: updatedAtSchema,
 })
 
 const postSchema = postSchemaWithoutId.extend({
-    docId: z.string(),
+    docId: docIdSchema,
 })
 
 export type IPost = z.infer<typeof postSchema>

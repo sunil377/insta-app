@@ -1,6 +1,6 @@
 import { db } from '@/config/firebase'
 import { USER_NOT_FOUND } from '@/constants/errors'
-import { ProfileSchema, UserSchema } from '@/helpers/schema'
+import { UserClient, UserSchema, UserServer } from '@/schema/user-schema'
 import {
     collection,
     deleteDoc,
@@ -12,8 +12,7 @@ import {
     updateDoc,
     where,
 } from 'firebase/firestore'
-import { z } from 'zod'
-import { parseQuerySnapshot, parseSnapshot } from './helper'
+import { parseQuerySnapshot, parseSnapshot } from './util'
 
 export const user_collection_name = 'users'
 const user_collection_ref = collection(db, user_collection_name)
@@ -21,10 +20,6 @@ const user_collection_ref = collection(db, user_collection_name)
 function getUserDocRef(docId: string) {
     return doc(db, user_collection_name, docId)
 }
-
-export type UserClient = z.input<typeof UserSchema>
-export type UserServer = z.infer<typeof UserSchema>
-export type UserProfileServer = z.infer<typeof ProfileSchema>
 
 function createUser(userData: UserClient) {
     const { docId, ...data } = UserSchema.parse(userData)

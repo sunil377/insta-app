@@ -1,4 +1,4 @@
-import { UserServer } from '@/services/user'
+import { UserServer } from '@/schema/user-schema'
 import Image from 'next/image'
 
 function ProfileAvatar({

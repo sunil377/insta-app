@@ -1,5 +1,5 @@
 import { useUsers } from '@/requests/useUser'
-import { UserServer } from '@/services/user'
+import { UserServer } from '@/schema/user-schema'
 import Link from 'next/link'
 import Alert from '../Alert'
 import FollowButton from '../Feeds/FollowButton'

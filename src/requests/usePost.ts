@@ -1,8 +1,8 @@
 import { SCREEN_LG } from '@/constants/screens'
 import { BASE64_KEY, POST_QUERY_KEY } from '@/constants/util'
 import { useAuth } from '@/context/AuthContext'
-import { IPost } from '@/helpers/post-schema'
 import useMediaQuery from '@/hooks/useMediaQuery'
+import { IPost } from '@/schema/post-schema'
 import { createpost, getPost, getPosts, updatePost } from '@/services/post'
 import { uploadPostBase64Image, uploadPostImage } from '@/services/storage'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -17,10 +17,10 @@ export function usePost(postId: string) {
     })
 }
 
-export function usePosts(userId: string) {
+export function usePosts(author: string) {
     return useQuery({
         queryKey: [POST_QUERY_KEY],
-        queryFn: () => getPosts(userId),
+        queryFn: () => getPosts(author),
     })
 }
 
@@ -91,7 +91,7 @@ export function useCreatePost() {
             return await createpost(
                 {
                     caption,
-                    userId: currentUser,
+                    authorId: currentUser,
                     photo: url,
                 },
                 currentUser,

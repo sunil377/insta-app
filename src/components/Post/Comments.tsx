@@ -1,4 +1,3 @@
-import { IPost } from '@/helpers/post-schema'
 import { useComments } from '@/requests/useComment'
 import { useUserById } from '@/requests/useUser'
 import { formatDistanceToNow } from 'date-fns'
@@ -6,7 +5,7 @@ import Link from 'next/link'
 import { AiOutlineHeart } from 'react-icons/ai'
 import { Avatar } from '../UserAvatar'
 
-function UserPic({ userId }: Pick<IPost, 'userId'>) {
+function UserPic({ userId }: { userId: string }) {
     const { data: user, status } = useUserById(userId)
 
     switch (status) {
@@ -26,7 +25,7 @@ function UserPic({ userId }: Pick<IPost, 'userId'>) {
             return null
     }
 }
-function Username({ userId }: Pick<IPost, 'userId'>) {
+function Username({ userId }: { userId: string }) {
     const { data: user, status } = useUserById(userId)
 
     switch (status) {
@@ -58,10 +57,10 @@ function Comments({ postId }: { postId: string }) {
                 <>
                     {comments.map((comment) => (
                         <article key={comment.docId} className="flex gap-x-4">
-                            <UserPic userId={comment.userId} />
+                            <UserPic userId={comment.criticId} />
                             <div className="flex flex-col justify-between">
                                 <p className="line-clamp-3 space-x-1">
-                                    <Username userId={comment.userId} />
+                                    <Username userId={comment.criticId} />
                                     <span>{comment.caption}</span>
                                 </p>
                                 <p className="text-xs text-secondary-light">

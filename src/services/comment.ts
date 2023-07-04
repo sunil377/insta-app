@@ -1,33 +1,24 @@
 import { db } from '@/config/firebase'
+import {
+    CommentSchemaWithoutId,
+    ICommentClient,
+    ICommentServer,
+} from '@/schema/comment-schema'
 import { addDoc, collection, getDocs } from 'firebase/firestore'
-import { z } from 'zod'
-import { parseQuerySnapshot } from './helper'
 import { POST_COLLECTION } from './post'
+import { parseQuerySnapshot } from './util'
 
 const COMMENT_COLLECTION = 'comments'
-const getCommentCol = (postId: string) =>
+
+const getCommentCollection = (postId: string) =>
     collection(db, POST_COLLECTION, postId, COMMENT_COLLECTION)
 
-const SchemaWithoutId = z.object({
-    userId: z.string().nonempty(),
-    caption: z.string().nonempty(),
-    createdAt: z.number().default(() => new Date().getTime()),
-    updatedAt: z.number().nullable().default(null),
-})
-
-const Schema = SchemaWithoutId.extend({
-    docId: z.string().nonempty(),
-})
-
-export type ICommentClient = z.input<typeof SchemaWithoutId>
-export type ICommentServer = z.infer<typeof Schema>
-
 export async function getComments(postId: string) {
-    const response = await getDocs(getCommentCol(postId))
+    const response = await getDocs(getCommentCollection(postId))
     return parseQuerySnapshot<ICommentServer>(response)
 }
 
 export function createComment(postId: string, data: ICommentClient) {
-    const parsedData = SchemaWithoutId.parse(data)
-    return addDoc(getCommentCol(postId), parsedData)
+    const parsedData = CommentSchemaWithoutId.parse(data)
+    return addDoc(getCommentCollection(postId), parsedData)
 }

@@ -2,17 +2,21 @@ import clsx from 'clsx'
 import { AiOutlineCheckCircle } from 'react-icons/ai'
 import { IoAlertCircle } from 'react-icons/io5'
 
-interface IProps extends React.HTMLAttributes<HTMLParagraphElement> {
+type IParagraph = React.HTMLAttributes<HTMLParagraphElement>
+
+interface IProps extends IParagraph {
     message: string
     type: 'success' | 'failed'
 }
 
 function Alert({ message, type, className, ...rest }: IProps) {
-    const defaultProps: React.HtmlHTMLAttributes<HTMLParagraphElement> = {
+    const defaultProps: IParagraph = {
         role: 'alert',
         'aria-live': 'polite',
         ...rest,
     }
+    const icon =
+        type === 'success' ? <AiOutlineCheckCircle /> : <IoAlertCircle />
 
     return (
         <p
@@ -23,13 +27,7 @@ function Alert({ message, type, className, ...rest }: IProps) {
             )}
             {...defaultProps}
         >
-            <i className="text-2xl">
-                {type === 'success' ? (
-                    <AiOutlineCheckCircle />
-                ) : (
-                    <IoAlertCircle />
-                )}
-            </i>
+            <i className="text-2xl">{icon}</i>
             {message}
         </p>
     )

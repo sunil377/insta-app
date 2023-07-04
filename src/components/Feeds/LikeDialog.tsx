@@ -1,12 +1,12 @@
-import { IPost } from '@/helpers/post-schema'
 import { useUserById } from '@/requests/useUser'
+import { IPost } from '@/schema/post-schema'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { InlineLoader } from '..'
 import { Avatar } from '../UserAvatar'
 import UserListDialog from './UserListDialog'
 
-function UserPic({ userId }: Pick<IPost, 'userId'>) {
+function UserPic({ userId }: { userId: string }) {
     const { data: user, status } = useUserById(userId)
 
     switch (status) {

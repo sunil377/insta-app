@@ -3,7 +3,7 @@ import clsx from 'clsx'
 
 function FollowButton({
     userId,
-    className = 'ml-auto',
+    className = 'sm:ml-auto',
     ...props
 }: { userId: string } & React.HTMLAttributes<HTMLButtonElement>) {
     const { data: currentUser, isSuccess } = useUser()
@@ -18,11 +18,11 @@ function FollowButton({
     return (
         <button
             className={clsx(
-                'rounded-md px-4 py-2 font-semibold disabled:pointer-events-none disabled:opacity-50',
+                'rounded-md px-0.5 py-0.5 font-semibold disabled:pointer-events-none disabled:opacity-50 sm:px-4 sm:py-2',
                 className,
                 isFollowing
-                    ? 'bg-secondary-lighter bg-opacity-50 hover:bg-opacity-100'
-                    : 'bg-primary-main text-white',
+                    ? 'sm:bg-secondary-lighter sm:bg-opacity-50 sm:hover:bg-opacity-100'
+                    : 'text-primary-main sm:bg-primary-main sm:text-white',
             )}
             onClick={handleClick}
             disabled={!isSuccess}
@@ -34,3 +34,6 @@ function FollowButton({
 }
 
 export default FollowButton
+function usAuth() {
+    throw new Error('Function not implemented.')
+}

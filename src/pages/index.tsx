@@ -24,16 +24,16 @@ const Home: NextPageWithLayout = () => {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div className="mt-10 px-4">
+            <main className="mb-10 mt-10 px-4">
                 <div className="lg:grid lg:grid-cols-6 lg:gap-x-10">
-                    <section className="mb-10 lg:col-span-4">
-                        <main className="mx-auto max-w-md space-y-5 divide-y pb-4">
+                    <div className="lg:col-span-4">
+                        <section className="mx-auto max-w-md space-y-5 divide-y pb-4">
                             <Feeds />
-                        </main>
-                    </section>
+                        </section>
+                    </div>
                     {isLaptopScreen ? <SidePanel /> : null}
                 </div>
-            </div>
+            </main>
         </>
     )
 }

@@ -1,6 +1,6 @@
 import { SettingsIcon } from '@/assets'
 import { useAuth } from '@/context/AuthContext'
-import { UserServer } from '@/services/user'
+import { UserServer } from '@/schema/user-schema'
 import Link from 'next/link'
 import FollowButton from '../Feeds/FollowButton'
 import FollowersInfo from './FollowersInfo'

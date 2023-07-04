@@ -4,8 +4,9 @@ import {
     CustomTextField,
 } from '@/components/form/TextField'
 import GoogleSignIn from '@/feature/GoogleSignIn'
-import { SignupSchema } from '@/helpers/schema'
+import { publicRoute } from '@/helpers/routes'
 import { convertZodErrorToFormikError } from '@/helpers/util'
+import { SignupSchema } from '@/schema/user-schema'
 import { createUserForAuth, createUserForFirestore } from '@/services/auth'
 import type { FormikHelpers, FormikProps } from 'formik'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
@@ -140,3 +141,5 @@ function signupform({
         </div>
     )
 }
+
+export const getServerSideProps = publicRoute

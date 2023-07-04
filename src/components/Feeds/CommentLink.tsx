@@ -12,4 +12,5 @@ function CommentLink({ postId }: { postId: string }) {
         </Link>
     )
 }
+
 export default CommentLink
