@@ -1,20 +1,13 @@
-import {
-    ExploreIcon,
-    HomeIcon,
-    MessengerIcon,
-    ReelsIcon,
-    UserPlusIcon,
-} from '@/assets'
+import { ExploreIcon, HomeIcon, MessengerIcon, UserPlusIcon } from '@/assets'
 import UserListDialog from '@/components/Feeds/UserListDialog'
 import { UserAvatar } from '@/components/UserAvatar'
 import useUser, { useUsers } from '@/requests/useUser'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Fragment, ReactNode, useState } from 'react'
-import { HiChevronDown, HiChevronLeft } from 'react-icons/hi'
+import { HiChevronDown } from 'react-icons/hi'
+import BackButton from './BackButton'
 import HomeNavigation from './HomeNavigation'
-import PostLikesNavigation from './PostLikeNavigation'
-import PostNavigation from './PostNavigation'
 import SettingsDialog from './SettingsDialog'
 
 function TopNavbar() {
@@ -26,9 +19,11 @@ function TopNavbar() {
         case '/[id]':
             return <ProfileMobileNav />
         case '/post/[id]':
-            return <PostNavigation />
+            return <EditPageMobileNav title="Post" />
         case '/post/[id]/likes':
-            return <PostLikesNavigation />
+            return <EditPageMobileNav title="Likes" />
+        case '/post/[id]/comments':
+            return <EditPageMobileNav title="Comments" />
         case '/accounts/edit':
             return <EditPageMobileNav title="Edit Profile" />
         case '/accounts/password/change':
@@ -46,12 +41,10 @@ function MobileLayout({ children }: { children: ReactNode }) {
                 <Link href="/" className="group rounded-full p-1">
                     <HomeIcon aria-label="Home" />
                 </Link>
+
                 <Link href="/explore" className="group rounded-full p-1">
                     <ExploreIcon aria-label="Explore" />
                 </Link>
-                <button className="group rounded-full p-1">
-                    <ReelsIcon aria-label="Reels" />
-                </button>
 
                 <button className="group rounded-full p-1">
                     <MessengerIcon aria-label="Messenger" />
@@ -60,7 +53,7 @@ function MobileLayout({ children }: { children: ReactNode }) {
                 <UserAvatar />
             </footer>
 
-            <div className="my-12 pb-12">{children}</div>
+            <div className="mt-12 pb-12">{children}</div>
         </Fragment>
     )
 }
@@ -98,14 +91,11 @@ function ProfileMobileNav() {
 
 function EditPageMobileNav({ title }: { title: string }) {
     return (
-        <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center justify-between border-y border-y-gray-300 bg-white px-2 xs:px-4">
-            <Link href=".." className="rounded-full">
-                <HiChevronLeft className="text-3xl" aria-label="back" />
-            </Link>
-
-            <button className="px-2 py-0.5 font-semibold">{title}</button>
-
-            <span aria-hidden></span>
+        <nav className="fixed inset-x-0 top-0 z-40 h-12 border-y border-y-gray-300 bg-white px-2 xs:px-4">
+            <div className="relative flex h-full items-center">
+                <BackButton />
+                <h2 className="mx-auto text-lg font-medium">{title}</h2>
+            </div>
         </nav>
     )
 }

@@ -35,7 +35,7 @@ function Header({
 
     return (
         <>
-            <section className="grid max-w-sm grid-cols-4 px-4 sm:max-w-none">
+            <section className="grid max-w-sm grid-cols-4 px-4 pb-10 sm:max-w-none">
                 <div className="col-span-1">
                     <div className="relative aspect-square w-20 sm:mx-auto sm:w-28 lg:w-36">
                         <ProfileAvatar photo={photo} username={username} />
@@ -83,7 +83,8 @@ function Header({
                     {userBio}
                 </div>
             </section>
-            <section className="grid grid-cols-3 justify-items-center border-t py-2 sm:hidden">
+
+            <section className="grid grid-cols-3 justify-items-center border-t py-2 text-center sm:hidden">
                 <div className="sm:flex sm:gap-x-2">
                     <p className="font-bold">{posts.length}</p>
                     <p className="text-gray-500">posts</p>

@@ -13,7 +13,7 @@ import Link from 'next/link'
 import { Fragment } from 'react'
 
 function SettingMenu() {
-    const { handleLogout, isLoading } = useLogout()
+    const { mutate, isLoading } = useLogout()
     const currentUser = useAuth()
 
     return (
@@ -136,7 +136,7 @@ function SettingMenu() {
                 <Menu.Item>
                     {({ active }) => (
                         <button
-                            onClick={handleLogout}
+                            onClick={() => mutate()}
                             disabled={isLoading}
                             className={clsx(
                                 'flex w-full items-center justify-between px-4 py-2',

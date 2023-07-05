@@ -8,10 +8,8 @@ import { useEffect } from 'react'
 function SelectPostImage() {
     const router = useRouter()
     const {
-        state: { dataURL, error, isloading },
+        state: { dataURL },
         handleChange,
-        handleResetState,
-        file,
     } = useFileReader()
 
     useEffect(() => {
@@ -21,7 +19,7 @@ function SelectPostImage() {
     }, [dataURL, router])
 
     return (
-        <label className="block w-full px-2 py-1 text-left">
+        <label className="block w-full px-2 py-1.5 text-left">
             Post
             <input
                 type="file"
@@ -45,19 +43,14 @@ function HomeNavigation() {
                     <AddPostIcon aria-label="New post" />
                 </Menu.Button>
 
-                <Menu.Items className="absolute right-1/2 z-10 w-20 translate-x-1/2 divide-y rounded-md border bg-gray-50 text-sm shadow-md">
+                <Menu.Items className="absolute right-1/2 z-10 w-20 translate-x-1/2 divide-y rounded-sm border bg-gray-50 text-sm">
                     <Menu.Item>
                         <SelectPostImage />
-                    </Menu.Item>
-                    <Menu.Item>
-                        <button className="block w-full px-2 py-1 text-left">
-                            Story
-                        </button>
                     </Menu.Item>
                 </Menu.Items>
             </Menu>
 
-            <button className="ml-4 rounded-full p-1">
+            <button className="ml-4 rounded-full p-1 text-2xl">
                 <HeartIcon aria-label="activity" />
             </button>
         </nav>

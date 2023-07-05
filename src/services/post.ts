@@ -37,7 +37,7 @@ async function getPost(docId: string) {
 
 async function getPosts(author: string) {
     const responseUsers = await getDocs(
-        query(collection(db, POST_COLLECTION), where('author', '!=', author)),
+        query(collection(db, POST_COLLECTION), where('authorId', '!=', author)),
     )
     return parseQuerySnapshot<IPost>(responseUsers)
 }

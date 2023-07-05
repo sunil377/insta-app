@@ -3,7 +3,7 @@ import clsx from 'clsx'
 
 function FollowButton({
     userId,
-    className = 'sm:ml-auto',
+    className,
     ...props
 }: { userId: string } & React.HTMLAttributes<HTMLButtonElement>) {
     const { data: currentUser, isSuccess } = useUser()
@@ -34,6 +34,3 @@ function FollowButton({
 }
 
 export default FollowButton
-function usAuth() {
-    throw new Error('Function not implemented.')
-}

@@ -1,18 +1,24 @@
 import { HeartFillIcon, HeartIcon } from '@/assets'
 import { useAuth } from '@/context/AuthContext'
-import { useUpdatePostLike } from '@/requests/usePost'
+import { usePost, useUpdatePostLike } from '@/requests/usePost'
 
-function LikeButton({ postId, likes }: { postId: string; likes: string[] }) {
+function LikeButton({ postId }: { postId: string }) {
+    const { data: post } = usePost(postId)
+
+    const { mutate, isLoading } = useUpdatePostLike(postId)
+
     const currentUser = useAuth()
-    const { mutate } = useUpdatePostLike(postId)
-    const isLiked = likes.includes(currentUser)
-    const handleClick = () => mutate({ isLiked })
+
+    const isLiked = post?.likes.includes(currentUser) ?? false
+
+    const toggleLike = () => mutate({ isLiked })
 
     return (
         <button
             className="rounded-full disabled:pointer-events-none disabled:opacity-50"
             title={isLiked ? 'Unlike' : 'Like'}
-            onClick={handleClick}
+            disabled={isLoading}
+            onClick={toggleLike}
         >
             {isLiked ? (
                 <HeartFillIcon className="fill-red-500 transition-transform hover:scale-105 hover:transform" />

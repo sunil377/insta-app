@@ -1,12 +1,10 @@
 import {
     ExploreIcon,
-    HeartIcon,
     HomeIcon,
     InstagramTextIcon,
     InstaIcon,
     MenuIcon,
     MessengerIcon,
-    ReelsIcon,
     SearchIcon,
 } from '@/assets'
 import CreatePost from '@/components/CreatePost/CreatePostButton'
@@ -16,7 +14,6 @@ import { Menu, Popover, Transition } from '@headlessui/react'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { Fragment, ReactNode, useState } from 'react'
-import NotificationContent from './NotificationContent'
 import SearchContent from './SearchContent'
 import SettingMenu from './SettingMenu'
 import ToolTip from './Tooltip'
@@ -127,23 +124,6 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                             },
                         )}
                     >
-                        <ReelsIcon
-                            aria-label="Reels"
-                            className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100"
-                        />
-
-                        <ToolTip isOpen={isPopoverOpened}>Reels</ToolTip>
-                    </Link>
-
-                    <Link
-                        href="/"
-                        className={clsx(
-                            'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-black',
-                            {
-                                'lg:w-full': !isPopoverOpened,
-                            },
-                        )}
-                    >
                         <MessengerIcon
                             aria-label="Messenger"
                             className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100"
@@ -151,41 +131,6 @@ function LaptopLayout({ children }: { children: ReactNode }) {
 
                         <ToolTip isOpen={isPopoverOpened}>Messenger</ToolTip>
                     </Link>
-
-                    <Popover>
-                        <Popover.Button
-                            className={clsx(
-                                'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100',
-                                {
-                                    'lg:w-full': !isPopoverOpened,
-                                },
-                            )}
-                        >
-                            <HeartIcon
-                                aria-label="Notifications"
-                                className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100"
-                            />
-
-                            <ToolTip isOpen={isPopoverOpened}>
-                                Notifications
-                            </ToolTip>
-                        </Popover.Button>
-
-                        <Transition
-                            show={isPopoverOpened}
-                            enter="transition duration-100 ease-out"
-                            enterFrom="transform -translate-x-2 opacity-0"
-                            enterTo="transform translate-x-0 opacity-100"
-                            leave="transition duration-75 ease-out"
-                            leaveFrom="transform translate-x-0 opacity-100"
-                            leaveTo="transform -translate-x-2 opacity-0"
-                            as={Fragment}
-                        >
-                            <Popover.Panel className="fixed inset-y-0 left-16 z-30 w-64 origin-left border border-l-0 bg-white">
-                                <NotificationContent />
-                            </Popover.Panel>
-                        </Transition>
-                    </Popover>
 
                     <CreatePost isDrawerOpen={isPopoverOpened} />
 

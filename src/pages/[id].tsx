@@ -34,12 +34,11 @@ const ProfilePage: IPage = () => {
             <Header {...profileUser} />
             <Tab.Group
                 as="section"
-                className="mt-10"
                 selectedIndex={activeTab}
                 onChange={setActiveTab}
             >
                 <Tab.List className="border-t sm:flex sm:justify-center">
-                    <div className="grid grid-cols-3 sm:block sm:space-x-4">
+                    <div className="grid grid-cols-3 text-center sm:block sm:space-x-4">
                         <TabButton userId={profileUser.docId} params="posts">
                             POSTS
                         </TabButton>

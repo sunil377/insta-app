@@ -57,7 +57,10 @@ function Suggestions(currentUser: Pick<UserServer, 'username' | 'followings'>) {
                                         </p>
                                     </div>
                                 </Link>
-                                <FollowButton userId={docId} />
+                                <FollowButton
+                                    userId={docId}
+                                    className="ml-auto"
+                                />
                             </div>
                         ),
                     )}

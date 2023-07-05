@@ -1,6 +1,6 @@
 import { COMMENT_QUERY_KEY, POST_QUERY_KEY } from '@/constants/util'
 import { ICommentClient } from '@/schema/comment-schema'
-import { createComment, getComments } from '@/services/comment'
+import { createComment, getComment, getComments } from '@/services/comment'
 import { updatePost } from '@/services/post'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { arrayUnion } from 'firebase/firestore'
@@ -9,6 +9,14 @@ export function useComments(postId: string) {
     return useQuery({
         queryKey: [COMMENT_QUERY_KEY, postId],
         queryFn: () => getComments(postId),
+    })
+}
+
+export function useComment(postId: string, commentId: string) {
+    return useQuery({
+        queryKey: [COMMENT_QUERY_KEY, commentId],
+        queryFn: () => getComment(postId, commentId),
+        enabled: !!commentId,
     })
 }
 

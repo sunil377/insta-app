@@ -1,27 +1,57 @@
-import Post from '@/components/Post'
+import { CommentForm } from '@/components/Feeds/Comments'
+import Comments from '@/components/Post/Comments'
+import { UserAvatarWithoutLink } from '@/components/UserAvatar'
 import { adminAuth } from '@/config/firebase-admin'
 import { POST_QUERY_KEY, USER_QUERY_KEY } from '@/constants/util'
 import MainLayout from '@/layout/main-layout'
+import { NextPageWithLayout } from '@/pages/_app'
+import { usePost } from '@/requests/usePost'
 import { getServerPost, getServerUser } from '@/services/server'
 import { QueryClient, dehydrate } from '@tanstack/react-query'
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
+import { GetServerSidePropsContext } from 'next'
+import { useRouter } from 'next/router'
 import nookies from 'nookies'
 import { z } from 'zod'
-import { NextPageWithLayout } from '../../_app'
 
-type IProps = NextPageWithLayout<
-    InferGetServerSidePropsType<typeof getServerSideProps>
->
+const CommentsPage: NextPageWithLayout = () => {
+    const router = useRouter()
+    const { id: postId } = z
+        .object({
+            id: z.string().min(1),
+        })
+        .parse(router.query)
 
-const PostPage: IProps = ({ postId }) => {
-    return <Post postId={postId} />
+    const { data: post, isLoading, isError } = usePost(postId)
+
+    if (isLoading) {
+        return <div>loading...</div>
+    }
+    if (isError) {
+        return <div>somethng went wrong</div>
+    }
+
+    if (post.comments.length === 0) {
+        return <h3 className="pt-10 text-center font-medium">No comments</h3>
+    }
+
+    return (
+        <section className="space-y-4">
+            <div className="flex items-center gap-x-4 border-b border-b-secondary-lighter bg-primary-main bg-opacity-10 p-4">
+                <UserAvatarWithoutLink sizes="h-8 w-8 text-xl" />
+                <CommentForm postId={postId} />
+            </div>
+            <div className="space-y-4 px-4">
+                <Comments postId={postId} />
+            </div>
+        </section>
+    )
 }
 
-PostPage.getLayout = (page) => {
+export default CommentsPage
+
+CommentsPage.getLayout = (page) => {
     return <MainLayout>{page}</MainLayout>
 }
-
-export default PostPage
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const cookies = nookies.get(ctx)

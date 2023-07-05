@@ -12,7 +12,7 @@ import { z } from 'zod'
 
 export const docIdSchema = z.string().min(1, 'Id Required')
 export const defaultArraySchema = z.array(z.string()).default([])
-export const createdAtSchema = z.number().default(new Date().getTime)
+export const createdAtSchema = z.number().default(() => new Date().getTime())
 export const updatedAtSchema = z.number().nullable().default(null)
 
 export const emailSchema = z
