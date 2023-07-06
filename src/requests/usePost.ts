@@ -8,6 +8,7 @@ import { uploadPostBase64Image, uploadPostImage } from '@/services/storage'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { arrayRemove, arrayUnion } from 'firebase/firestore'
 import { UploadResult, getDownloadURL } from 'firebase/storage'
+import { produce } from 'immer'
 import { useRouter } from 'next/router'
 
 export function usePost(postId: string) {
@@ -40,26 +41,26 @@ export function useUpdatePostLike(postId: string) {
                 queryKey: [POST_QUERY_KEY, postId],
             })
 
-            queryClient.setQueryData<IPost[]>([POST_QUERY_KEY], (oldPosts) => {
-                if (oldPosts) {
-                    return oldPosts.map((oldPost) => {
-                        if (oldPost.docId === postId) {
-                            const oldLikesArray = new Set(oldPost.likes)
-                            if (isLiked) {
-                                oldLikesArray.delete(currentUser)
-                            } else {
-                                oldLikesArray.add(currentUser)
-                            }
-                            return {
-                                ...oldPost,
-                                likes: Array.from(oldLikesArray),
-                            }
-                        }
-                        return oldPost
-                    })
-                }
-                return oldPosts
-            })
+            queryClient.setQueryData<IPost[]>(
+                [POST_QUERY_KEY],
+                produce((draftState) => {
+                    if (!draftState) return
+                    const oldPost = draftState.find(
+                        ({ docId }) => docId === postId,
+                    )
+
+                    if (!oldPost) return
+                    const userIndex = oldPost.likes.findIndex(
+                        (id) => id === currentUser,
+                    )
+
+                    if (userIndex != -1) {
+                        oldPost.likes.splice(userIndex, 1)
+                        return
+                    }
+                    oldPost.likes.push(currentUser)
+                }),
+            )
         },
     })
 }
