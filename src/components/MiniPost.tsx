@@ -13,13 +13,13 @@ function MiniPost({ caption, comments, docId: postId, likes, photo }: IPost) {
             <Image src={photo} alt={caption} fill className="object-cover" />
             <div className="invisible absolute inset-0 z-10 flex flex-col items-center justify-center gap-1 fill-white  font-semibold text-white transition-all group-hover:visible group-hover:bg-overlay sm:flex-row sm:gap-4 sm:text-lg">
                 <div className="inline-flex items-center space-x-2">
-                    <AiFillHeart className="text-3xl" />
+                    <AiFillHeart className="text-lg sm:text-2xl" />
                     <p>{likes.length}</p>
                 </div>
 
                 {comments.length > 0 ? (
                     <div className="inline-flex items-center space-x-2">
-                        <CommentIcon />
+                        <CommentIcon className="text-lg sm:text-2xl" />
                         <p>{comments.length}</p>
                     </div>
                 ) : null}

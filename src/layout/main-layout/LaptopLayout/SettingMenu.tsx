@@ -1,10 +1,4 @@
-import {
-    ActivityIcon,
-    MoonIcon,
-    ProblemIcon,
-    SavedIcon,
-    SettingsIcon,
-} from '@/assets'
+import { MoonIcon, SavedIcon, SettingsIcon } from '@/assets'
 import { useAuth } from '@/context/AuthContext'
 import useLogout from '@/hooks/useLogout'
 import { Menu, Transition } from '@headlessui/react'
@@ -29,7 +23,8 @@ function SettingMenu() {
             <Menu.Items className="absolute bottom-full z-10 w-56 origin-bottom-left divide-y rounded-md border bg-white text-sm shadow-2xl shadow-gray-300">
                 <Menu.Item>
                     {({ active }) => (
-                        <button
+                        <Link
+                            href="/accounts/edit"
                             className={clsx(
                                 'flex w-full items-center justify-between px-4 py-2',
                                 {
@@ -42,25 +37,7 @@ function SettingMenu() {
                                 aria-label="Settings"
                                 className="scale-90 transform"
                             />
-                        </button>
-                    )}
-                </Menu.Item>
-                <Menu.Item>
-                    {({ active }) => (
-                        <button
-                            className={clsx(
-                                'flex w-full items-center justify-between px-4 py-2',
-                                {
-                                    'bg-gray-100': active,
-                                },
-                            )}
-                        >
-                            <span>Your activity</span>
-                            <ActivityIcon
-                                aria-label="Your activity"
-                                className="scale-90 transform"
-                            />
-                        </button>
+                        </Link>
                     )}
                 </Menu.Item>
                 <Menu.Item>
@@ -77,7 +54,7 @@ function SettingMenu() {
                             <span>Saved</span>
                             <SavedIcon
                                 aria-label="saved"
-                                className="scale-90 transform"
+                                className="scale-90 transform text-2xl"
                             />
                         </Link>
                     )}
@@ -100,39 +77,6 @@ function SettingMenu() {
                         </button>
                     )}
                 </Menu.Item>
-                <Menu.Item>
-                    {({ active }) => (
-                        <button
-                            className={clsx(
-                                'flex w-full items-center justify-between px-4 py-2',
-                                {
-                                    'bg-gray-100': active,
-                                },
-                            )}
-                        >
-                            <span>Report a problem</span>
-                            <ProblemIcon
-                                aria-label="report a problem"
-                                className="scale-90 transform"
-                            />
-                        </button>
-                    )}
-                </Menu.Item>
-                <Menu.Item>
-                    {({ active }) => (
-                        <button
-                            className={clsx(
-                                'flex w-full items-center justify-between px-4 py-2',
-                                {
-                                    'bg-gray-100': active,
-                                },
-                            )}
-                        >
-                            <span>Switch accounts</span>
-                        </button>
-                    )}
-                </Menu.Item>
-
                 <Menu.Item>
                     {({ active }) => (
                         <button

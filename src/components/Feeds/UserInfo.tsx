@@ -1,5 +1,5 @@
 import { useUserById } from '@/requests/useUser'
-import { formatDistanceToNow } from 'date-fns'
+import { formatDistanceToNowStrict } from 'date-fns'
 import Link from 'next/link'
 import { Avatar } from '../UserAvatar'
 
@@ -41,8 +41,8 @@ function UserInfo({
                     />
 
                     <p className="text-xs text-gray-700">
-                        {formatDistanceToNow(createdAt, {
-                            addSuffix: true,
+                        {formatDistanceToNowStrict(createdAt, {
+                            addSuffix: false,
                         })}
                     </p>
                 </>

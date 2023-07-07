@@ -27,6 +27,8 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
                 defaultOptions: {
                     queries: {
                         refetchOnWindowFocus: false,
+                        retry: false,
+                        staleTime: 30000,
                     },
                 },
             }),

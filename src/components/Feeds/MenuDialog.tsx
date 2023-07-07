@@ -2,8 +2,9 @@ import { ThreeDotIcon } from '@/assets'
 import Link from 'next/link'
 import { useState } from 'react'
 import Modal from '../Modal'
+import FollowButton from './FollowButton'
 
-function MenuDialog({ postId }: { postId: string }) {
+function MenuDialog({ postId,userId }: { postId: string,userId:string }) {
     const [isOpen, setOpen] = useState(false)
 
     return (
@@ -22,9 +23,7 @@ function MenuDialog({ postId }: { postId: string }) {
                 className="w-full overflow-hidden rounded-lg bg-white shadow-md sm:max-w-sm"
             >
                 <div className="flex flex-col divide-y divide-secondary-lighter text-sm text-secondary-dark">
-                    <button className="w-full py-3 text-center font-bold text-red-500 focus:outline-none focus-visible:bg-gray-100">
-                        Unfollow
-                    </button>
+                   <FollowButton userId={userId}/>
 
                     <button className="w-full py-3 text-center focus:outline-none focus-visible:bg-gray-100">
                         Add to favorites
