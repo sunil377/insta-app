@@ -1,6 +1,8 @@
 import { USER_NOT_FOUND } from '@/constants/errors'
 import { UserClient, UserSchema, UserServer } from '@/schema/user-schema'
 import {
+    DocumentData,
+    Query,
     deleteDoc,
     endAt,
     getDoc,
@@ -44,20 +46,34 @@ async function getUserByUsername(username: string) {
 
 async function getUserSuggestion(userId: string) {
     const currentUser = await getUser(userId)
-    const userSuggestionQuery = query(
+    let userSuggestionQuery: Query<DocumentData, DocumentData> = query(
         db_ref.users.collection_ref(),
         or(
             where('followings', 'array-contains-any', [
                 currentUser.docId,
                 ...currentUser.followings,
             ]),
-            where('followers', 'array-contains-any', [
-                ...currentUser.followings,
-            ]),
         ),
         orderBy('createdAt', 'desc'),
         limit(5),
     )
+
+    if (currentUser.followings.length != 0) {
+        userSuggestionQuery = query(
+            db_ref.users.collection_ref(),
+            or(
+                where('followings', 'array-contains-any', [
+                    currentUser.docId,
+                    ...currentUser.followings,
+                ]),
+                where('followers', 'array-contains-any', [
+                    ...currentUser.followings,
+                ]),
+            ),
+            orderBy('createdAt', 'desc'),
+            limit(5),
+        )
+    }
 
     const response = await getDocs(userSuggestionQuery)
 
