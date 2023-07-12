@@ -15,7 +15,9 @@ function Avatar({
             className="rounded-full"
         />
     ) : (
-        <UserBedge className="h-8 w-8 text-lg">{username.at(0)}</UserBedge>
+        <UserBedge className="h-8 w-8 flex-shrink-0 text-lg">
+            {username.at(0)}
+        </UserBedge>
     )
 }
 
