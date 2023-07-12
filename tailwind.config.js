@@ -12,6 +12,7 @@ module.exports = {
             },
             zIndex: {
                 dialog: '1000',
+                snackbar: '1001',
             },
             colors: {
                 overlay: 'rgb(0 0 0 / 0.3)',

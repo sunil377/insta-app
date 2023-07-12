@@ -1,5 +1,6 @@
 import PageLoader from '@/components/PageLoader'
 import AuthContext from '@/context/AuthContext'
+import SnackBarProvider from '@/context/SnackBarContext'
 import '@/styles/globals.css'
 import {
     Hydrate,
@@ -43,8 +44,10 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
                     fallback={<div role="alert">something went wrong</div>}
                 >
                     <AuthContext currentUser={pageProps.currentUser}>
-                        <PageLoader />
-                        {getLayout(<Component {...pageProps} />)}
+                        <SnackBarProvider>
+                            <PageLoader />
+                            {getLayout(<Component {...pageProps} />)}
+                        </SnackBarProvider>
                     </AuthContext>
                 </ErrorBoundary>
             </Hydrate>

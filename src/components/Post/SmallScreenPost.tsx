@@ -1,15 +1,18 @@
 import { CommentIcon } from '@/assets'
+import { useAuth } from '@/context/AuthContext'
 import { useComment } from '@/requests/useComment'
 import { useUserById } from '@/requests/useUser'
 import { IPost } from '@/schema/post-schema'
+import UnStyledFollowButton from '@/unstyled/UnStyledFollowButton'
+import clsx from 'clsx'
 import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/image'
 import Link from 'next/link'
-import FollowButton from '../Feeds/FollowButton'
-import LikeButton from '../Feeds/LikeButton'
-import SavedButton from '../Feeds/SavedButton'
-import { Avatar } from '../UserAvatar'
+import LikeButton from '../LikeButton'
+import SavedButton from '../SavedButton'
+import { AlertBadge, Spinner } from '../util'
 import MenuDialog from './MenuDialog'
+import { Avatar } from './util'
 
 function SmallScreenPost({
     caption,
@@ -20,29 +23,49 @@ function SmallScreenPost({
     authorId,
     comments,
 }: IPost) {
-    const { data: author, isSuccess } = useUserById(authorId)
+    const { data: author, isError, isLoading, error } = useUserById(authorId)
+    const currentUser = useAuth()
 
     return (
         <div>
             <header className="flex items-center gap-x-2 border-b border-secondary-lighter border-opacity-50 px-4 py-4">
-                {isSuccess ? (
+                {isLoading ? (
+                    <Spinner />
+                ) : isError ? (
+                    <AlertBadge error={error} renderText />
+                ) : (
                     <>
                         <Avatar
                             photo={author.profile.photo}
                             username={author.username}
-                            sizes="h-8 w-8 text-lg"
                         />
                         <Link href={`/${authorId}`} className="font-semibold">
                             {author.username}
                         </Link>
                     </>
-                ) : null}
+                )}
 
                 <div
                     className="h-1.5 w-1.5 rounded-full bg-secondary-lighter bg-opacity-50"
                     aria-hidden
                 />
-                <FollowButton userId={authorId} />
+                {currentUser != authorId ? (
+                    <UnStyledFollowButton userId={authorId}>
+                        {(isFollowing, props) => (
+                            <button
+                                className={clsx(
+                                    isFollowing
+                                        ? 'text-gray-950 hover:text-gray-500'
+                                        : 'text-primary-main hover:text-primary-dark',
+                                    'p-0.5 font-medium transition-colors disabled:pointer-events-none disabled:opacity-50',
+                                )}
+                                {...props}
+                            >
+                                {isFollowing ? 'Following' : 'Follow'}
+                            </button>
+                        )}
+                    </UnStyledFollowButton>
+                ) : null}
                 <MenuDialog postId={postId} />
             </header>
 
@@ -57,7 +80,7 @@ function SmallScreenPost({
 
             <section className="space-y-2 px-4 text-sm">
                 <div className="flex items-center gap-x-4 py-2 text-2xl">
-                    <LikeButton postId={postId} />
+                    <LikeButton postId={postId} likes={likes} />
 
                     <Link
                         href={`/post/${postId}/comments`}

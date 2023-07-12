@@ -1,54 +1,68 @@
-import { db } from '@/config/firebase'
 import { POST_NOT_FOUND } from '@/constants/errors'
 import { IClientPost, IPost, postSchemaWithoutId } from '@/schema/post-schema'
 import {
     addDoc,
     arrayUnion,
-    collection,
-    doc,
     getDoc,
     getDocs,
+    orderBy,
     query,
     updateDoc,
     where,
 } from 'firebase/firestore'
-import { getUserDocRef } from './user'
+import { db_ref } from './config'
+import { getUser } from './user'
 import { parseQuerySnapshot, parseSnapshot } from './util'
-
-export const POST_COLLECTION = 'posts'
 
 async function createpost(
     postData: Omit<IClientPost, 'docId'>,
     currentUser: string,
 ) {
     const validatedData = postSchemaWithoutId.parse(postData)
-    const post = await addDoc(collection(db, POST_COLLECTION), validatedData)
-    const postId = post.id
-    await updateDoc(getUserDocRef(currentUser), {
-        posts: arrayUnion(postId),
+
+    const post = await addDoc(db_ref.posts.collection_ref(), validatedData)
+
+    await updateDoc(db_ref.users.document_ref(currentUser), {
+        posts: arrayUnion(post.id),
     })
     return post
 }
 
-async function getPost(docId: string) {
-    const responseUser = await getDoc(doc(db, POST_COLLECTION, docId))
-    return parseSnapshot<IPost>(responseUser, POST_NOT_FOUND)
+async function getPost(postId: string) {
+    const responsePost = await getDoc(db_ref.posts.document_ref(postId))
+    return parseSnapshot<IPost>(responsePost, POST_NOT_FOUND)
 }
 
 async function getPosts(author: string) {
-    const responseUsers = await getDocs(
-        query(collection(db, POST_COLLECTION), where('authorId', '!=', author)),
+    const allPostQuery = query(
+        db_ref.posts.collection_ref(),
+        where('authorId', '!=', author),
     )
-    return parseQuerySnapshot<IPost>(responseUsers)
+
+    const responsePosts = await getDocs(allPostQuery)
+    return parseQuerySnapshot<IPost>(responsePosts)
+}
+
+async function getFeedsPosts(currentUser: string) {
+    const responseUser = await getUser(currentUser)
+    if (responseUser.followings.length === 0) {
+        return []
+    }
+
+    const feedQuery = query(
+        db_ref.posts.collection_ref(),
+        where('authorId', 'in', responseUser.followings),
+        orderBy('createdAt', 'desc'),
+    )
+
+    const responsePosts = await getDocs(feedQuery)
+    return parseQuerySnapshot<IPost>(responsePosts)
 }
 
 type postKeys = keyof Pick<IPost, 'comments' | 'likes'>
 
-async function updatePost(
-    postId: string,
-    data: Partial<Record<postKeys, any>>,
-) {
-    return await updateDoc(doc(db, POST_COLLECTION, postId), data)
+function updatePost(postId: string, data: Partial<Record<postKeys, any>>) {
+    return updateDoc(db_ref.posts.document_ref(postId), data)
 }
 
-export { createpost, getPost, getPosts, updatePost }
+export { createpost, getFeedsPosts, getPost, getPosts, updatePost }

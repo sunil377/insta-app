@@ -1,5 +1,5 @@
 import useUser from '@/requests/useUser'
-import { Avatar } from '../UserAvatar'
+import Image from 'next/image'
 import Suggestions from './Suggestions'
 
 function SidePanel() {
@@ -21,11 +21,20 @@ function SidePanel() {
                 <section className="col-span-2 px-2">
                     <div className="flex items-center py-2 text-xs">
                         <div className="flex items-center gap-2">
-                            <Avatar
-                                photo={currentUser.profile.photo}
-                                username={currentUser.username}
-                                sizes="h-8 w-8 text-lg"
-                            />
+                            {currentUser.profile.photo ? (
+                                <Image
+                                    src={currentUser.profile.photo}
+                                    alt={currentUser.username}
+                                    width={32}
+                                    height={32}
+                                    className="h-8 w-8 rounded-full object-cover"
+                                />
+                            ) : (
+                                <p className="inline-grid h-8 w-8 place-items-center self-start rounded-full bg-gray-200 text-lg font-medium capitalize">
+                                    {currentUser.username.at(0)}
+                                </p>
+                            )}
+
                             <div>
                                 <p>
                                     <b className="font-semibold">
@@ -42,10 +51,7 @@ function SidePanel() {
                         </button>
                     </div>
 
-                    <Suggestions
-                        username={currentUser.username}
-                        followings={currentUser.followings}
-                    />
+                    <Suggestions />
                 </section>
             )
 

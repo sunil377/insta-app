@@ -2,11 +2,12 @@ import { adminDB } from '@/config/firebase-admin'
 import { POST_NOT_FOUND, USER_NOT_FOUND } from '@/constants/errors'
 import { IPost } from '@/schema/post-schema'
 import { UserServer } from '@/schema/user-schema'
-import { POST_COLLECTION } from './post'
-import { user_collection_name } from './user'
+import { db_ref } from './config'
 
 async function getServerUser(docId: string) {
-    const response = await adminDB.doc(user_collection_name + '/' + docId).get()
+    const response = await adminDB
+        .doc(db_ref.users.collection_name + '/' + docId)
+        .get()
 
     if (response.exists) {
         return {
@@ -19,7 +20,9 @@ async function getServerUser(docId: string) {
 }
 
 async function getServerPost(docId: string) {
-    const response = await adminDB.doc(POST_COLLECTION + '/' + docId).get()
+    const response = await adminDB
+        .doc(db_ref.posts.collection_name + '/' + docId)
+        .get()
 
     if (response.exists) {
         return {

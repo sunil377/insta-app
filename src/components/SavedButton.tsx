@@ -10,13 +10,13 @@ function SavedButton({ postId }: { postId: string }) {
 
     return (
         <button
-            className="ml-auto rounded-full"
+            className="ml-auto rounded-full p-1 disabled:pointer-events-none disabled:opacity-50"
             title={isSaved ? 'Unsave' : 'Save'}
             disabled={!isSuccess}
             onClick={handleClick}
         >
             {isSaved ? (
-                <SavedFillIcon className="fill-black transition-transform hover:transform hover:scale-105" />
+                <SavedFillIcon className="fill-black transition-transform hover:scale-105 hover:transform" />
             ) : (
                 <SavedIcon className="transition-colors hover:text-secondary-light" />
             )}

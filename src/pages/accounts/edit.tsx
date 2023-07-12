@@ -1,17 +1,16 @@
-import Alert from '@/components/Alert'
-import { UserAvatar } from '@/components/UserAvatar'
+import { UserBedge } from '@/components/util'
+import { useSnackBar } from '@/context/SnackBarContext'
 import { protectedRouteWithUser } from '@/helpers/routes'
 import { convertZodErrorToFormikError } from '@/helpers/util'
-import useSuccess from '@/hooks/useSuccess'
 import AccountLayout from '@/layout/account-layout'
 import MainLayout from '@/layout/main-layout'
 import useUser from '@/requests/useUser'
-import { ProfileSchema, UserServer } from '@/schema/user-schema'
+import { ProfileSchema } from '@/schema/user-schema'
 import { updateUser } from '@/services/user'
-import { Field, Form, Formik, FormikHelpers } from 'formik'
+import { Field, Form, Formik } from 'formik'
 import { InferGetServerSidePropsType } from 'next'
+import Image from 'next/image'
 import { Fragment } from 'react'
-import { z } from 'zod'
 import { NextPageWithLayout } from '../_app'
 
 const Schema = ProfileSchema.pick({
@@ -21,34 +20,10 @@ const Schema = ProfileSchema.pick({
     gender: true,
 })
 
-type initialValues = z.infer<typeof Schema>
-
-async function onSubmit(
-    values: initialValues,
-    helpers: FormikHelpers<initialValues>,
-    user: UserServer,
-    handleSubmit: () => void,
-) {
-    try {
-        await updateUser(user.docId, {
-            profile: {
-                ...user.profile,
-                ...values,
-            },
-        })
-
-        handleSubmit()
-    } catch (error) {
-        helpers.setFieldError('fullname', (error as Error).message)
-    } finally {
-        helpers.setSubmitting(false)
-    }
-}
-
 const EditProfile: IPage = function EditProfile() {
-    const [isSuccess, setSuccess] = useSuccess()
     const { data } = useUser()
     const currentUser = data!
+    const snackBar = useSnackBar()
 
     const {
         username,
@@ -57,14 +32,6 @@ const EditProfile: IPage = function EditProfile() {
 
     return (
         <div className="px-4 py-10 text-sm sm:px-10">
-            {isSuccess ? (
-                <Alert
-                    type="success"
-                    className="fixed right-10 top-5"
-                    message="Profile Updated"
-                />
-            ) : null}
-
             <Formik
                 initialValues={{
                     fullname,
@@ -75,10 +42,24 @@ const EditProfile: IPage = function EditProfile() {
                 validate={(values) => {
                     return convertZodErrorToFormikError(values, Schema)
                 }}
-                onSubmit={(values, helpers) => {
-                    return onSubmit(values, helpers, currentUser, () => {
-                        setSuccess(true)
-                    })
+                onSubmit={async function onSubmit(values, helpers) {
+                    try {
+                        await updateUser(currentUser.docId, {
+                            profile: {
+                                ...currentUser.profile,
+                                ...values,
+                            },
+                        })
+                        snackBar.setMessage('Profile Updated')
+                    } catch (error) {
+                        helpers.setFieldError(
+                            'fullname',
+                            (error as Error).message,
+                        )
+                        snackBar.setMessage('Failed Profile Updating')
+                    } finally {
+                        helpers.setSubmitting(false)
+                    }
                 }}
             >
                 {({ errors, isValid, submitCount, values, isSubmitting }) => (
@@ -86,7 +67,19 @@ const EditProfile: IPage = function EditProfile() {
                         <Form noValidate className="space-y-4">
                             <section className="flex grid-cols-4 items-center gap-x-2 space-y-2 xs:grid xs:gap-x-6">
                                 <div className="col-span-1 items-center justify-end pt-2 xs:inline-flex">
-                                    <UserAvatar />
+                                    {currentUser.profile.photo ? (
+                                        <Image
+                                            src={currentUser.profile.photo}
+                                            alt={currentUser.username}
+                                            width="24"
+                                            height="24"
+                                            className="h-6 w-6 rounded-full"
+                                        />
+                                    ) : (
+                                        <UserBedge className="h-6 w-6 text-base">
+                                            {currentUser.username.at(0)}
+                                        </UserBedge>
+                                    )}
                                 </div>
                                 <div className="col-span-3 leading-4">
                                     <h4>{username}</h4>

@@ -2,20 +2,20 @@ import { CommentIcon } from '@/assets'
 import { SCREEN_SM } from '@/constants/screens'
 import { useAuth } from '@/context/AuthContext'
 import useMediaQuery from '@/hooks/useMediaQuery'
-import { usePosts } from '@/requests/usePost'
+import { useFeeds } from '@/requests/usePost'
 import { useUserById } from '@/requests/useUser'
 import { IPost } from '@/schema/post-schema'
+import UnStyledFollowButton from '@/unstyled/UnStyledFollowButton'
 import { formatDistanceToNowStrict } from 'date-fns'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Avatar } from '../UserAvatar'
+import LikeButton from '../LikeButton'
+import SavedButton from '../SavedButton'
+import { AlertBadge, Spinner, UserBedge } from '../util'
 import Caption from './Caption'
 import Comments from './Comments'
-import FollowButton from './FollowButton'
-import LikeButton from './LikeButton'
 import LikeDialog from './LikeDialog'
 import MenuDialog from './MenuDialog'
-import SavedButton from './SavedButton'
 
 function Feed({
     authorId,
@@ -27,25 +27,32 @@ function Feed({
     photo,
 }: IPost) {
     const isMobile = useMediaQuery(SCREEN_SM)
-    const { data: author, isLoading, isError } = useUserById(authorId)
+    const { data: author, isLoading, isError, error } = useUserById(authorId)
 
-    const commentLink = isMobile
-        ? `/post/${postId}/comments`
-        : `/post/${postId}`
+    const currentUser = useAuth()
 
     return (
         <article className="space-y-2 pt-4 text-sm sm:first:pt-0">
             <header className="flex items-center gap-2">
                 {isLoading ? (
-                    <div>loading...</div>
+                    <Spinner />
                 ) : isError ? (
-                    <div>something went wrong</div>
+                    <AlertBadge error={error} renderText />
                 ) : (
                     <>
-                        <Avatar
-                            photo={author.profile.photo}
-                            username={author.username}
-                        />
+                        {author.profile.photo ? (
+                            <Image
+                                src={author.profile.photo}
+                                alt={author.username}
+                                width="32"
+                                height="32"
+                                className="rounded-full object-cover"
+                            />
+                        ) : (
+                            <UserBedge className="h-8 w-8 text-lg">
+                                {author.username.at(0)}
+                            </UserBedge>
+                        )}
 
                         <Link href={`/${authorId}`} className="font-semibold">
                             {author.username}
@@ -57,13 +64,25 @@ function Feed({
                     className="h-1.5 w-1.5 rounded-full bg-primary-main bg-opacity-50"
                     aria-hidden
                 />
+
                 <p className="text-xs text-gray-700">
-                    {formatDistanceToNowStrict(createdAt, {
-                        addSuffix: false,
-                    })}
+                    {formatDistanceToNowStrict(createdAt)}
                 </p>
 
-                <FollowButton userId={authorId} />
+                {currentUser != authorId ? (
+                    <UnStyledFollowButton userId={authorId}>
+                        {(isFollowing, props) =>
+                            isFollowing ? null : (
+                                <button
+                                    className="p-0.5 font-medium text-primary-main transition-colors hover:text-primary-dark disabled:pointer-events-none disabled:opacity-50"
+                                    {...props}
+                                >
+                                    follow
+                                </button>
+                            )
+                        }
+                    </UnStyledFollowButton>
+                ) : null}
 
                 <MenuDialog postId={postId} userId={authorId} />
             </header>
@@ -81,10 +100,14 @@ function Feed({
             </Link>
 
             <div className="flex items-center gap-x-4 text-2xl">
-                <LikeButton postId={postId} />
+                <LikeButton postId={postId} likes={likes} />
                 <Link
-                    href={commentLink}
-                    className="rounded-full transition-colors hover:text-secondary-light"
+                    href={
+                        isMobile
+                            ? `/post/${postId}/comments`
+                            : `/post/${postId}`
+                    }
+                    className="rounded-full p-1 transition-colors hover:text-secondary-light"
                     title="Comment"
                 >
                     <CommentIcon />
@@ -112,12 +135,25 @@ function Feed({
 }
 
 export default function Feeds() {
-    const currentUser = useAuth()
-    const { data: posts, isError, isLoading } = usePosts(currentUser)
+    const { data: posts, isError, isLoading, error } = useFeeds()
 
     if (isLoading) return <p>loading...</p>
 
-    if (isError) return <p>Something went wrong</p>
+    if (isError) return <AlertBadge error={error} renderText />
+
+    if (posts.length === 0) {
+        return (
+            <h2 className="py-5">
+                You are currently NOT Following any User.{' '}
+                <Link
+                    href="/explore"
+                    className="text-primary-main hover:text-primary-dark"
+                >
+                    Explore Posts.
+                </Link>
+            </h2>
+        )
+    }
 
     return (
         <>

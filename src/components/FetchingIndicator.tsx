@@ -9,8 +9,8 @@ function FetchingIndicator() {
 
     return (
         <div
-            aria-label="loading"
-            className="fixed right-10 top-5 z-50 h-6 w-6 animate-spin rounded-full border border-l-0 border-primary-main"
+            aria-label="fetching"
+            className="fixed inset-x-0 top-0 z-[1000] h-[3px] animate-pulse bg-primary-main"
         />
     )
 }

@@ -12,4 +12,12 @@ function convertZodErrorToFormikError<A, B extends z.Schema>(
     }
 }
 
-export { convertZodErrorToFormikError }
+function getErrorForTitle(error: unknown): string {
+    return error instanceof Error
+        ? error.message
+        : typeof error === 'string'
+        ? error
+        : 'something went wrong'
+}
+
+export { convertZodErrorToFormikError, getErrorForTitle }

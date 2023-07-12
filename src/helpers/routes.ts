@@ -1,9 +1,10 @@
 import { adminAuth } from '@/config/firebase-admin'
-import { USER_QUERY_KEY } from '@/constants/util'
-import { getServerUser } from '@/services/server'
+import { queries } from '@/requests/queries'
+import { getServerPost, getServerUser } from '@/services/server'
 import { QueryClient, dehydrate } from '@tanstack/react-query'
 import { GetServerSidePropsContext } from 'next'
 import nookies from 'nookies'
+import { z } from 'zod'
 
 async function publicRoute(ctx: GetServerSidePropsContext) {
     const cookies = nookies.get(ctx)
@@ -64,7 +65,7 @@ async function protectedRouteWithUser(ctx: GetServerSidePropsContext) {
     }
 
     await queryClient.prefetchQuery({
-        queryKey: [USER_QUERY_KEY, currentUser],
+        queryKey: queries.users.getOne(currentUser),
         queryFn: () => getServerUser(currentUser!),
     })
 
@@ -76,4 +77,64 @@ async function protectedRouteWithUser(ctx: GetServerSidePropsContext) {
     }
 }
 
-export { protectedRouteWithUser, publicRoute }
+async function protectedRouteWithPost(ctx: GetServerSidePropsContext) {
+    const cookies = nookies.get(ctx)
+    const token = cookies?.token
+
+    if (!token) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        } as never
+    }
+
+    let currentUser: string | null = null
+
+    try {
+        const response = await adminAuth.verifyIdToken(token)
+        currentUser = response.uid
+    } catch (error) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        } as never
+    }
+
+    const queryClient = new QueryClient()
+
+    await queryClient.prefetchQuery({
+        queryKey: queries.users.getOne(currentUser),
+        queryFn: () => getServerUser(currentUser!),
+    })
+
+    const { id } = z
+        .object({
+            id: z.string(),
+        })
+        .parse(ctx.query)
+
+    try {
+        await queryClient.fetchQuery({
+            queryKey: queries.posts.getOne(id),
+            queryFn: () => getServerPost(id),
+        })
+    } catch (error) {
+        return {
+            notFound: true,
+        } as never
+    }
+
+    return {
+        props: {
+            dehydratedState: dehydrate(queryClient),
+            currentUser,
+            postId: id,
+        },
+    }
+}
+
+export { protectedRouteWithPost, protectedRouteWithUser, publicRoute }

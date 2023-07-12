@@ -9,20 +9,44 @@ import Image from 'next/image'
 import { Fragment, useState } from 'react'
 import { HiChevronLeft } from 'react-icons/hi'
 import Modal from '../Modal'
-import { UserAvatar } from '../UserAvatar'
+import { AlertBadge, Spinner, UserBedge } from '../util'
 import useCaption from './useCaption'
 
 function Content({ onClose }: { onClose: () => void }) {
     const {
-        state: { dataURL, error, isloading },
+        state: { dataURL },
         handleChange,
         handleResetState,
         file,
     } = useFileReader()
     const isNextStep = !!dataURL
-    const { data: currentUser, isSuccess } = useUser()
+    const {
+        data: currentUser,
+        isSuccess,
+        isLoading,
+        isError,
+        error,
+    } = useUser()
     const [caption, handleCaptionChange] = useCaption()
     const mutation = useCreatePost()
+
+    const userAvatar = isLoading ? (
+        <Spinner />
+    ) : isError ? (
+        <AlertBadge error={error} renderText />
+    ) : currentUser.profile.photo ? (
+        <Image
+            src={currentUser.profile.photo}
+            alt={currentUser.username}
+            width="24"
+            height="24"
+            className="rounded-full"
+        />
+    ) : (
+        <UserBedge className="h-6 w-6 text-sm">
+            {currentUser.username.at(0)}
+        </UserBedge>
+    )
 
     return (
         <Fragment>
@@ -75,10 +99,10 @@ function Content({ onClose }: { onClose: () => void }) {
                     <div className="p-4">
                         <div className="space-y-2">
                             <div className="flex items-center gap-2">
-                                <UserAvatar />
-                                <span className="text-sm">
+                                {userAvatar}
+                                <h4 className="text-sm">
                                     {currentUser?.username}
-                                </span>
+                                </h4>
                             </div>
                             <div>
                                 <textarea

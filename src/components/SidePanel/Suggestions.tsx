@@ -1,74 +1,87 @@
-import { useUsers } from '@/requests/useUser'
-import { UserServer } from '@/schema/user-schema'
+import { useAuth } from '@/context/AuthContext'
+import { useUserSuggestion } from '@/requests/useUser'
+import UnStyledFollowButton from '@/unstyled/UnStyledFollowButton'
+import Image from 'next/image'
 import Link from 'next/link'
-import Alert from '../Alert'
-import FollowButton from '../Feeds/FollowButton'
-import { Avatar } from '../UserAvatar'
+import { AlertBadge, Spinner } from '../util'
 
-function Suggestions(currentUser: Pick<UserServer, 'username' | 'followings'>) {
-    const { data: users, status } = useUsers(currentUser.username ?? null)
+function Suggestions() {
+    const { data: users, error, isError, isLoading } = useUserSuggestion()
+    const currentUser = useAuth()
 
-    switch (status) {
-        case 'loading':
-            return <p>loading...</p>
-        case 'error':
-            return <Alert type="failed" message="Something went wrong" />
+    if (isLoading) {
+        return <Spinner />
+    }
+    if (isError) {
+        return <AlertBadge error={error} renderText />
+    }
 
-        case 'success':
-            const removeFollowingUsers = users.filter(
-                (val) => !currentUser.followings.includes(val.docId),
-            )
+    if (users.length === 0) {
+        return <h5>No Suggestion Found</h5>
+    }
 
-            if (removeFollowingUsers.length === 0) {
-                return <div className="text-sm">No user found</div>
-            }
+    return (
+        <div>
+            <div className="mb-1.5 mt-3 flex justify-between ">
+                <p className="text-sm text-gray-700">Suggested for you</p>
+                <button className="text-xs font-semibold">See All</button>
+            </div>
+            {users.map(
+                ({
+                    docId,
+                    username,
+                    profile: { photo, fullname },
+                    followings,
+                }) => (
+                    <div key={docId} className="flex items-start py-2 text-xs">
+                        <div className="flex items-start gap-2">
+                            {photo ? (
+                                <Image
+                                    src={photo}
+                                    alt={username}
+                                    width={32}
+                                    height={32}
+                                    className="h-8 w-8 rounded-full object-cover"
+                                />
+                            ) : (
+                                <p className="inline-grid h-8 w-8 place-items-center rounded-full bg-gray-200 text-lg font-medium capitalize">
+                                    {username.at(0)}
+                                </p>
+                            )}
 
-            return (
-                <div>
-                    <div className="mb-1.5 mt-3 flex justify-between ">
-                        <p className="text-sm text-gray-700">
-                            Suggested for you
-                        </p>
-                        <button className="text-xs font-semibold">
-                            See All
-                        </button>
-                    </div>
-                    {removeFollowingUsers.map(
-                        ({ docId, username, profile: { photo, fullname } }) => (
-                            <div
-                                key={docId}
-                                className="flex items-center py-2 text-xs"
-                            >
+                            <div className="space-y-0.5">
                                 <Link
                                     href={`/${docId}`}
-                                    className="flex items-center gap-2"
+                                    className="block font-semibold"
                                 >
-                                    <Avatar
-                                        photo={photo}
-                                        username={username}
-                                        sizes="h-8 w-8 text-lg"
-                                    />
-                                    <div>
-                                        <p className="font-semibold">
-                                            {username}
-                                        </p>
-                                        <p className="capitalize text-gray-700">
-                                            {fullname}
-                                        </p>
-                                    </div>
+                                    {username}
                                 </Link>
-                                <FollowButton
-                                    userId={docId}
-                                    className="ml-auto"
-                                />
+                                <p className="capitalize text-gray-700">
+                                    {fullname}
+                                </p>
+                                {followings.includes(currentUser) ? (
+                                    <p className="text-xs leading-3 text-primary-main text-opacity-90">
+                                        follow you
+                                    </p>
+                                ) : null}
                             </div>
-                        ),
-                    )}
-                </div>
-            )
-
-        default:
-            return null
-    }
+                        </div>
+                        <UnStyledFollowButton userId={docId}>
+                            {(isFollowing, props) =>
+                                isFollowing ? null : (
+                                    <button
+                                        className="ml-auto p-0.5 font-semibold text-primary-main transition-colors hover:text-primary-dark disabled:pointer-events-none disabled:opacity-50"
+                                        {...props}
+                                    >
+                                        Follow
+                                    </button>
+                                )
+                            }
+                        </UnStyledFollowButton>
+                    </div>
+                ),
+            )}
+        </div>
+    )
 }
 export default Suggestions

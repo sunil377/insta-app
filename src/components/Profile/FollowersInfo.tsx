@@ -1,6 +1,6 @@
 import { UserServer } from '@/schema/user-schema'
 import { Fragment, useState } from 'react'
-import UserListDialog from '../Feeds/UserListDialog'
+import UserListDialog from '../UserListDialog'
 
 function FollowersInfo({ followers }: Pick<UserServer, 'followers'>) {
     const [isOpen, setIsOpen] = useState(false)

@@ -1,10 +1,10 @@
 import { ExploreIcon, HomeIcon, MessengerIcon, UserPlusIcon } from '@/assets'
-import UserListDialog from '@/components/Feeds/UserListDialog'
-import { UserAvatar } from '@/components/UserAvatar'
-import useUser, { useUsers } from '@/requests/useUser'
+import { AlertBadge, Spinner, UserBedge } from '@/components/util'
+import useUser from '@/requests/useUser'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Fragment, ReactNode, useState } from 'react'
+import { Fragment, ReactNode } from 'react'
 import { HiChevronDown } from 'react-icons/hi'
 import BackButton from './BackButton'
 import HomeNavigation from './HomeNavigation'
@@ -34,6 +34,8 @@ function TopNavbar() {
 }
 
 function MobileLayout({ children }: { children: ReactNode }) {
+    const { data: currentUser, isLoading, isError, error } = useUser()
+
     return (
         <Fragment>
             <TopNavbar />
@@ -50,7 +52,27 @@ function MobileLayout({ children }: { children: ReactNode }) {
                     <MessengerIcon aria-label="Messenger" />
                 </button>
 
-                <UserAvatar />
+                {isLoading ? (
+                    <Spinner />
+                ) : isError ? (
+                    <AlertBadge error={error} renderText />
+                ) : (
+                    <Link href={`/${currentUser.docId}`}>
+                        {currentUser.profile.photo ? (
+                            <Image
+                                src={currentUser.profile.photo}
+                                alt={currentUser.username}
+                                width="24"
+                                height="24"
+                                className="h-6 w-6 rounded-full"
+                            />
+                        ) : (
+                            <UserBedge className="h-6 w-6 text-base">
+                                {currentUser.username.at(0)}
+                            </UserBedge>
+                        )}
+                    </Link>
+                )}
             </footer>
 
             <div className="mt-12 pb-12">{children}</div>
@@ -60,8 +82,6 @@ function MobileLayout({ children }: { children: ReactNode }) {
 
 function ProfileMobileNav() {
     const { data: currentUser } = useUser()
-    const { data: users, isSuccess } = useUsers(currentUser?.username ?? null)
-    const [isOpen, setOpen] = useState(false)
 
     return (
         <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center justify-between border-y border-y-gray-300 bg-white px-2 xs:px-4">
@@ -72,19 +92,9 @@ function ProfileMobileNav() {
                 <HiChevronDown className="text-2xl" />
             </button>
 
-            <button onClick={() => setOpen(true)} className="rounded-full p-1">
+            <button className="rounded-full p-1">
                 <UserPlusIcon aria-label="Discover People" />
             </button>
-            {isSuccess ? (
-                <UserListDialog
-                    list={users?.map((user) => user.docId)}
-                    isOpen={isOpen}
-                    onClose={() => {
-                        setOpen(false)
-                    }}
-                    title="People"
-                />
-            ) : null}
         </nav>
     )
 }

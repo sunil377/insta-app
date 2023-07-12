@@ -1,83 +1,68 @@
+import { HeartIcon } from '@/assets'
 import { useComments } from '@/requests/useComment'
 import { useUserById } from '@/requests/useUser'
+import { ICommentServer } from '@/schema/comment-schema'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
-import { AiOutlineHeart } from 'react-icons/ai'
-import { Avatar } from '../UserAvatar'
+import { AlertBadge, Spinner } from '../util'
+import { Avatar } from './util'
 
-function UserPic({ userId }: { userId: string }) {
-    const { data: user, status } = useUserById(userId)
+export function RenderComponent({
+    criticId,
+    caption,
+    createdAt,
+}: ICommentServer) {
+    const { data: user, isLoading, isError, error } = useUserById(criticId)
 
-    switch (status) {
-        case 'loading':
-            return <div>loading..</div>
-        case 'error':
-            return <h2>Error has accur</h2>
-        case 'success':
-            return (
-                <Avatar
-                    photo={user.profile.photo}
-                    username={user.username}
-                    sizes="w-8 h-8 text-lg"
-                />
-            )
-        default:
-            return null
-    }
-}
-function Username({ userId }: { userId: string }) {
-    const { data: user, status } = useUserById(userId)
+    if (isLoading) return <Spinner />
+    if (isError) return <AlertBadge error={error} renderText />
 
-    switch (status) {
-        case 'loading':
-            return <div>loading..</div>
-        case 'error':
-            return <h2>Error has accur</h2>
-        case 'success':
-            return (
-                <Link href={`/${userId}`} className="font-semibold">
-                    {user.username}
-                </Link>
-            )
-        default:
-            return null
-    }
+    return isLoading ? (
+        <Spinner />
+    ) : isError ? (
+        <AlertBadge error={error} renderText />
+    ) : (
+        <>
+            <Avatar username={user.username} photo={user.profile.photo} />
+            <div>
+                <div className="space-x-1">
+                    <Link
+                        href={`/${user.docId}`}
+                        className="inline-block font-medium"
+                    >
+                        {user.username}
+                    </Link>
+                    <p className="inline-block">{caption}</p>
+                </div>
+                <p className="text-xs text-secondary-light">
+                    {formatDistanceToNow(createdAt)}
+                </p>
+            </div>
+        </>
+    )
 }
 
 function Comments({ postId }: { postId: string }) {
-    const { data: comments, status } = useComments(postId)
+    const { data: comments, isError, isLoading, error } = useComments(postId)
 
-    switch (status) {
-        case 'loading':
-            return <div>loading...</div>
-        case 'error':
-            return <p>Error has Accur</p>
-        case 'success':
-            return (
-                <>
-                    {comments.map((comment) => (
-                        <article key={comment.docId} className="flex gap-x-4">
-                            <UserPic userId={comment.criticId} />
-                            <div className="flex flex-col justify-between">
-                                <p className="line-clamp-3 space-x-1">
-                                    <Username userId={comment.criticId} />
-                                    <span>{comment.caption}</span>
-                                </p>
-                                <p className="text-xs text-secondary-light">
-                                    {formatDistanceToNow(comment.createdAt)}
-                                </p>
-                            </div>
+    if (isLoading) return <Spinner />
+    if (isError) return <AlertBadge error={error} renderText />
 
-                            <button className="ml-auto text-xs">
-                                <AiOutlineHeart />
-                            </button>
-                        </article>
-                    ))}
-                </>
-            )
-        default:
-            return null
-    }
+    return (
+        <>
+            {comments.map((comment) => (
+                <article
+                    key={comment.docId}
+                    className="flex items-start gap-x-4"
+                >
+                    <RenderComponent {...comment} />
+                    <button className="ml-auto text-xs">
+                        <HeartIcon />
+                    </button>
+                </article>
+            ))}
+        </>
+    )
 }
 
 export default Comments

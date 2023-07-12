@@ -1,4 +1,4 @@
-import { UserAvatar } from '@/components/UserAvatar'
+import { UserBedge } from '@/components/util'
 import { PASSWORD_DONT_MATCH } from '@/constants/errors'
 import { protectedRouteWithUser } from '@/helpers/routes'
 import { convertZodErrorToFormikError } from '@/helpers/util'
@@ -11,6 +11,7 @@ import { passwordSchema } from '@/schema/util'
 import { changePassword } from '@/services/auth'
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik'
 import { InferGetServerSidePropsType } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Fragment } from 'react'
 import { z } from 'zod'
@@ -75,7 +76,19 @@ const ChangePassword: IPage = function ChangePassword() {
                     ) : null}
                     <div className="flex grid-cols-4 items-center gap-x-2 xs:grid  xs:gap-x-6">
                         <div className="col-span-1 flex xs:justify-end">
-                            <UserAvatar />
+                            {user.profile.photo ? (
+                                <Image
+                                    src={user.profile.photo}
+                                    alt={user.username}
+                                    width="24"
+                                    height="24"
+                                    className="h-6 w-6 rounded-full"
+                                />
+                            ) : (
+                                <UserBedge className="h-6 w-6 text-base">
+                                    {user.username.at(0)}
+                                </UserBedge>
+                            )}
                         </div>
                         <div className="col-span-3">
                             {user.profile.fullname}

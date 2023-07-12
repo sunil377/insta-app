@@ -1,33 +1,51 @@
 import { SCREEN_LG } from '@/constants/screens'
-import { BASE64_KEY, POST_QUERY_KEY } from '@/constants/util'
+import { BASE64_KEY } from '@/constants/util'
 import { useAuth } from '@/context/AuthContext'
+import { useSnackBar } from '@/context/SnackBarContext'
 import useMediaQuery from '@/hooks/useMediaQuery'
 import { IPost } from '@/schema/post-schema'
-import { createpost, getPost, getPosts, updatePost } from '@/services/post'
+import {
+    createpost,
+    getFeedsPosts,
+    getPost,
+    getPosts,
+    updatePost,
+} from '@/services/post'
 import { uploadPostBase64Image, uploadPostImage } from '@/services/storage'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { arrayRemove, arrayUnion } from 'firebase/firestore'
 import { UploadResult, getDownloadURL } from 'firebase/storage'
 import { produce } from 'immer'
 import { useRouter } from 'next/router'
+import { queries } from './queries'
 
 export function usePost(postId: string) {
     return useQuery({
-        queryKey: [POST_QUERY_KEY, postId],
+        queryKey: queries.posts.getOne(postId),
         queryFn: () => getPost(postId),
     })
 }
 
 export function usePosts(author: string) {
     return useQuery({
-        queryKey: [POST_QUERY_KEY],
+        queryKey: queries.posts.getAll(),
         queryFn: () => getPosts(author),
+    })
+}
+
+export function useFeeds() {
+    const currentUser = useAuth()
+
+    return useQuery({
+        queryKey: queries.posts.followings(currentUser),
+        queryFn: () => getFeedsPosts(currentUser),
     })
 }
 
 export function useUpdatePostLike(postId: string) {
     const currentUser = useAuth()
     const queryClient = useQueryClient()
+    const snackbar = useSnackBar()
 
     return useMutation({
         mutationFn: ({ isLiked }: { isLiked: boolean }) =>
@@ -37,12 +55,14 @@ export function useUpdatePostLike(postId: string) {
                     : arrayUnion(currentUser),
             }),
         onSuccess: (_, { isLiked }) => {
+            snackbar.setMessage(`Post ${isLiked ? 'unliked' : 'liked'}`)
+
             queryClient.invalidateQueries({
-                queryKey: [POST_QUERY_KEY, postId],
+                queryKey: queries.posts.getOne(postId),
             })
 
             queryClient.setQueryData<IPost[]>(
-                [POST_QUERY_KEY],
+                queries.posts.getAll(),
                 produce((draftState) => {
                     if (!draftState) return
                     const oldPost = draftState.find(

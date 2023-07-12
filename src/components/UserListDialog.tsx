@@ -1,6 +1,6 @@
 import { CloseIcon } from '@/assets'
 import { Dialog } from '@headlessui/react'
-import Modal from '../Modal'
+import Modal from './Modal'
 import UserListItem from './UserListItem'
 
 interface IUserListDialog {

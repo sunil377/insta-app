@@ -1,5 +1,5 @@
 import useCaption from '@/components/CreatePost/useCaption'
-import { Avatar } from '@/components/UserAvatar'
+import { UserBedge } from '@/components/util'
 import { BASE64_KEY } from '@/constants/util'
 import { protectedRouteWithUser } from '@/helpers/routes'
 import { useCreatePost } from '@/requests/usePost'
@@ -67,11 +67,19 @@ function PostDetails() {
             </nav>
             <main className="mt-12 py-4">
                 <header className="flex justify-between gap-x-4 px-4">
-                    <Avatar
-                        photo={currentUser.profile.photo}
-                        username={currentUser.username}
-                        sizes="h-8 w-8 text-base"
-                    />
+                    {currentUser.profile.photo ? (
+                        <Image
+                            src={currentUser.profile.photo}
+                            alt={currentUser.username}
+                            width="32"
+                            height="32"
+                            className="h-8 w-8 rounded-full"
+                        />
+                    ) : (
+                        <UserBedge className="h-8 w-8 text-lg">
+                            {currentUser.username.at(0)}
+                        </UserBedge>
+                    )}
 
                     <textarea
                         className="w-full resize-y bg-gray-100 p-2 placeholder:text-sm"

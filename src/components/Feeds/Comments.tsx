@@ -32,7 +32,7 @@ export const CommentForm = forwardRef<HTMLInputElement, { postId: string }>(
                 return convertZodErrorToFormikError(
                     values,
                     z.object({
-                        caption: z.string().nonempty(ERROR_COMMENT_MIN_LENGTH),
+                        caption: z.string().min(1, ERROR_COMMENT_MIN_LENGTH),
                     }),
                 )
             },
@@ -52,9 +52,12 @@ export const CommentForm = forwardRef<HTMLInputElement, { postId: string }>(
 
         return (
             <form
-                className={clsx('flex gap-4 text-sm', {
-                    'rounded-full bg-white px-2': isCommentPage,
-                })}
+                className={clsx(
+                    {
+                        'rounded-full bg-white px-2': isCommentPage,
+                    },
+                    'flex gap-4 text-sm',
+                )}
                 noValidate
                 onSubmit={handleSubmit}
             >
@@ -62,10 +65,10 @@ export const CommentForm = forwardRef<HTMLInputElement, { postId: string }>(
                     type="text"
                     placeholder="Add a Comment..."
                     className={clsx(
-                        'w-full bg-transparent placeholder:text-secondary-light focus:outline-none',
                         {
                             'pl-4 leading-10': isCommentPage,
                         },
+                        'w-full bg-transparent placeholder:text-secondary-light focus:outline-none',
                     )}
                     name="caption"
                     value={values.caption}
@@ -80,8 +83,8 @@ export const CommentForm = forwardRef<HTMLInputElement, { postId: string }>(
                 <button
                     type="submit"
                     className={clsx(
-                        'mr-2 font-semibold text-primary-main transition-colors hover:text-primary-dark disabled:pointer-events-none disabled:opacity-50',
                         { invisible: !isValid },
+                        'mr-2 font-semibold text-primary-main transition-colors hover:text-primary-dark disabled:pointer-events-none disabled:opacity-50',
                     )}
                     disabled={isDisabled}
                 >

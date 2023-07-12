@@ -1,8 +1,9 @@
 import { SettingsIcon } from '@/assets'
 import { useAuth } from '@/context/AuthContext'
 import { UserServer } from '@/schema/user-schema'
+import UnStyledFollowButton from '@/unstyled/UnStyledFollowButton'
+import clsx from 'clsx'
 import Link from 'next/link'
-import FollowButton from '../Feeds/FollowButton'
 import FollowersInfo from './FollowersInfo'
 import FollowingsInfo from './FollowingsInfo'
 import ProfileAvatar from './ProfileAvatar'
@@ -54,7 +55,23 @@ function Header({
                                     Edit Profile
                                 </Link>
                             ) : (
-                                <FollowButton userId={docId} />
+                                <UnStyledFollowButton userId={docId}>
+                                    {(isFollowing, props) => (
+                                        <button
+                                            className={clsx(
+                                                isFollowing
+                                                    ? 'bg-gray-200 text-gray-950 hover:bg-gray-300'
+                                                    : 'bg-primary-main text-white',
+                                                'rounded-md px-4 py-1.5 font-medium transition-colors disabled:pointer-events-none disabled:opacity-50',
+                                            )}
+                                            {...props}
+                                        >
+                                            {isFollowing
+                                                ? 'Following'
+                                                : 'Follow'}
+                                        </button>
+                                    )}
+                                </UnStyledFollowButton>
                             )}
                         </div>
                         {isOwner ? (

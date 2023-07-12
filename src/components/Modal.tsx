@@ -27,11 +27,11 @@ function Modal({
                     <div className="flex min-h-full items-center justify-center overflow-hidden p-4 sm:p-10">
                         <Transition.Child
                             enter="duration-200 ease-in"
-                            enterFrom="opacity-0"
-                            enterTo="opacity-100"
+                            enterFrom="scale-75 opacity-0"
+                            enterTo="opacity-100 scale-100"
                             leave="duration-100 ease-in"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
+                            leaveFrom="opacity-100 scale-100"
+                            leaveTo="opacity-0 scale-75"
                             as={Fragment}
                         >
                             <Dialog.Panel {...props} />

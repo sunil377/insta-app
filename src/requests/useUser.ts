@@ -1,15 +1,21 @@
-import { USER_QUERY_KEY } from '@/constants/util'
 import { useAuth } from '@/context/AuthContext'
-import { getUser, getUserDocRef, getUsers } from '@/services/user'
+import { useSnackBar } from '@/context/SnackBarContext'
+import { db_ref } from '@/services/config'
+import {
+    getUser,
+    getUserBySearchQuery,
+    getUserSuggestion,
+} from '@/services/user'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { arrayRemove, arrayUnion, updateDoc } from 'firebase/firestore'
 import { useRouter } from 'next/router'
 import { z } from 'zod'
+import { queries } from './queries'
 
-export function useUserById(id: string) {
+function useUserById(userId: string) {
     return useQuery({
-        queryKey: [USER_QUERY_KEY, id],
-        queryFn: () => getUser(id),
+        queryKey: queries.users.getOne(userId),
+        queryFn: () => getUser(userId),
     })
 }
 
@@ -18,15 +24,22 @@ export default function useUser() {
     return useUserById(currentUser)
 }
 
-export function useUsers(username: string | null) {
+function useUserSuggestion() {
+    const currentUser = useAuth()
     return useQuery({
-        queryKey: [USER_QUERY_KEY],
-        queryFn: () => getUsers(username!),
-        enabled: !!username,
+        queryKey: queries.users.suggestion(),
+        queryFn: () => getUserSuggestion(currentUser),
     })
 }
 
-export function useProfileUser() {
+function useUserSearchQuery(query: string) {
+    return useQuery({
+        queryKey: queries.users.querySearch(query),
+        queryFn: () => getUserBySearchQuery(query),
+    })
+}
+
+function useProfileUser() {
     const router = useRouter()
     const { id } = z
         .object({
@@ -40,15 +53,17 @@ export function useProfileUser() {
 function useUpdateUserSaved(postId: string) {
     const currentUser = useAuth()
     const queryClient = useQueryClient()
+    const snackbar = useSnackBar()
 
     return useMutation({
         mutationFn: ({ isSaved }: { isSaved: boolean }) =>
-            updateDoc(getUserDocRef(currentUser), {
+            updateDoc(db_ref.users.document_ref(currentUser), {
                 saved: isSaved ? arrayRemove(postId) : arrayUnion(postId),
             }),
-        onSuccess: () => {
+        onSuccess: (_, { isSaved }) => {
+            snackbar.setMessage(`post ${isSaved ? 'unsaved' : 'saved'}`)
             queryClient.invalidateQueries({
-                queryKey: [USER_QUERY_KEY, currentUser],
+                queryKey: queries.users.getOne(currentUser),
             })
         },
     })
@@ -57,29 +72,40 @@ function useUpdateUserSaved(postId: string) {
 function useUpdateUserFollowings(userId: string) {
     const currentUser = useAuth()
     const queryClient = useQueryClient()
+    const snackbar = useSnackBar()
 
     return useMutation({
         mutationFn: async ({ isFollowing }: { isFollowing: boolean }) => {
-            await updateDoc(getUserDocRef(currentUser), {
+            await updateDoc(db_ref.users.document_ref(currentUser), {
                 followings: isFollowing
                     ? arrayRemove(userId)
                     : arrayUnion(userId),
             })
-            await updateDoc(getUserDocRef(userId), {
+            await updateDoc(db_ref.users.document_ref(userId), {
                 followers: isFollowing
                     ? arrayRemove(currentUser)
                     : arrayUnion(currentUser),
             })
         },
-        onSuccess: () => {
+        onSuccess: (_, { isFollowing }) => {
+            snackbar.setMessage(
+                `user ${isFollowing ? 'unfollowed' : 'following'} Successfully`,
+            )
             queryClient.invalidateQueries({
-                queryKey: [USER_QUERY_KEY, userId],
+                queryKey: queries.users.getOne(userId),
             })
             queryClient.invalidateQueries({
-                queryKey: [USER_QUERY_KEY, currentUser],
+                queryKey: queries.users.getOne(currentUser),
             })
         },
     })
 }
 
-export { useUpdateUserFollowings, useUpdateUserSaved }
+export {
+    useProfileUser,
+    useUpdateUserFollowings,
+    useUpdateUserSaved,
+    useUserById,
+    useUserSearchQuery,
+    useUserSuggestion,
+}
