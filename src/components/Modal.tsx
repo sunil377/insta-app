@@ -66,7 +66,7 @@ export function ModalListItem({ children }: { children: React.ReactNode }) {
             : child
     })
 
-    return clone
+    return <>{clone}</>
 }
 
 export default Modal
