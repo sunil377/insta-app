@@ -12,7 +12,7 @@ function convertZodErrorToFormikError<A, B extends z.Schema>(
     }
 }
 
-function getErrorForTitle(error: unknown): string {
+function parseUnkownErrorToString(error: unknown): string {
     return error instanceof Error
         ? error.message
         : typeof error === 'string'
@@ -20,4 +20,4 @@ function getErrorForTitle(error: unknown): string {
         : 'something went wrong'
 }
 
-export { convertZodErrorToFormikError, getErrorForTitle }
+export { convertZodErrorToFormikError, parseUnkownErrorToString }

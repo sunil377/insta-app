@@ -63,7 +63,7 @@ function SettingMenu() {
                     {({ active }) => (
                         <button
                             className={clsx(
-                                'flex w-full items-center justify-between px-4 py-2',
+                                'flex w-full items-center justify-between px-4 py-2 font-normal',
                                 {
                                     'bg-gray-100': active,
                                 },
@@ -83,7 +83,7 @@ function SettingMenu() {
                             onClick={() => mutate()}
                             disabled={isLoading}
                             className={clsx(
-                                'flex w-full items-center justify-between px-4 py-2',
+                                'block w-full px-4 py-2 text-start font-normal',
                                 {
                                     'bg-gray-100': active,
                                 },

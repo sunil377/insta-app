@@ -2,9 +2,13 @@ import { SettingsIcon } from '@/assets'
 import { useAuth } from '@/context/AuthContext'
 import { UserServer } from '@/schema/user-schema'
 import UnStyledFollowButton from '@/unstyled/UnStyledFollowButton'
+import UnStyledLogoutButton from '@/unstyled/UnStyledLogoutButton'
 import clsx from 'clsx'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useState } from 'react'
+import Modal, { ModalList, ModalListItem } from '../Modal'
+import { UserBedge } from '../util'
 import FollowersInfo from './FollowersInfo'
 import FollowingsInfo from './FollowingsInfo'
 
@@ -47,16 +51,16 @@ function Header({
                                 className="rounded-full border border-gray-300 object-contain"
                             />
                         ) : (
-                            <div className="inline-flex h-full w-full items-center justify-center rounded-full bg-primary-main bg-opacity-50 text-5xl capitalize text-white">
+                            <UserBedge className="h-full w-full text-4xl">
                                 {username.at(0)}
-                            </div>
+                            </UserBedge>
                         )}
                     </div>
                 </div>
 
                 <div className="col-span-3 flex flex-col justify-center gap-y-4 px-4 sm:justify-start">
                     <div className="flex-wrap space-y-2 xs:flex xs:items-center xs:gap-x-4">
-                        <h4 className="text-xl font-light">{username}</h4>
+                        <h4 className="text-xl">{username}</h4>
                         <div className="basis-full xs:order-last sm:basis-auto">
                             {isOwner ? (
                                 <Link
@@ -85,17 +89,13 @@ function Header({
                                 </UnStyledFollowButton>
                             )}
                         </div>
-                        {isOwner ? (
-                            <button className="hidden rounded-full p-1.5 xs:inline-block sm:order-last">
-                                <SettingsIcon aria-label="setttings" />
-                            </button>
-                        ) : null}
+                        {isOwner ? <Settings /> : null}
                     </div>
 
                     <div className="hidden sm:flex sm:gap-x-6">
                         <div className="sm:flex sm:gap-x-2">
                             <p className="font-bold">{posts.length}</p>
-                            <p className="text-gray-500">posts</p>
+                            <p className="text-gray-800">posts</p>
                         </div>
 
                         <FollowersInfo followers={followers} />
@@ -115,7 +115,7 @@ function Header({
             <section className="grid grid-cols-3 justify-items-center border-t py-2 text-center sm:hidden">
                 <div className="sm:flex sm:gap-x-2">
                     <p className="font-bold">{posts.length}</p>
-                    <p className="text-gray-500">posts</p>
+                    <p className="text-gray-800">posts</p>
                 </div>
 
                 <FollowersInfo followers={followers} />
@@ -124,4 +124,35 @@ function Header({
         </>
     )
 }
+
+function Settings() {
+    const [isOpen, setOpen] = useState(false)
+
+    return (
+        <>
+            <button
+                title="setttings"
+                className="hidden rounded-full p-1.5 xs:inline-block sm:order-last"
+                onClick={() => setOpen(true)}
+            >
+                <SettingsIcon />
+            </button>
+            <Modal
+                isOpen={isOpen}
+                onClose={() => setOpen(false)}
+                className="w-full max-w-sm rounded-md bg-white"
+            >
+                <ModalList>
+                    <ModalListItem>
+                        <UnStyledLogoutButton>Log Out</UnStyledLogoutButton>
+                    </ModalListItem>
+                    <ModalListItem>
+                        <button onClick={() => setOpen(false)}>Cancel</button>
+                    </ModalListItem>
+                </ModalList>
+            </Modal>
+        </>
+    )
+}
+
 export default Header

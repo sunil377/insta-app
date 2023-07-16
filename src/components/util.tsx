@@ -1,4 +1,4 @@
-import { getErrorForTitle } from '@/helpers/util'
+import { parseUnkownErrorToString } from '@/helpers/util'
 import { UserProfileServer, UserServer } from '@/schema/user-schema'
 import clsx from 'clsx'
 import Image from 'next/image'
@@ -77,7 +77,7 @@ function AlertBadge({
     renderText = false,
     className = 'p-0.5 text-2xl',
 }: alert_bedge) {
-    const errText = getErrorForTitle(error)
+    const errText = parseUnkownErrorToString(error)
 
     const icon = (
         <div

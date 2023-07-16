@@ -3,7 +3,7 @@ import { useAuth } from '@/context/AuthContext'
 import UnStyledFollowButton from '@/unstyled/UnStyledFollowButton'
 import Link from 'next/link'
 import { useState } from 'react'
-import Modal from '../Modal'
+import Modal, { ModalList, ModalListItem } from '../Modal'
 
 function MenuDialog({ postId, userId }: { postId: string; userId: string }) {
     const [isOpen, setOpen] = useState(false)
@@ -22,42 +22,38 @@ function MenuDialog({ postId, userId }: { postId: string; userId: string }) {
             <Modal
                 isOpen={isOpen}
                 onClose={() => setOpen(false)}
-                className="w-full overflow-hidden rounded-lg bg-white shadow-md sm:max-w-sm"
+                className="w-full rounded-lg bg-white shadow-md sm:max-w-sm"
             >
-                <div className="divide-y divide-secondary-lighter text-center text-sm text-secondary-dark">
+                <ModalList>
                     {currentUser != userId ? (
                         <UnStyledFollowButton userId={userId}>
                             {(isFollowing, props) =>
                                 isFollowing ? (
-                                    <button
-                                        className="block w-full p-0.5 py-3 font-bold text-red-600 transition-colors hover:text-red-800 focus:outline-none focus-visible:bg-gray-100"
-                                        {...props}
-                                    >
-                                        Unfollow
-                                    </button>
+                                    <ModalListItem>
+                                        <button
+                                            className="text-red-600 transition-colors hover:text-red-800"
+                                            {...props}
+                                        >
+                                            <b>Unfollow</b>
+                                        </button>
+                                    </ModalListItem>
                                 ) : null
                             }
                         </UnStyledFollowButton>
                     ) : null}
 
-                    <button className="block w-full py-3 font-normal focus:outline-none focus-visible:bg-gray-100">
-                        Add to favorites
-                    </button>
+                    <ModalListItem>
+                        <button>Add to favorites</button>
+                    </ModalListItem>
 
-                    <Link
-                        href={`/post/${postId}`}
-                        className="block w-full py-3 focus:outline-none focus-visible:bg-gray-100"
-                    >
-                        Go to post
-                    </Link>
+                    <ModalListItem>
+                        <Link href={`/post/${postId}`}>Go to post</Link>
+                    </ModalListItem>
 
-                    <button
-                        onClick={() => setOpen(false)}
-                        className="block w-full py-3 text-center font-normal focus:outline-none focus-visible:bg-gray-100"
-                    >
-                        Cancel
-                    </button>
-                </div>
+                    <ModalListItem>
+                        <button onClick={() => setOpen(false)}>Cancel</button>
+                    </ModalListItem>
+                </ModalList>
             </Modal>
         </>
     )

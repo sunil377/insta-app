@@ -1,4 +1,4 @@
-import Modal from '@/components/Modal'
+import Modal, { ModalList, ModalListItem } from '@/components/Modal'
 import { AlertBadge, Spinner, UserBedge } from '@/components/util'
 import useUser, {
     useUpdateUserFollowings,
@@ -95,25 +95,24 @@ function UnStyledFollowButton({ userId, children }: IProps) {
                 onClose={() => setIsOpen(false)}
                 className="w-full max-w-sm rounded-md bg-white"
             >
-                <div className="divide-y divide-secondary-lighter text-sm">
+                <ModalList>
                     <ModalHeader userId={userId} />
-                    <button
-                        className="block w-full py-4 text-center font-bold text-red-500"
-                        disabled={mutation.isLoading}
-                        onClick={async () => {
-                            await mutation.mutateAsync({ isFollowing })
-                            setIsOpen(false)
-                        }}
-                    >
-                        Unfollow
-                    </button>
-                    <button
-                        className="block w-full py-4 text-center"
-                        onClick={() => setIsOpen(false)}
-                    >
-                        Cancel
-                    </button>
-                </div>
+                    <ModalListItem>
+                        <button
+                            className="text-red-600 transition-colors hover:text-red-800"
+                            disabled={mutation.isLoading}
+                            onClick={async () => {
+                                await mutation.mutateAsync({ isFollowing })
+                                setIsOpen(false)
+                            }}
+                        >
+                            <b>Unfollow</b>
+                        </button>
+                    </ModalListItem>
+                    <ModalListItem>
+                        <button onClick={() => setIsOpen(false)}>Cancel</button>
+                    </ModalListItem>
+                </ModalList>
             </Modal>
 
             {children(isFollowing, {

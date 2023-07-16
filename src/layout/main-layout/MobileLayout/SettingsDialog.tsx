@@ -1,7 +1,6 @@
 import { SettingsIcon } from '@/assets'
-import { logout } from '@/services/auth'
-import { Dialog, Transition } from '@headlessui/react'
-import { FirebaseError } from 'firebase-admin'
+import UnStyledLogoutButton from '@/unstyled/UnStyledLogoutButton'
+import { Dialog } from '@headlessui/react'
 import Link from 'next/link'
 import { Fragment, useState } from 'react'
 import { BsMeta } from 'react-icons/bs'
@@ -70,79 +69,14 @@ function SettingsDialog() {
                         </section>
 
                         <section className="mt-2 px-3">
-                            <LogOutDialog />
+                            <UnStyledLogoutButton className="flex w-full justify-between border-y py-2 text-left text-red-500">
+                                <span>Log Out</span>
+                                <HiChevronRight className="text-2xl text-gray-500" />
+                            </UnStyledLogoutButton>
                         </section>
                     </div>
                 </Dialog.Panel>
             </Dialog>
-        </Fragment>
-    )
-}
-
-function LogOutDialog() {
-    const [isOpen, setOpen] = useState(false)
-
-    return (
-        <Fragment>
-            <button
-                className="flex w-full justify-between border-y py-2 text-left text-red-500"
-                onClick={() => setOpen(true)}
-            >
-                <span>Log Out</span>
-                <HiChevronRight className="text-2xl text-gray-500" />
-            </button>
-
-            <Transition
-                show={isOpen}
-                enter="transition duration-100 ease-linear"
-                enterFrom="transform scale-95 opacity-0"
-                enterTo="transform scale-100 opacity-100"
-                leave="transition duration-75 ease-linear"
-                leaveFrom="transform scale-100 opacity-100"
-                leaveTo="transform scale-95 opacity-0"
-                as={Fragment}
-            >
-                <Dialog
-                    onClose={setOpen}
-                    className="fixed inset-0 z-50 grid place-items-center"
-                >
-                    <div className="absolute inset-0 z-10 bg-gray-700/70"></div>
-                    <Dialog.Panel className="relative z-20 w-full max-w-[min(250px,calc(100%-2rem))] rounded-xl bg-gray-100 text-sm">
-                        <section className="space-y-2 py-5 text-center">
-                            <Dialog.Title className="text-xl">
-                                Log Out?
-                            </Dialog.Title>
-                            <p className="px-5 text-secondary-light">
-                                Are you sure that you want to log out of your
-                                Account?
-                            </p>
-                        </section>
-                        <section>
-                            <button
-                                className="block w-full border-y py-3 font-bold text-blue-500"
-                                onClick={async function () {
-                                    try {
-                                        await logout()
-                                    } catch (error) {
-                                        alert(
-                                            (error as Error | FirebaseError)
-                                                .message,
-                                        )
-                                    }
-                                }}
-                            >
-                                Log Out
-                            </button>
-                            <button
-                                className="block w-full py-3"
-                                onClick={() => setOpen(false)}
-                            >
-                                Cancel
-                            </button>
-                        </section>
-                    </Dialog.Panel>
-                </Dialog>
-            </Transition>
         </Fragment>
     )
 }

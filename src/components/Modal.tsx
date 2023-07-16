@@ -1,5 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
+import clsx from 'clsx'
+import { Children, Fragment, cloneElement } from 'react'
 
 function Modal({
     isOpen,
@@ -42,4 +43,30 @@ function Modal({
         </Transition>
     )
 }
+
+export function ModalList(props: React.HTMLAttributes<HTMLDivElement>) {
+    return (
+        <div
+            className="divide-y divide-secondary-lighter text-center text-sm text-secondary-dark"
+            {...props}
+        />
+    )
+}
+
+export function ModalListItem({ children }: { children: React.ReactNode }) {
+    const clone = Children.map(children, (child) => {
+        return child && typeof child === 'object' && 'type' in child
+            ? cloneElement(child, {
+                  ...child.props,
+                  className: clsx(
+                      child.props.className,
+                      'block w-full py-3 font-normal',
+                  ),
+              })
+            : child
+    })
+
+    return clone
+}
+
 export default Modal
