@@ -111,6 +111,8 @@ async function protectedRouteWithPost(ctx: GetServerSidePropsContext) {
         queryFn: () => getServerUser(currentUser!),
     })
 
+    console.log(ctx.query)
+
     const { id } = z
         .object({
             id: z.string(),

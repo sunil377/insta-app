@@ -1,4 +1,4 @@
-import { UserBedge } from '@/components/util'
+import { Avatar } from '@/components/util'
 import { useSnackBar } from '@/context/SnackBarContext'
 import { protectedRouteWithUser } from '@/helpers/routes'
 import { convertZodErrorToFormikError } from '@/helpers/util'
@@ -9,7 +9,6 @@ import { ProfileSchema } from '@/schema/user-schema'
 import { updateUser } from '@/services/user'
 import { Field, Form, Formik } from 'formik'
 import { InferGetServerSidePropsType } from 'next'
-import Image from 'next/image'
 import { Fragment } from 'react'
 import { NextPageWithLayout } from '../_app'
 
@@ -67,19 +66,11 @@ const EditProfile: IPage = function EditProfile() {
                         <Form noValidate className="space-y-4">
                             <section className="flex grid-cols-4 items-center gap-x-2 space-y-2 xs:grid xs:gap-x-6">
                                 <div className="col-span-1 items-center justify-end pt-2 xs:inline-flex">
-                                    {currentUser.profile.photo ? (
-                                        <Image
-                                            src={currentUser.profile.photo}
-                                            alt={currentUser.username}
-                                            width="24"
-                                            height="24"
-                                            className="h-6 w-6 rounded-full"
-                                        />
-                                    ) : (
-                                        <UserBedge className="h-6 w-6 text-base">
-                                            {currentUser.username.at(0)}
-                                        </UserBedge>
-                                    )}
+                                    <Avatar
+                                        photo={currentUser.profile.photo}
+                                        username={currentUser.username}
+                                        size={24}
+                                    />
                                 </div>
                                 <div className="col-span-3 leading-4">
                                     <h4>{username}</h4>
@@ -119,7 +110,7 @@ const EditProfile: IPage = function EditProfile() {
                                     <input
                                         id="username"
                                         name="username"
-                                        className="w-full rounded-md border px-4 py-2 read-only:pointer-events-none read-only:opacity-50"
+                                        className="w-full rounded-md border px-4 py-2"
                                         placeholder="Enter username here..."
                                         value={username}
                                         readOnly
@@ -160,7 +151,7 @@ const EditProfile: IPage = function EditProfile() {
                                     <input
                                         name="email"
                                         id="email"
-                                        className="w-full rounded-md border px-4 py-2 read-only:pointer-events-none read-only:opacity-50"
+                                        className="w-full rounded-md border px-4 py-2"
                                         value={email}
                                         readOnly
                                         title="Email can't be changed"
@@ -179,7 +170,7 @@ const EditProfile: IPage = function EditProfile() {
                                     <Field
                                         id="phone"
                                         name="phoneNumber"
-                                        className="w-full rounded-md border bg-gray-100 px-4 py-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="w-full rounded-md border bg-gray-100 px-4 py-2"
                                         type="text"
                                         placeholder="Enter PhoneNumber here..."
                                     />
@@ -213,7 +204,7 @@ const EditProfile: IPage = function EditProfile() {
                                 <div className="col-span-3">
                                     <button
                                         type="submit"
-                                        className="rounded-md bg-blue-500 px-3 py-1.5 font-semibold text-white transition-colors hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
+                                        className="rounded-md bg-blue-500 px-3 py-1.5 font-semibold text-white transition-colors hover:bg-blue-700"
                                         disabled={isSubmitting}
                                     >
                                         {isSubmitting

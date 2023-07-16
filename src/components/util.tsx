@@ -1,5 +1,7 @@
 import { getErrorForTitle } from '@/helpers/util'
+import { UserProfileServer, UserServer } from '@/schema/user-schema'
 import clsx from 'clsx'
+import Image from 'next/image'
 import { TbAlertTriangleFilled } from 'react-icons/tb'
 
 function Spinner() {
@@ -18,28 +20,70 @@ function UserBedge({
         <div
             className={clsx(
                 className,
-                'inline-flex items-center justify-center rounded-full bg-purple-600 leading-none text-white',
+                'inline-flex items-center justify-center rounded-full bg-purple-700 bg-opacity-90 font-roboto capitalize leading-none text-gray-200',
             )}
             {...props}
         />
     )
 }
 
+type avatar = Pick<UserProfileServer, 'photo'> &
+    Pick<UserServer, 'username'> &
+    Pick<React.HTMLAttributes<HTMLDivElement>, 'className'> & {
+        size?: number
+    }
+
+function Avatar({ photo, username, size = 32, className }: avatar) {
+    const classes = clsx({
+        'h-6 w-6 text-xs': size === 24,
+        'h-8 w-8 text-base': size === 32,
+    })
+
+    return photo ? (
+        <Image
+            src={photo}
+            alt={username}
+            width={size}
+            height={size}
+            className={clsx(
+                classes,
+                className,
+                'flex-none rounded-full object-cover',
+            )}
+        />
+    ) : (
+        <UserBedge className={clsx(classes, 'flex-none')}>
+            {username.at(0)}
+        </UserBedge>
+    )
+}
+
+function DotIcon() {
+    return (
+        <div
+            className="h-1.5 w-1.5 rounded-full bg-primary-main bg-opacity-50"
+            aria-hidden
+        />
+    )
+}
+
+type alert_bedge = { error: unknown; renderText?: boolean } & Pick<
+    React.HTMLAttributes<HTMLDivElement>,
+    'className'
+>
+
 function AlertBadge({
     error,
     renderText = false,
     className = 'p-0.5 text-2xl',
-}: { error: unknown; renderText?: boolean } & Pick<
-    React.HTMLAttributes<HTMLDivElement>,
-    'className'
->) {
+}: alert_bedge) {
     const errText = getErrorForTitle(error)
 
     const icon = (
         <div
             role="alert"
             aria-live="polite"
-            className={clsx(className, 'inline-block text-red-600')}
+            className={clsx(className, 'inline-block flex-none text-red-600')}
             title={errText}
         >
             <TbAlertTriangleFilled />
@@ -49,11 +93,11 @@ function AlertBadge({
     return renderText ? (
         <div className="flex items-center gap-x-2 break-all">
             {icon}
-            <p className="break-words text-red-600">{errText}</p>
+            <p className="flex-auto break-words text-red-600">{errText}</p>
         </div>
     ) : (
         icon
     )
 }
 
-export { AlertBadge, Spinner, UserBedge }
+export { AlertBadge, Avatar, DotIcon, Spinner, UserBedge }

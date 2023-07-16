@@ -3,7 +3,14 @@ import {
     ICommentClient,
     ICommentServer,
 } from '@/schema/comment-schema'
-import { addDoc, getDoc, getDocs } from 'firebase/firestore'
+import {
+    addDoc,
+    getDoc,
+    getDocs,
+    limit,
+    orderBy,
+    query,
+} from 'firebase/firestore'
 import { db_ref } from './config'
 import { parseQuerySnapshot, parseSnapshot } from './util'
 
@@ -15,7 +22,12 @@ async function getComment(postId: string, commentId: string) {
 }
 
 async function getComments(postId: string) {
-    const response = await getDocs(db_ref.comments.collection_ref(postId))
+    const q = query(
+        db_ref.comments.collection_ref(postId),
+        orderBy('createdAt', 'desc'),
+        limit(5),
+    )
+    const response = await getDocs(q)
     return parseQuerySnapshot<ICommentServer>(response)
 }
 

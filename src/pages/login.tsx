@@ -80,7 +80,7 @@ export default function Login() {
                 <GoogleSignIn>
                     {(onClick, isLoading) => (
                         <button
-                            className="mx-auto block rounded-md px-4 py-2 text-sm font-medium text-blue-500 transition-colors hover:text-blue-700 disabled:pointer-events-none disabled:opacity-50"
+                            className="mx-auto block rounded-md px-4 py-2 text-sm text-blue-500 transition-colors hover:text-blue-700"
                             onClick={onClick}
                             disabled={isLoading}
                         >
@@ -131,7 +131,7 @@ function loginform({
                 <Field name="email">{CustomTextField}</Field>
                 <Field name="password">{CustomPasswordTextField}</Field>
                 <button
-                    className="inline-flex w-full justify-center rounded-md bg-blue-500 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
+                    className="inline-flex w-full justify-center rounded-md bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-700"
                     type="submit"
                     disabled={!isValid || isSubmitting}
                 >

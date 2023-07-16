@@ -1,6 +1,7 @@
 import Header from '@/components/Profile/Header'
 import TabButton from '@/components/Profile/TabButton'
 import TabPanel from '@/components/Profile/TabPanel'
+import { AlertBadge, Spinner } from '@/components/util'
 import { adminAuth } from '@/config/firebase-admin'
 import useGetSearchQuery from '@/hooks/useGetSearchQuery'
 import MainLayout from '@/layout/main-layout'
@@ -13,20 +14,24 @@ import type {
     GetServerSidePropsContext,
     InferGetServerSidePropsType,
 } from 'next'
+import { usePathname } from 'next/navigation'
+import { useRouter } from 'next/router'
 import nookies from 'nookies'
 import { z } from 'zod'
 import { NextPageWithLayout } from './_app'
 
 const ProfilePage: IPage = () => {
-    const { data: profileUser, isLoading, isError } = useProfileUser()
-    const [activeTab, setActiveTab] = useGetSearchQuery()
+    const { data: profileUser, isLoading, isError, error } = useProfileUser()
+    const selectedIndex = useGetSearchQuery()
+    const router = useRouter()
+    const pathname = usePathname()
 
     if (isLoading) {
-        return <p>loading...</p>
+        return <Spinner />
     }
 
     if (isError) {
-        return <p>error has Accur</p>
+        return <AlertBadge error={error} renderText />
     }
 
     return (
@@ -34,8 +39,21 @@ const ProfilePage: IPage = () => {
             <Header {...profileUser} />
             <Tab.Group
                 as="section"
-                selectedIndex={activeTab}
-                onChange={setActiveTab}
+                defaultIndex={selectedIndex}
+                selectedIndex={selectedIndex}
+                onChange={(selectedIndexArg) =>
+                    router.push({
+                        pathname,
+                        query: {
+                            search:
+                                selectedIndexArg === 0
+                                    ? 'posts'
+                                    : selectedIndexArg === 1
+                                    ? 'saved'
+                                    : 'tagged',
+                        },
+                    })
+                }
             >
                 <Tab.List className="border-t sm:flex sm:justify-center">
                     <div className="grid grid-cols-3 text-center sm:block sm:space-x-4">

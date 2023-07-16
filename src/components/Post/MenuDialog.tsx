@@ -9,7 +9,7 @@ function MenuDialog({ postId }: { postId: string }) {
         <>
             <button
                 onClick={() => setOpen(true)}
-                aria-label="more info"
+                title="more info"
                 className="ml-auto aspect-square rounded-full p-1.5 text-xl"
             >
                 <ThreeDotIcon />
@@ -21,17 +21,17 @@ function MenuDialog({ postId }: { postId: string }) {
                 className="w-full overflow-hidden rounded-lg bg-white shadow-md sm:max-w-sm"
             >
                 <div className="flex flex-col divide-y divide-secondary-lighter text-sm text-secondary-dark">
-                    <button className="w-full py-3 text-center font-bold text-red-500 focus:outline-none focus-visible:bg-gray-100">
+                    <button className="flex-1 py-3 text-center font-bold text-red-500">
                         Delete
                     </button>
 
-                    <button className="w-full py-3 text-center focus:outline-none focus-visible:bg-gray-100">
+                    <button className="flex-1 py-3 text-center font-normal">
                         Edit
                     </button>
 
                     <button
                         onClick={() => setOpen(false)}
-                        className="w-full py-3 text-center focus:outline-none focus-visible:bg-gray-100"
+                        className="flex-1 py-3 text-center font-normal"
                     >
                         Cancel
                     </button>

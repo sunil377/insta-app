@@ -7,15 +7,13 @@ import clsx from 'clsx'
 import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRef } from 'react'
 import { CommentForm } from '../Feeds/Comments'
 import LikeDialog from '../Feeds/LikeDialog'
 import LikeButton from '../LikeButton'
 import SavedButton from '../SavedButton'
-import { AlertBadge, Spinner } from '../util'
+import { AlertBadge, Avatar, DotIcon, Spinner } from '../util'
 import Comments from './Comments'
 import MenuDialog from './MenuDialog'
-import { Avatar } from './util'
 
 function BigScreenPost({
     authorId,
@@ -25,7 +23,6 @@ function BigScreenPost({
     likes,
     photo,
 }: IPost) {
-    const formInputRef = useRef<HTMLInputElement>(null)
     const currentUser = useAuth()
     const { data: author, isLoading, isError, error } = useUserById(authorId)
 
@@ -53,33 +50,36 @@ function BigScreenPost({
                                         username={author.username}
                                         photo={author.profile.photo}
                                     />
-                                    <h3 className="font-medium">
+                                    <Link
+                                        href={`/${author.docId}`}
+                                        className="inline-block font-medium"
+                                    >
                                         {author.username}
-                                    </h3>
+                                    </Link>
                                 </>
                             )}
-                            <div
-                                className="h-1.5 w-1.5 rounded-full bg-primary-main bg-opacity-50"
-                                aria-hidden
-                            />
+
                             {currentUser != authorId ? (
-                                <UnStyledFollowButton userId={authorId}>
-                                    {(isFollowing, props) => (
-                                        <button
-                                            className={clsx(
-                                                isFollowing
-                                                    ? 'text-gray-950 hover:text-gray-500'
-                                                    : 'text-primary-main hover:text-primary-dark',
-                                                'p-0.5 font-medium transition-colors disabled:pointer-events-none disabled:opacity-50',
-                                            )}
-                                            {...props}
-                                        >
-                                            {isFollowing
-                                                ? 'Following'
-                                                : 'Follow'}
-                                        </button>
-                                    )}
-                                </UnStyledFollowButton>
+                                <>
+                                    <DotIcon />
+                                    <UnStyledFollowButton userId={authorId}>
+                                        {(isFollowing, props) => (
+                                            <button
+                                                className={clsx(
+                                                    isFollowing
+                                                        ? 'text-gray-950 hover:text-gray-500'
+                                                        : 'text-primary-main hover:text-primary-dark',
+                                                    'p-0.5 font-medium transition-colors',
+                                                )}
+                                                {...props}
+                                            >
+                                                {isFollowing
+                                                    ? 'Following'
+                                                    : 'Follow'}
+                                            </button>
+                                        )}
+                                    </UnStyledFollowButton>
+                                </>
                             ) : null}
 
                             <MenuDialog postId={postId} />
@@ -124,15 +124,14 @@ function BigScreenPost({
                         <div className="mt-auto flex items-center gap-x-4 px-4 py-2 text-2xl">
                             <LikeButton postId={postId} likes={likes} />
 
-                            <button
-                                className="rounded-full transition-colors hover:text-secondary-light"
+                            <label
+                                className="inline-block cursor-pointer rounded-full transition-colors hover:text-secondary-light focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                                htmlFor="comment"
                                 title="Comment"
-                                onClick={() => {
-                                    formInputRef.current?.focus()
-                                }}
+                                tabIndex={0}
                             >
                                 <CommentIcon />
-                            </button>
+                            </label>
 
                             <SavedButton postId={postId} />
                         </div>
@@ -142,7 +141,7 @@ function BigScreenPost({
                         </div>
 
                         <div className="px-4 py-2">
-                            <CommentForm postId={postId} ref={formInputRef} />
+                            <CommentForm postId={postId} />
                         </div>
                     </section>
                 </div>

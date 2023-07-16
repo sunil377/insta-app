@@ -1,5 +1,5 @@
 import useCaption from '@/components/CreatePost/useCaption'
-import { UserBedge } from '@/components/util'
+import { Avatar } from '@/components/util'
 import { BASE64_KEY } from '@/constants/util'
 import { protectedRouteWithUser } from '@/helpers/routes'
 import { useCreatePost } from '@/requests/usePost'
@@ -67,38 +67,28 @@ function PostDetails() {
             </nav>
             <main className="mt-12 py-4">
                 <header className="flex justify-between gap-x-4 px-4">
-                    {currentUser.profile.photo ? (
-                        <Image
-                            src={currentUser.profile.photo}
-                            alt={currentUser.username}
-                            width="32"
-                            height="32"
-                            className="h-8 w-8 rounded-full"
-                        />
-                    ) : (
-                        <UserBedge className="h-8 w-8 text-lg">
-                            {currentUser.username.at(0)}
-                        </UserBedge>
-                    )}
+                    <Avatar
+                        photo={currentUser.profile.photo}
+                        username={currentUser.username}
+                    />
 
                     <textarea
-                        className="w-full resize-y bg-gray-100 p-2 placeholder:text-sm"
+                        className="flex-auto resize-y bg-gray-100 p-2 placeholder:text-sm"
                         placeholder="Write a caption..."
                         maxLength={2000}
                         value={caption}
                         onChange={handleChange}
                     />
 
-                    <div className="relative h-16 w-16 flex-shrink-0">
-                        {pic ? (
-                            <Image
-                                src={pic}
-                                alt=""
-                                className="object-cover"
-                                fill
-                            />
-                        ) : null}
-                    </div>
+                    {pic ? (
+                        <Image
+                            src={pic}
+                            alt=""
+                            className="flex-auto object-cover"
+                            width="64"
+                            height="64"
+                        />
+                    ) : null}
                 </header>
             </main>
         </>

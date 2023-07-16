@@ -3,10 +3,10 @@ import { useAuth } from '@/context/AuthContext'
 import { UserServer } from '@/schema/user-schema'
 import UnStyledFollowButton from '@/unstyled/UnStyledFollowButton'
 import clsx from 'clsx'
+import Image from 'next/image'
 import Link from 'next/link'
 import FollowersInfo from './FollowersInfo'
 import FollowingsInfo from './FollowingsInfo'
-import ProfileAvatar from './ProfileAvatar'
 
 function Header({
     docId,
@@ -39,7 +39,18 @@ function Header({
             <section className="grid max-w-sm grid-cols-4 px-4 pb-10 sm:max-w-none">
                 <div className="col-span-1">
                     <div className="relative aspect-square w-20 sm:mx-auto sm:w-28 lg:w-36">
-                        <ProfileAvatar photo={photo} username={username} />
+                        {photo ? (
+                            <Image
+                                src={photo}
+                                alt={username}
+                                fill
+                                className="rounded-full border border-gray-300 object-contain"
+                            />
+                        ) : (
+                            <div className="inline-flex h-full w-full items-center justify-center rounded-full bg-primary-main bg-opacity-50 text-5xl capitalize text-white">
+                                {username.at(0)}
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -62,7 +73,7 @@ function Header({
                                                 isFollowing
                                                     ? 'bg-gray-200 text-gray-950 hover:bg-gray-300'
                                                     : 'bg-primary-main text-white',
-                                                'rounded-md px-4 py-1.5 font-medium transition-colors disabled:pointer-events-none disabled:opacity-50',
+                                                'rounded-md px-4 py-1.5 font-medium transition-colors',
                                             )}
                                             {...props}
                                         >

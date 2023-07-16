@@ -21,11 +21,13 @@ import { parseQuerySnapshot, parseSnapshot } from './util'
 
 function createUser(userData: UserClient) {
     const { docId, ...data } = UserSchema.parse(userData)
-    return setDoc(db_ref.users.document_ref(docId), data)
+    const docRef = db_ref.users.document_ref(docId)
+    return setDoc(docRef, data)
 }
 
 async function getUser(docId: string) {
-    const responseUser = await getDoc(db_ref.users.document_ref(docId))
+    const docRef = db_ref.users.document_ref(docId)
+    const responseUser = await getDoc(docRef)
     return parseSnapshot<UserServer>(responseUser, USER_NOT_FOUND)
 }
 
@@ -46,50 +48,47 @@ async function getUserByUsername(username: string) {
 
 async function getUserSuggestion(userId: string) {
     const currentUser = await getUser(userId)
-    let userSuggestionQuery: Query<DocumentData, DocumentData> = query(
-        db_ref.users.collection_ref(),
-        or(
-            where('followings', 'array-contains-any', [
-                currentUser.docId,
+    const coll_ref = db_ref.users.collection_ref()
+    const constraints = [
+        where('followings', 'array-contains-any', [
+            currentUser.docId,
+            ...currentUser.followings,
+        ]),
+    ]
+
+    if (currentUser.followings.length != 0) {
+        constraints.push(
+            where('followers', 'array-contains-any', [
                 ...currentUser.followings,
             ]),
-        ),
+        )
+    }
+
+    const userSuggestionQuery: Query<DocumentData, DocumentData> = query(
+        coll_ref,
+        or(...constraints),
         orderBy('createdAt', 'desc'),
         limit(5),
     )
 
-    if (currentUser.followings.length != 0) {
-        userSuggestionQuery = query(
-            db_ref.users.collection_ref(),
-            or(
-                where('followings', 'array-contains-any', [
-                    currentUser.docId,
-                    ...currentUser.followings,
-                ]),
-                where('followers', 'array-contains-any', [
-                    ...currentUser.followings,
-                ]),
-            ),
-            orderBy('createdAt', 'desc'),
-            limit(5),
-        )
-    }
-
     const response = await getDocs(userSuggestionQuery)
 
     const users = parseQuerySnapshot<UserServer>(response).filter(
-        (arg) => arg.docId !== currentUser.docId,
+        (arg) =>
+            arg.docId !== currentUser.docId &&
+            !arg.followers.includes(currentUser.docId),
     )
 
     return users
 }
 
 async function getUserBySearchQuery(q: string) {
-    if (!q) {
-        return []
-    }
+    if (!q) return []
+
+    const coll_ref = db_ref.users.collection_ref()
+
     const querySearch = query(
-        db_ref.users.collection_ref(),
+        coll_ref,
         orderBy('username'),
         startAt(q),
         endAt(q + '\uf8ff'),

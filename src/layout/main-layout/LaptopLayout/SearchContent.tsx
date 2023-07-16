@@ -1,9 +1,8 @@
 import { CloseIcon } from '@/assets'
-import { AlertBadge, Spinner, UserBedge } from '@/components/util'
+import { AlertBadge, Avatar, Spinner } from '@/components/util'
 import { useUserSearchQuery } from '@/requests/useUser'
 import { Combobox } from '@headlessui/react'
 import clsx from 'clsx'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Fragment, useState } from 'react'
 
@@ -36,6 +35,7 @@ function SearchContent() {
                             autoCapitalize="off"
                             placeholder="Search"
                             autoFocus
+                            autoComplete="off"
                         />
                         <button
                             className="hidden h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-transparent text-xs text-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 group-focus-within:inline-grid"
@@ -72,19 +72,11 @@ function SearchContent() {
                                                 'flex items-center gap-x-2 rounded-sm px-4 py-2',
                                             )}
                                         >
-                                            {user.profile.photo ? (
-                                                <Image
-                                                    src={user.profile.photo}
-                                                    alt={user.username}
-                                                    width="24"
-                                                    height="24"
-                                                    className="h-6 w-6 rounded-full"
-                                                />
-                                            ) : (
-                                                <UserBedge className="h-6 w-6 text-base leading-4">
-                                                    {user.username.at(0)}
-                                                </UserBedge>
-                                            )}
+                                            <Avatar
+                                                photo={user.profile.photo}
+                                                username={user.username}
+                                            />
+
                                             {user.username}
                                         </Link>
                                     )}

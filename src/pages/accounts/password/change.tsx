@@ -1,4 +1,4 @@
-import { UserBedge } from '@/components/util'
+import { Avatar } from '@/components/util'
 import { PASSWORD_DONT_MATCH } from '@/constants/errors'
 import { protectedRouteWithUser } from '@/helpers/routes'
 import { convertZodErrorToFormikError } from '@/helpers/util'
@@ -11,7 +11,6 @@ import { passwordSchema } from '@/schema/util'
 import { changePassword } from '@/services/auth'
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik'
 import { InferGetServerSidePropsType } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Fragment } from 'react'
 import { z } from 'zod'
@@ -76,19 +75,11 @@ const ChangePassword: IPage = function ChangePassword() {
                     ) : null}
                     <div className="flex grid-cols-4 items-center gap-x-2 xs:grid  xs:gap-x-6">
                         <div className="col-span-1 flex xs:justify-end">
-                            {user.profile.photo ? (
-                                <Image
-                                    src={user.profile.photo}
-                                    alt={user.username}
-                                    width="24"
-                                    height="24"
-                                    className="h-6 w-6 rounded-full"
-                                />
-                            ) : (
-                                <UserBedge className="h-6 w-6 text-base">
-                                    {user.username.at(0)}
-                                </UserBedge>
-                            )}
+                            <Avatar
+                                photo={user.profile.photo}
+                                username={user.username}
+                                size={24}
+                            />
                         </div>
                         <div className="col-span-3">
                             {user.profile.fullname}
@@ -130,7 +121,7 @@ const ChangePassword: IPage = function ChangePassword() {
                                                 type="password"
                                                 disabled={isGoogleSignin}
                                                 id={`old-pass`}
-                                                className="block w-full rounded-md border bg-gray-100 px-4 py-2 focus:outline-none focus-visible:border-gray-500 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                                                className="block w-full rounded-md border bg-gray-100 px-4 py-2 focus:outline-none focus-visible:border-gray-500"
                                                 placeholder="Enter your Old password here..."
                                                 aria-invalid={
                                                     !!errors.oldPassword
@@ -157,7 +148,7 @@ const ChangePassword: IPage = function ChangePassword() {
                                                 type="password"
                                                 disabled={isGoogleSignin}
                                                 id={`new-pass`}
-                                                className="block w-full rounded-md border bg-gray-100 px-4 py-2 focus:outline-none focus-visible:border-gray-500 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                                                className="block w-full rounded-md border bg-gray-100 px-4 py-2 focus:outline-none focus-visible:border-gray-500"
                                                 placeholder="Enter your new password here..."
                                                 aria-invalid={
                                                     !!errors.newPassword
@@ -184,7 +175,7 @@ const ChangePassword: IPage = function ChangePassword() {
                                                 type="password"
                                                 disabled={isGoogleSignin}
                                                 id={`confirm-pass`}
-                                                className="block w-full rounded-md border bg-gray-100 px-4 py-2 focus:outline-none focus-visible:border-gray-500 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                                                className="block w-full rounded-md border bg-gray-100 px-4 py-2 focus:outline-none focus-visible:border-gray-500"
                                                 placeholder="ReEnter your password..."
                                                 aria-invalid={!!errors.confirm}
                                                 aria-label={
@@ -208,7 +199,7 @@ const ChangePassword: IPage = function ChangePassword() {
                                         <div className="col-span-3">
                                             <div className="inline-flex flex-col items-center">
                                                 <button
-                                                    className="rounded-md bg-blue-500 px-3 py-1.5 font-semibold text-white disabled:pointer-events-none disabled:opacity-50"
+                                                    className="rounded-md bg-blue-500 px-3 py-1.5 font-semibold text-white"
                                                     disabled={
                                                         isGoogleSignin ||
                                                         isSubmitting ||

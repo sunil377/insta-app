@@ -1,5 +1,5 @@
 import Modal from '@/components/Modal'
-import { AlertBadge, Spinner } from '@/components/util'
+import { AlertBadge, Spinner, UserBedge } from '@/components/util'
 import useUser, {
     useUpdateUserFollowings,
     useUserById,
@@ -29,17 +29,23 @@ function ModalHeader({ userId }: { userId: string }) {
             ) : (
                 <>
                     {user.profile.photo ? (
-                        <Image
-                            src={user.profile.photo}
-                            alt={user.username}
-                            width={80}
-                            height={80}
-                            className="mx-auto rounded-full"
-                        />
-                    ) : (
-                        <div className="inline-grid h-20 w-20 place-items-center rounded-full bg-primary-main bg-opacity-10 text-4xl capitalize">
-                            {user.username.at(0)}
+                        <div className="relative mx-auto h-20 w-20 overflow-hidden rounded-full">
+                            {/**
+                             * this is small image so defining width ,and height can't render image so
+                             * thats why using fill property on Image tag
+                             *
+                             * */}
+                            <Image
+                                src={user.profile.photo}
+                                alt={user.username}
+                                fill
+                                className="object-cover"
+                            />
                         </div>
+                    ) : (
+                        <UserBedge className="h-20 w-20 text-4xl">
+                            {user.username.at(0)}
+                        </UserBedge>
                     )}
                     <h3>Unfollow @{user.username}</h3>
                 </>
@@ -92,7 +98,7 @@ function UnStyledFollowButton({ userId, children }: IProps) {
                 <div className="divide-y divide-secondary-lighter text-sm">
                     <ModalHeader userId={userId} />
                     <button
-                        className="block w-full py-4 text-center font-bold text-red-500 disabled:pointer-events-none disabled:opacity-50"
+                        className="block w-full py-4 text-center font-bold text-red-500"
                         disabled={mutation.isLoading}
                         onClick={async () => {
                             await mutation.mutateAsync({ isFollowing })

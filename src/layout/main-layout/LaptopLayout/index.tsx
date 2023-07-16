@@ -8,11 +8,10 @@ import {
     SearchIcon,
 } from '@/assets'
 import CreatePost from '@/components/CreatePost/CreatePostButton'
-import { AlertBadge, Spinner } from '@/components/util'
+import { AlertBadge, Avatar, Spinner } from '@/components/util'
 import useUser from '@/requests/useUser'
 import { Menu, Popover, Transition } from '@headlessui/react'
 import clsx from 'clsx'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Fragment, ReactNode } from 'react'
 import SearchContent from './SearchContent'
@@ -87,7 +86,7 @@ function LaptopLayout({ children }: { children: ReactNode }) {
 
                             <Popover.Button
                                 className={clsx(
-                                    'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100',
+                                    'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 font-normal transition-colors hover:bg-gray-100',
                                     {
                                         'lg:w-full': !isPopoverOpened,
                                     },
@@ -158,19 +157,10 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                                     )}
                                 >
                                     <div className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100">
-                                        {currentUser.profile.photo ? (
-                                            <Image
-                                                src={currentUser.profile.photo}
-                                                alt={currentUser.username}
-                                                width={32}
-                                                height={32}
-                                                className="rounded-full object-cover"
-                                            />
-                                        ) : (
-                                            <div className="inline-grid h-8 w-8 place-items-center rounded-full bg-gray-200 text-xl font-medium capitalize leading-5">
-                                                {currentUser.username.at(0)}
-                                            </div>
-                                        )}
+                                        <Avatar
+                                            photo={currentUser.profile.photo}
+                                            username={currentUser.username}
+                                        />
                                     </div>
 
                                     <ToolTip isOpen={isPopoverOpened}>

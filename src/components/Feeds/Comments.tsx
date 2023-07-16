@@ -84,7 +84,7 @@ export const CommentForm = forwardRef<HTMLInputElement, { postId: string }>(
                     type="submit"
                     className={clsx(
                         { invisible: !isValid },
-                        'mr-2 font-semibold text-primary-main transition-colors hover:text-primary-dark disabled:pointer-events-none disabled:opacity-50',
+                        'mr-2 font-semibold text-primary-main transition-colors hover:text-primary-dark',
                     )}
                     disabled={isDisabled}
                 >

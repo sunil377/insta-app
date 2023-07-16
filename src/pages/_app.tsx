@@ -10,8 +10,15 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
+import { Roboto } from 'next/font/google'
 import { ReactElement, ReactNode, useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+
+const roboto = Roboto({
+    subsets: ['latin'],
+    variable: '--font-roboto',
+    weight: ['400'],
+})
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
     getLayout?: (page: ReactElement) => ReactNode
@@ -46,7 +53,9 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
                     <AuthContext currentUser={pageProps.currentUser}>
                         <SnackBarProvider>
                             <PageLoader />
-                            {getLayout(<Component {...pageProps} />)}
+                            <div className={roboto.variable}>
+                                {getLayout(<Component {...pageProps} />)}
+                            </div>
                         </SnackBarProvider>
                     </AuthContext>
                 </ErrorBoundary>

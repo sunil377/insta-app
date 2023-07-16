@@ -1,9 +1,8 @@
 import { useAuth } from '@/context/AuthContext'
 import { useUserSuggestion } from '@/requests/useUser'
 import UnStyledFollowButton from '@/unstyled/UnStyledFollowButton'
-import Image from 'next/image'
 import Link from 'next/link'
-import { AlertBadge, Spinner } from '../util'
+import { AlertBadge, Avatar, Spinner } from '../util'
 
 function Suggestions() {
     const { data: users, error, isError, isLoading } = useUserSuggestion()
@@ -17,14 +16,23 @@ function Suggestions() {
     }
 
     if (users.length === 0) {
-        return <h5>No Suggestion Found</h5>
+        return (
+            <h5 className="py-2 text-sm">
+                No Suggestion Found.
+                <Link
+                    href="/explore"
+                    className="text-primary-main transition-colors hover:text-primary-dark"
+                >
+                    Try Explore
+                </Link>
+            </h5>
+        )
     }
 
     return (
         <div>
             <div className="mb-1.5 mt-3 flex justify-between ">
                 <p className="text-sm text-gray-700">Suggested for you</p>
-                <button className="text-xs font-semibold">See All</button>
             </div>
             {users.map(
                 ({
@@ -35,19 +43,7 @@ function Suggestions() {
                 }) => (
                     <div key={docId} className="flex items-start py-2 text-xs">
                         <div className="flex items-start gap-2">
-                            {photo ? (
-                                <Image
-                                    src={photo}
-                                    alt={username}
-                                    width={32}
-                                    height={32}
-                                    className="h-8 w-8 rounded-full object-cover"
-                                />
-                            ) : (
-                                <p className="inline-grid h-8 w-8 place-items-center rounded-full bg-gray-200 text-lg font-medium capitalize">
-                                    {username.at(0)}
-                                </p>
-                            )}
+                            <Avatar photo={photo} username={username} />
 
                             <div className="space-y-0.5">
                                 <Link
@@ -70,7 +66,7 @@ function Suggestions() {
                             {(isFollowing, props) =>
                                 isFollowing ? null : (
                                     <button
-                                        className="ml-auto p-0.5 font-semibold text-primary-main transition-colors hover:text-primary-dark disabled:pointer-events-none disabled:opacity-50"
+                                        className="ml-auto p-0.5 font-semibold text-primary-main transition-colors hover:text-primary-dark"
                                         {...props}
                                     >
                                         Follow

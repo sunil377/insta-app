@@ -1,7 +1,6 @@
 import { ExploreIcon, HomeIcon, MessengerIcon, UserPlusIcon } from '@/assets'
-import { AlertBadge, Spinner, UserBedge } from '@/components/util'
+import { AlertBadge, Avatar, Spinner } from '@/components/util'
 import useUser from '@/requests/useUser'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Fragment, ReactNode } from 'react'
@@ -58,19 +57,11 @@ function MobileLayout({ children }: { children: ReactNode }) {
                     <AlertBadge error={error} renderText />
                 ) : (
                     <Link href={`/${currentUser.docId}`}>
-                        {currentUser.profile.photo ? (
-                            <Image
-                                src={currentUser.profile.photo}
-                                alt={currentUser.username}
-                                width="24"
-                                height="24"
-                                className="h-6 w-6 rounded-full"
-                            />
-                        ) : (
-                            <UserBedge className="h-6 w-6 text-base">
-                                {currentUser.username.at(0)}
-                            </UserBedge>
-                        )}
+                        <Avatar
+                            photo={currentUser.profile.photo}
+                            username={currentUser.username}
+                            size={24}
+                        />
                     </Link>
                 )}
             </footer>

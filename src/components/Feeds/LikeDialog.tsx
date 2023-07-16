@@ -2,10 +2,8 @@ import { useUserById } from '@/requests/useUser'
 import { IPost } from '@/schema/post-schema'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-
-import Image from 'next/image'
 import UserListDialog from '../UserListDialog'
-import { AlertBadge, Spinner, UserBedge } from '../util'
+import { AlertBadge, Avatar, Spinner } from '../util'
 
 function UserPic({ userId }: { userId: string }) {
     const { data: user, isLoading, isError, error } = useUserById(userId)
@@ -14,18 +12,13 @@ function UserPic({ userId }: { userId: string }) {
 
     if (isError) return <AlertBadge error={error} className="p-1 text-lg" />
 
-    return user.profile.photo ? (
-        <Image
-            src={user.profile.photo}
-            alt={user.username}
-            width="24"
-            height="24"
-            className="rounded-full ring-2 ring-white"
+    return (
+        <Avatar
+            photo={user.profile.photo}
+            username={user.username}
+            size={24}
+            className="ring-2 ring-white"
         />
-    ) : (
-        <UserBedge className="h-6 w-6 text-sm ring-2 ring-white">
-            {user.username.at(0)}
-        </UserBedge>
     )
 }
 

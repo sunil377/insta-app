@@ -11,7 +11,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import LikeButton from '../LikeButton'
 import SavedButton from '../SavedButton'
-import { AlertBadge, Spinner, UserBedge } from '../util'
+import { AlertBadge, Avatar, DotIcon, Spinner } from '../util'
 import Caption from './Caption'
 import Comments from './Comments'
 import LikeDialog from './LikeDialog'
@@ -40,19 +40,10 @@ function Feed({
                     <AlertBadge error={error} renderText />
                 ) : (
                     <>
-                        {author.profile.photo ? (
-                            <Image
-                                src={author.profile.photo}
-                                alt={author.username}
-                                width="32"
-                                height="32"
-                                className="rounded-full object-cover"
-                            />
-                        ) : (
-                            <UserBedge className="h-8 w-8 text-lg">
-                                {author.username.at(0)}
-                            </UserBedge>
-                        )}
+                        <Avatar
+                            photo={author.profile.photo}
+                            username={author.username}
+                        />
 
                         <Link href={`/${authorId}`} className="font-semibold">
                             {author.username}
@@ -60,10 +51,7 @@ function Feed({
                     </>
                 )}
 
-                <div
-                    className="h-1.5 w-1.5 rounded-full bg-primary-main bg-opacity-50"
-                    aria-hidden
-                />
+                <DotIcon />
 
                 <p className="text-xs text-gray-700">
                     {formatDistanceToNowStrict(createdAt)}
@@ -74,7 +62,7 @@ function Feed({
                         {(isFollowing, props) =>
                             isFollowing ? null : (
                                 <button
-                                    className="p-0.5 font-medium text-primary-main transition-colors hover:text-primary-dark disabled:pointer-events-none disabled:opacity-50"
+                                    className="p-0.5 text-primary-main transition-colors hover:text-primary-dark"
                                     {...props}
                                 >
                                     follow

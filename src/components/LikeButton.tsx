@@ -10,7 +10,7 @@ function LikeButton({ postId, likes }: { postId: string; likes: string[] }) {
 
     return (
         <button
-            className="rounded-full p-1 disabled:pointer-events-none disabled:opacity-50"
+            className="rounded-full p-1"
             title={isLiked ? 'Unlike' : 'Like'}
             disabled={mutation.isLoading}
             onClick={() => mutation.mutate({ isLiked })}

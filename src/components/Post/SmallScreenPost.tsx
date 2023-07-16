@@ -10,9 +10,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import LikeButton from '../LikeButton'
 import SavedButton from '../SavedButton'
-import { AlertBadge, Spinner } from '../util'
+import { AlertBadge, Avatar, Spinner } from '../util'
 import MenuDialog from './MenuDialog'
-import { Avatar } from './util'
 
 function SmallScreenPost({
     caption,
@@ -57,7 +56,7 @@ function SmallScreenPost({
                                     isFollowing
                                         ? 'text-gray-950 hover:text-gray-500'
                                         : 'text-primary-main hover:text-primary-dark',
-                                    'p-0.5 font-medium transition-colors disabled:pointer-events-none disabled:opacity-50',
+                                    'p-0.5 font-medium transition-colors',
                                 )}
                                 {...props}
                             >

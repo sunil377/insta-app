@@ -10,7 +10,7 @@ function SavedButton({ postId }: { postId: string }) {
 
     return (
         <button
-            className="ml-auto rounded-full p-1 disabled:pointer-events-none disabled:opacity-50"
+            className="ml-auto rounded-full p-1"
             title={isSaved ? 'Unsave' : 'Save'}
             disabled={!isSuccess}
             onClick={handleClick}

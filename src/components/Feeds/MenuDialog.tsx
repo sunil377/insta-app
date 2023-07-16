@@ -13,7 +13,7 @@ function MenuDialog({ postId, userId }: { postId: string; userId: string }) {
         <>
             <button
                 onClick={() => setOpen(true)}
-                aria-label="more info"
+                title="more info"
                 className="ml-auto aspect-square rounded-full p-0.5 text-xl sm:p-2"
             >
                 <ThreeDotIcon />
@@ -30,7 +30,7 @@ function MenuDialog({ postId, userId }: { postId: string; userId: string }) {
                             {(isFollowing, props) =>
                                 isFollowing ? (
                                     <button
-                                        className="block w-full p-0.5 py-3 font-bold text-red-600 transition-colors hover:text-red-800 focus:outline-none focus-visible:bg-gray-100 disabled:pointer-events-none disabled:opacity-50"
+                                        className="block w-full p-0.5 py-3 font-bold text-red-600 transition-colors hover:text-red-800 focus:outline-none focus-visible:bg-gray-100"
                                         {...props}
                                     >
                                         Unfollow
@@ -40,7 +40,7 @@ function MenuDialog({ postId, userId }: { postId: string; userId: string }) {
                         </UnStyledFollowButton>
                     ) : null}
 
-                    <button className="block w-full py-3 focus:outline-none focus-visible:bg-gray-100">
+                    <button className="block w-full py-3 font-normal focus:outline-none focus-visible:bg-gray-100">
                         Add to favorites
                     </button>
 
@@ -53,7 +53,7 @@ function MenuDialog({ postId, userId }: { postId: string; userId: string }) {
 
                     <button
                         onClick={() => setOpen(false)}
-                        className="block w-full py-3 text-center focus:outline-none focus-visible:bg-gray-100"
+                        className="block w-full py-3 text-center font-normal focus:outline-none focus-visible:bg-gray-100"
                     >
                         Cancel
                     </button>

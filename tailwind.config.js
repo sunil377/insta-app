@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const defaultTheme = require('tailwindcss/defaultTheme')
 module.exports = {
     darkMode: ['class'],
     content: ['./src/**/*.{ts,tsx}'],
@@ -9,6 +10,7 @@ module.exports = {
             },
             fontSize: {
                 xsm: ['0.825rem', '1rem'],
+                xlg: ['1.2rem', '1.75rem'],
             },
             zIndex: {
                 dialog: '1000',
@@ -26,6 +28,9 @@ module.exports = {
                     light: '#6b7280',
                     dark: '#1f2937',
                 },
+            },
+            fontFamily: {
+                roboto: ['var(--font-roboto)', ...defaultTheme.fontFamily.sans],
             },
         },
     },

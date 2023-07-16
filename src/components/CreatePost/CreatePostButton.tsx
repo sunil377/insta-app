@@ -9,7 +9,7 @@ import Image from 'next/image'
 import { Fragment, useState } from 'react'
 import { HiChevronLeft } from 'react-icons/hi'
 import Modal from '../Modal'
-import { AlertBadge, Spinner, UserBedge } from '../util'
+import { AlertBadge, Avatar, Spinner } from '../util'
 import useCaption from './useCaption'
 
 function Content({ onClose }: { onClose: () => void }) {
@@ -29,24 +29,6 @@ function Content({ onClose }: { onClose: () => void }) {
     } = useUser()
     const [caption, handleCaptionChange] = useCaption()
     const mutation = useCreatePost()
-
-    const userAvatar = isLoading ? (
-        <Spinner />
-    ) : isError ? (
-        <AlertBadge error={error} renderText />
-    ) : currentUser.profile.photo ? (
-        <Image
-            src={currentUser.profile.photo}
-            alt={currentUser.username}
-            width="24"
-            height="24"
-            className="rounded-full"
-        />
-    ) : (
-        <UserBedge className="h-6 w-6 text-sm">
-            {currentUser.username.at(0)}
-        </UserBedge>
-    )
 
     return (
         <Fragment>
@@ -71,7 +53,7 @@ function Content({ onClose }: { onClose: () => void }) {
 
                 {isNextStep && isSuccess ? (
                     <button
-                        className="px-0.5 text-sm font-semibold text-primary-main hover:text-primary-dark disabled:pointer-events-none disabled:opacity-50"
+                        className="px-0.5 text-sm font-semibold text-primary-main transition-colors hover:text-primary-dark"
                         disabled={mutation.isLoading}
                         onClick={async () => {
                             if (!file) return
@@ -99,10 +81,22 @@ function Content({ onClose }: { onClose: () => void }) {
                     <div className="p-4">
                         <div className="space-y-2">
                             <div className="flex items-center gap-2">
-                                {userAvatar}
-                                <h4 className="text-sm">
-                                    {currentUser?.username}
-                                </h4>
+                                {isLoading ? (
+                                    <Spinner />
+                                ) : isError ? (
+                                    <AlertBadge error={error} renderText />
+                                ) : (
+                                    <>
+                                        <Avatar
+                                            photo={currentUser.profile.photo}
+                                            username={currentUser.username}
+                                            size={24}
+                                        />
+                                        <h4 className="text-sm">
+                                            {currentUser?.username}
+                                        </h4>
+                                    </>
+                                )}
                             </div>
                             <div>
                                 <textarea
@@ -151,7 +145,7 @@ function CreatePost({ isDrawerOpen }: { isDrawerOpen: boolean }) {
             <button
                 onClick={() => setIsOpen(true)}
                 className={clsx(
-                    'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 transition-colors hover:bg-gray-100',
+                    'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 font-normal transition-colors hover:bg-gray-100',
                     {
                         'lg:w-full lg:rounded-l-full lg:rounded-r-full':
                             !isDrawerOpen,

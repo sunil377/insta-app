@@ -4,8 +4,7 @@ import { useUserById } from '@/requests/useUser'
 import { ICommentServer } from '@/schema/comment-schema'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
-import { AlertBadge, Spinner } from '../util'
-import { Avatar } from './util'
+import { AlertBadge, Avatar, Spinner } from '../util'
 
 export function RenderComponent({
     criticId,

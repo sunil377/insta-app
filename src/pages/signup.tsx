@@ -63,7 +63,7 @@ export default function Signup() {
                 <GoogleSignIn>
                     {(onClick, disabled) => (
                         <button
-                            className="block w-full rounded-md bg-blue-500 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
+                            className="block w-full rounded-md bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-700"
                             onClick={onClick}
                             disabled={disabled}
                         >
@@ -128,7 +128,7 @@ function signupform({
                 <Field name="username">{CustomTextField}</Field>
                 <Field name="password">{CustomPasswordTextField}</Field>
                 <button
-                    className="flex w-full justify-center rounded-md bg-blue-500 px-4 py-2 text-center font-medium text-white transition-colors hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
+                    className="flex w-full justify-center rounded-md bg-blue-500 px-4 py-2 text-center text-white transition-colors hover:bg-blue-700"
                     type="submit"
                     disabled={!isValid || isSubmitting}
                 >
