@@ -9,11 +9,7 @@ function FollowersInfo({ followers }: Pick<UserServer, 'followers'>) {
 
     return (
         <Fragment>
-            <button
-                onClick={onOpen}
-                disabled={!followers.length}
-                className="sm:flex sm:gap-x-2"
-            >
+            <button onClick={onOpen} className="font-normal sm:flex sm:gap-x-2">
                 <div className="font-bold">{followers.length}</div>
                 <div className="text-gray-500">followers</div>
             </button>

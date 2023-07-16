@@ -9,8 +9,7 @@ function FollowingsInfo({ followings }: Pick<UserServer, 'followings'>) {
         <>
             <button
                 onClick={() => setIsOpen(true)}
-                disabled={!followings.length}
-                className="sm:flex sm:gap-x-2"
+                className="font-normal sm:flex sm:gap-x-2"
             >
                 <div className="font-bold">{followings.length}</div>
                 <div className="text-gray-500">followings</div>
