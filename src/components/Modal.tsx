@@ -47,7 +47,7 @@ function Modal({
 export function ModalList(props: React.HTMLAttributes<HTMLDivElement>) {
     return (
         <div
-            className="divide-y divide-secondary-lighter text-center text-sm text-secondary-dark"
+            className="divide-y divide-secondary-lighter text-center text-xsm text-black"
             {...props}
         />
     )

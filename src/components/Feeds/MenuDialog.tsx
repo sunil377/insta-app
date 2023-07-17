@@ -25,32 +25,28 @@ function MenuDialog({ postId, userId }: { postId: string; userId: string }) {
                 className="w-full rounded-lg bg-white shadow-md sm:max-w-sm"
             >
                 <ModalList>
-                    {currentUser != userId ? (
-                        <UnStyledFollowButton userId={userId}>
-                            {(isFollowing, props) =>
-                                isFollowing ? (
-                                    <ModalListItem>
-                                        <button
-                                            className="text-red-600 transition-colors hover:text-red-800"
-                                            {...props}
-                                        >
-                                            <b>Unfollow</b>
-                                        </button>
-                                    </ModalListItem>
-                                ) : null
-                            }
-                        </UnStyledFollowButton>
-                    ) : null}
-
                     <ModalListItem>
+                        {currentUser != userId ? (
+                            <UnStyledFollowButton userId={userId}>
+                                {(isFollowing, props) =>
+                                    isFollowing ? (
+                                        <ModalListItem>
+                                            <button
+                                                className="text-red-600 transition-colors hover:text-red-800"
+                                                {...props}
+                                            >
+                                                <b>Unfollow</b>
+                                            </button>
+                                        </ModalListItem>
+                                    ) : null
+                                }
+                            </UnStyledFollowButton>
+                        ) : null}
+
                         <button>Add to favorites</button>
-                    </ModalListItem>
 
-                    <ModalListItem>
                         <Link href={`/post/${postId}`}>Go to post</Link>
-                    </ModalListItem>
 
-                    <ModalListItem>
                         <button onClick={() => setOpen(false)}>Cancel</button>
                     </ModalListItem>
                 </ModalList>

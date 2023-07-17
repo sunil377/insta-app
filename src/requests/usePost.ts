@@ -2,6 +2,7 @@ import { SCREEN_LG } from '@/constants/screens'
 import { BASE64_KEY } from '@/constants/util'
 import { useAuth } from '@/context/AuthContext'
 import { useSnackBar } from '@/context/SnackBarContext'
+import { parseUnkownErrorToString } from '@/helpers/util'
 import useMediaQuery from '@/hooks/useMediaQuery'
 import { IPost } from '@/schema/post-schema'
 import {
@@ -16,6 +17,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { arrayRemove, arrayUnion } from 'firebase/firestore'
 import { UploadResult, getDownloadURL } from 'firebase/storage'
 import { produce } from 'immer'
+import { usePathname } from 'next/navigation'
 import { useRouter } from 'next/router'
 import { queries } from './queries'
 
@@ -46,6 +48,8 @@ export function useUpdatePostLike(postId: string) {
     const currentUser = useAuth()
     const queryClient = useQueryClient()
     const snackbar = useSnackBar()
+    const pathname = usePathname()
+    const isHomePage = pathname === '/'
 
     return useMutation({
         mutationFn: ({ isLiked }: { isLiked: boolean }) =>
@@ -54,34 +58,99 @@ export function useUpdatePostLike(postId: string) {
                     ? arrayRemove(currentUser)
                     : arrayUnion(currentUser),
             }),
-        onSuccess: (_, { isLiked }) => {
-            snackbar.setMessage(`Post ${isLiked ? 'unliked' : 'liked'}`)
 
+        onMutate: async ({ isLiked }) => {
+            await queryClient.cancelQueries({
+                queryKey: queries.posts.getOne(postId),
+            })
+            const oldPost = queryClient.getQueryData<IPost>(
+                queries.posts.getOne(postId),
+            )
+
+            if (isHomePage) {
+                queryClient.setQueryData<IPost[]>(
+                    queries.posts.followings(currentUser),
+                    (oldPosts) =>
+                        updateCachePosts(
+                            currentUser,
+                            postId,
+                            isLiked,
+                            oldPosts,
+                        ),
+                )
+            }
+
+            queryClient.setQueryData<IPost>(
+                queries.posts.getOne(postId),
+                (oldPost) => updateCachePost(currentUser, isLiked, oldPost),
+            )
+            return { previousPost: oldPost }
+        },
+        onError: (err, _, context) => {
+            snackbar.setMessage(parseUnkownErrorToString(err))
+            queryClient.setQueryData(
+                queries.posts.getOne(postId),
+                context?.previousPost,
+            )
+        },
+        onSettled: () => {
             queryClient.invalidateQueries({
                 queryKey: queries.posts.getOne(postId),
             })
-
-            queryClient.setQueryData<IPost[]>(
-                queries.posts.getAll(),
-                produce((draftState) => {
-                    if (!draftState) return
-                    const oldPost = draftState.find(
-                        ({ docId }) => docId === postId,
-                    )
-
-                    if (!oldPost) return
-                    const userIndex = oldPost.likes.findIndex(
-                        (id) => id === currentUser,
-                    )
-
-                    if (userIndex != -1) {
-                        oldPost.likes.splice(userIndex, 1)
-                        return
-                    }
-                    oldPost.likes.push(currentUser)
-                }),
-            )
+            if (isHomePage) {
+                queryClient.invalidateQueries({
+                    queryKey: queries.posts.followings(currentUser),
+                })
+            }
         },
+        onSuccess: (_, { isLiked }) => {
+            snackbar.setMessage(`Post ${isLiked ? 'unliked' : 'liked'}`)
+        },
+    })
+}
+
+function updateCachePost(
+    currentUser: string,
+    isAdded: boolean,
+    oldPost?: IPost,
+): IPost | undefined {
+    if (!oldPost) return
+    return produce(oldPost, (darftState) => {
+        const indexOfPostLikedUser = darftState.likes.findIndex(
+            (id) => id === currentUser,
+        )
+        if (isAdded && indexOfPostLikedUser != -1) {
+            darftState.likes.splice(indexOfPostLikedUser, 1)
+            return
+        } else if (isAdded && indexOfPostLikedUser == -1) {
+            return
+        } else {
+            darftState.likes.push(currentUser)
+        }
+    })
+}
+
+function updateCachePosts(
+    currentUser: string,
+    updatingPostId: string,
+    isAdded: boolean,
+    oldPosts?: Array<IPost>,
+): IPost[] | undefined {
+    if (!oldPosts) return
+    return produce(oldPosts, (darftState) => {
+        const oldPost = darftState.find((post) => post.docId === updatingPostId)
+        if (!oldPost) return
+        const indexOfPostLikedUser = oldPost.likes.findIndex(
+            (id) => id === currentUser,
+        )
+        if (isAdded && indexOfPostLikedUser != -1) {
+            oldPost.likes.splice(indexOfPostLikedUser, 1)
+            return
+        } else if (isAdded && indexOfPostLikedUser == -1) {
+            return
+        } else {
+            oldPost.likes.push(currentUser)
+        }
     })
 }
 

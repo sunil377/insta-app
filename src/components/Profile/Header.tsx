@@ -144,9 +144,9 @@ function Settings() {
             >
                 <ModalList>
                     <ModalListItem>
-                        <UnStyledLogoutButton>Log Out</UnStyledLogoutButton>
-                    </ModalListItem>
-                    <ModalListItem>
+                        <UnStyledLogoutButton>
+                            <b>Log Out</b>
+                        </UnStyledLogoutButton>
                         <button onClick={() => setOpen(false)}>Cancel</button>
                     </ModalListItem>
                 </ModalList>
