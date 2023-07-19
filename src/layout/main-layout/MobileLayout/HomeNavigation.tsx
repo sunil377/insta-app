@@ -19,7 +19,7 @@ function SelectPostImage() {
     }, [dataURL, router])
 
     return (
-        <label className="block w-full px-2 py-1.5 text-left">
+        <label className="block w-full cursor-pointer px-2 py-1.5 text-left">
             Post
             <input
                 type="file"
@@ -33,17 +33,17 @@ function SelectPostImage() {
 
 function HomeNavigation() {
     return (
-        <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center border-y border-y-gray-300 bg-white px-4">
+        <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center border-y border-y-gray-300 bg-white px-4 dark:border-y-slate-700 dark:bg-black">
             <Link href="/" title="Home">
                 <InstagramTextIcon />
             </Link>
 
             <Menu as="div" className="relative ml-auto">
-                <Menu.Button className="rounded-full p-1">
+                <Menu.Button className="rounded-full p-1 text-2xl">
                     <AddPostIcon aria-label="New post" />
                 </Menu.Button>
 
-                <Menu.Items className="absolute right-1/2 z-10 w-20 translate-x-1/2 divide-y rounded-sm border bg-gray-50 text-sm">
+                <Menu.Items className="absolute right-1/2 z-10 w-20 translate-x-1/2 divide-y rounded-md border bg-gray-50 text-sm dark:border-slate-900 dark:bg-slate-800">
                     <Menu.Item>
                         <SelectPostImage />
                     </Menu.Item>

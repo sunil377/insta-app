@@ -14,7 +14,7 @@ function MenuDialog({ postId, userId }: { postId: string; userId: string }) {
             <button
                 onClick={() => setOpen(true)}
                 title="more info"
-                className="ml-auto aspect-square rounded-full p-0.5 text-xl sm:p-2"
+                className="ml-auto aspect-square rounded-full p-0.5 text-2xl"
             >
                 <ThreeDotIcon />
             </button>
@@ -22,7 +22,7 @@ function MenuDialog({ postId, userId }: { postId: string; userId: string }) {
             <Modal
                 isOpen={isOpen}
                 onClose={() => setOpen(false)}
-                className="w-full rounded-lg bg-white shadow-md sm:max-w-sm"
+                className="w-full rounded-lg bg-white shadow-md dark:bg-slate-900 sm:max-w-sm"
             >
                 <ModalList>
                     <ModalListItem>
@@ -32,7 +32,7 @@ function MenuDialog({ postId, userId }: { postId: string; userId: string }) {
                                     isFollowing ? (
                                         <ModalListItem>
                                             <button
-                                                className="text-red-600 transition-colors hover:text-red-800"
+                                                className="text-red-600 transition-colors hover:text-red-800 dark:hover:text-red-600"
                                                 {...props}
                                             >
                                                 <b>Unfollow</b>

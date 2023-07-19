@@ -11,7 +11,9 @@ function FollowersInfo({ followers }: Pick<UserServer, 'followers'>) {
         <Fragment>
             <button onClick={onOpen} className="font-normal sm:flex sm:gap-x-2">
                 <div className="font-bold">{followers.length}</div>
-                <div className="text-gray-800">followers</div>
+                <div className="text-gray-800 dark:text-gray-300">
+                    followers
+                </div>
             </button>
 
             <UserListDialog

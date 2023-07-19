@@ -29,7 +29,9 @@ function UserListItem({ userId }: { userId: string }) {
                 <Link href={`/${userId}`} className="block font-semibold">
                     {user.username}
                 </Link>
-                <p className="text-secondary-light">{user.profile.fullname}</p>
+                <p className="text-secondary-light dark:text-gray-300">
+                    {user.profile.fullname}
+                </p>
             </div>
 
             {currentUser != userId ? (
@@ -38,8 +40,8 @@ function UserListItem({ userId }: { userId: string }) {
                         <button
                             className={clsx(
                                 isFollowing
-                                    ? 'bg-gray-200 text-gray-950 hover:bg-gray-300'
-                                    : 'bg-primary-main text-white hover:bg-primary-dark',
+                                    ? 'bg-gray-200 text-gray-950 hover:bg-gray-300 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-800'
+                                    : 'bg-primary-main text-white hover:bg-primary-dark dark:text-slate-100',
                                 'ml-auto rounded-md px-4 py-2 transition-colors',
                             )}
                             {...props}

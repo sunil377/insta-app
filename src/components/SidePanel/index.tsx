@@ -29,7 +29,7 @@ function SidePanel() {
                     >
                         {currentUser.username}
                     </Link>
-                    <p className="capitalize text-gray-700">
+                    <p className="capitalize text-gray-700 dark:text-gray-300">
                         {currentUser.profile.fullname}
                     </p>
                 </div>

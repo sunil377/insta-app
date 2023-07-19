@@ -16,7 +16,7 @@ function LikeButton({ postId, likes }: { postId: string; likes: string[] }) {
             onClick={() => mutation.mutate({ isLiked })}
         >
             {isLiked ? (
-                <HeartFillIcon className="fill-red-500 transition-transform hover:scale-105 hover:transform" />
+                <HeartFillIcon className="fill-red-500 transition-transform hover:scale-105 hover:transform dark:fill-red-700" />
             ) : (
                 <HeartIcon className="transition-colors hover:text-secondary-light " />
             )}

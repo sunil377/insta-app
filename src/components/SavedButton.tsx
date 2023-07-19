@@ -16,7 +16,7 @@ function SavedButton({ postId }: { postId: string }) {
             onClick={handleClick}
         >
             {isSaved ? (
-                <SavedFillIcon className="fill-black transition-transform hover:scale-105 hover:transform" />
+                <SavedFillIcon className="transition-transform hover:scale-105 hover:transform" />
             ) : (
                 <SavedIcon className="transition-colors hover:text-secondary-light" />
             )}

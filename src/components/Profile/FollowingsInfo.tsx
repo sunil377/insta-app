@@ -12,7 +12,9 @@ function FollowingsInfo({ followings }: Pick<UserServer, 'followings'>) {
                 className="font-normal sm:flex sm:gap-x-2"
             >
                 <div className="font-bold">{followings.length}</div>
-                <div className="text-gray-800">followings</div>
+                <div className="text-gray-800 dark:text-gray-300">
+                    followings
+                </div>
             </button>
 
             <UserListDialog

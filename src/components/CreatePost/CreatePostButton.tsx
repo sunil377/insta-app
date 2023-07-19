@@ -1,18 +1,15 @@
-import { AddPostIcon } from '@/assets'
 import useFileReader from '@/hooks/useFileReader'
-import ToolTip from '@/layout/main-layout/LaptopLayout/Tooltip'
 import { useCreatePost } from '@/requests/usePost'
 import useUser from '@/requests/useUser'
 import { Dialog } from '@headlessui/react'
 import clsx from 'clsx'
 import Image from 'next/image'
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { HiChevronLeft } from 'react-icons/hi'
-import Modal from '../Modal'
 import { AlertBadge, Avatar, Spinner } from '../util'
 import useCaption from './useCaption'
 
-function Content({ onClose }: { onClose: () => void }) {
+function CreatePostModalContent({ onClose }: { onClose: () => void }) {
     const {
         state: { dataURL },
         handleChange,
@@ -34,13 +31,13 @@ function Content({ onClose }: { onClose: () => void }) {
         <Fragment>
             <header
                 className={clsx(
-                    'flex border-b px-4 py-2',
+                    'flex border-b px-4 py-2 dark:border-b-slate-700',
                     isNextStep ? 'justify-between' : 'justify-center',
                 )}
             >
                 {isNextStep ? (
                     <button onClick={handleResetState} title="back">
-                        <HiChevronLeft className="text-2xl text-gray-800" />
+                        <HiChevronLeft className="text-3xl text-gray-800 dark:text-slate-200" />
                     </button>
                 ) : null}
 
@@ -101,7 +98,7 @@ function Content({ onClose }: { onClose: () => void }) {
                             <div>
                                 <textarea
                                     rows={10}
-                                    className="w-full bg-gray-100 p-2 placeholder:text-sm"
+                                    className="w-full bg-gray-100 p-2 placeholder:text-sm dark:bg-slate-950"
                                     placeholder="Write a caption..."
                                     maxLength={2000}
                                     value={caption}
@@ -115,58 +112,24 @@ function Content({ onClose }: { onClose: () => void }) {
                     </div>
                 </div>
             ) : (
-                <div className="grid place-items-center py-40">
-                    <div className="text-center">
-                        <Dialog.Description className="text-xl">
-                            Drag photos and videos here
-                        </Dialog.Description>
+                <div className="grid place-items-center gap-10 py-40">
+                    <Dialog.Description className="text-xl">
+                        Drag photos and videos here
+                    </Dialog.Description>
 
-                        <label className="mt-4 inline-block rounded-md bg-primary-main px-3 py-1.5 text-sm font-semibold text-white focus-within:ring focus-within:ring-primary-main focus-within:ring-offset-2">
-                            Select from computer
-                            <input
-                                type="file"
-                                className="h-0 w-0 focus:outline-none"
-                                accept="image/*"
-                                onChange={handleChange}
-                            />
-                        </label>
-                    </div>
+                    <label className="rounded-md bg-primary-main px-3 py-1.5 text-sm font-semibold text-white focus-within:ring focus-within:ring-primary-main focus-within:ring-offset-2 dark:ring-offset-slate-900">
+                        Select from computer
+                        <input
+                            type="file"
+                            className="h-0 w-0 focus:outline-none"
+                            accept="image/*"
+                            onChange={handleChange}
+                        />
+                    </label>
                 </div>
             )}
         </Fragment>
     )
 }
 
-function CreatePost({ isDrawerOpen }: { isDrawerOpen: boolean }) {
-    const [isOpen, setIsOpen] = useState(false)
-
-    return (
-        <Fragment>
-            <button
-                onClick={() => setIsOpen(true)}
-                className={clsx(
-                    'group relative flex w-auto items-center space-x-4 rounded-full bg-white p-2.5 font-normal transition-colors hover:bg-gray-100',
-                    {
-                        'lg:w-full lg:rounded-l-full lg:rounded-r-full':
-                            !isDrawerOpen,
-                    },
-                )}
-            >
-                <AddPostIcon
-                    aria-label="Create"
-                    className="transfrom shrink-0 scale-90 transition-transform group-hover:scale-100"
-                />
-
-                <ToolTip isOpen={isDrawerOpen}>Create</ToolTip>
-            </button>
-            <Modal
-                isOpen={isOpen}
-                onClose={() => setIsOpen(false)}
-                className="w-full max-w-2xl overflow-hidden rounded-md bg-white shadow-md"
-            >
-                <Content onClose={() => setIsOpen(false)} />
-            </Modal>
-        </Fragment>
-    )
-}
-export default CreatePost
+export default CreatePostModalContent

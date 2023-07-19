@@ -54,7 +54,7 @@ function SmallScreenPost({
                             <button
                                 className={clsx(
                                     isFollowing
-                                        ? 'text-gray-950 hover:text-gray-500'
+                                        ? 'text-gray-950 hover:text-gray-500 dark:text-slate-200 dark:hover:text-slate-400'
                                         : 'text-primary-main hover:text-primary-dark',
                                     'p-0.5 font-medium transition-colors',
                                 )}

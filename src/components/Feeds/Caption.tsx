@@ -6,7 +6,7 @@ function Caption({ userId, caption }: { userId: string; caption: string }) {
     switch (status) {
         case 'loading':
             return (
-                <div className="rounded-md w-full inline-block h-4 animate-pulse bg-skeleton">
+                <div className="inline-block h-4 w-full animate-pulse rounded-md bg-skeleton">
                     <div className="sr-only">loading username and caption</div>
                 </div>
             )
@@ -14,14 +14,17 @@ function Caption({ userId, caption }: { userId: string; caption: string }) {
             return <div>error has Error</div>
         case 'success':
             return (
-                <div className="text-gray-800">
+                <div>
                     <Link
                         href={`/${userId}`}
-                        className="font-semibold text-gray-900"
+                        className="font-semibold tracking-wide text-gray-900 dark:text-gray-50"
                     >
                         {user.username}
                     </Link>
-                    &nbsp; {caption}
+                    &nbsp;
+                    <span className="text-gray-800 dark:text-gray-200">
+                        {caption}
+                    </span>
                 </div>
             )
     }

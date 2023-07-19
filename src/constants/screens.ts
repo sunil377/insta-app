@@ -1,6 +1,6 @@
 export const SCREEN_SM = '(max-width:640px)'
 export const SCREEN_LG = '(min-width:1024px)'
-
+export const DARK_THEME = '(prefers-color-scheme:"dark")'
 // 'sm': '640px',
 // // => @media (min-width: 640px) { ... }
 

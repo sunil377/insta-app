@@ -28,9 +28,9 @@ function BigScreenPost({
 
     return (
         <div className="mx-auto mt-10 max-w-4xl px-4">
-            <div className="rounded-md border bg-white shadow-md sm:h-screen sm:max-h-[min(580px,100vh-2rem)]">
+            <div className="rounded-md border dark:border-slate-700 sm:h-screen sm:max-h-[min(580px,100vh-2rem)]">
                 <div className="grid h-full w-full overflow-auto sm:grid-cols-2">
-                    <div className="relative aspect-square bg-black sm:aspect-auto">
+                    <div className="relative aspect-square border-r bg-black dark:border-r-slate-700 sm:aspect-auto">
                         <Image
                             src={photo}
                             alt={caption}
@@ -38,7 +38,7 @@ function BigScreenPost({
                             className="object-contain"
                         />
                     </div>
-                    <section className="flex flex-col divide-y divide-secondary-lighter text-sm">
+                    <section className="flex flex-col divide-y divide-secondary-lighter text-sm dark:divide-slate-700">
                         <header className="flex items-center gap-3 p-4">
                             {isLoading ? (
                                 <Spinner />
@@ -67,7 +67,7 @@ function BigScreenPost({
                                             <button
                                                 className={clsx(
                                                     isFollowing
-                                                        ? 'text-gray-950 hover:text-gray-500'
+                                                        ? 'text-gray-950 hover:text-gray-500 dark:text-slate-300'
                                                         : 'text-primary-main hover:text-primary-dark',
                                                     'p-0.5 font-medium transition-colors',
                                                 )}
@@ -106,7 +106,7 @@ function BigScreenPost({
                                                 </Link>
                                                 <span>{caption}</span>
                                             </div>
-                                            <p className="text-xs text-secondary-light">
+                                            <p className="text-xs text-secondary-light dark:text-slate-400">
                                                 {formatDistanceToNow(createdAt)}
                                             </p>
                                         </div>

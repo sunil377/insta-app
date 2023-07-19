@@ -1,13 +1,14 @@
 import PageLoader from '@/components/PageLoader'
 import AuthContext from '@/context/AuthContext'
 import SnackBarProvider from '@/context/SnackBarContext'
+import ThemeProvider from '@/context/ThemeContext'
 import '@/styles/globals.css'
 import {
     Hydrate,
     QueryClient,
     QueryClientProvider,
 } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import clsx from 'clsx'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { Roboto } from 'next/font/google'
@@ -36,7 +37,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
                     queries: {
                         refetchOnWindowFocus: false,
                         retry: false,
-                        staleTime: 30000,
+                        staleTime: 3 * 1000,
                     },
                 },
             }),
@@ -45,18 +46,24 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
     return (
         <QueryClientProvider client={queryClient}>
-            <ReactQueryDevtools initialIsOpen={false} />
             <Hydrate state={pageProps.dehydratedState}>
                 <ErrorBoundary
                     fallback={<div role="alert">something went wrong</div>}
                 >
                     <AuthContext currentUser={pageProps.currentUser}>
-                        <SnackBarProvider>
-                            <PageLoader />
-                            <div className={roboto.variable}>
-                                {getLayout(<Component {...pageProps} />)}
+                        <ThemeProvider
+                            initialState={{
+                                is_mobile: pageProps?.is_mobile ?? false,
+                                is_dark: pageProps?.is_dark ?? false,
+                            }}
+                        >
+                            <div className={clsx(roboto.variable)}>
+                                <SnackBarProvider>
+                                    <PageLoader />
+                                    {getLayout(<Component {...pageProps} />)}
+                                </SnackBarProvider>
                             </div>
-                        </SnackBarProvider>
+                        </ThemeProvider>
                     </AuthContext>
                 </ErrorBoundary>
             </Hydrate>

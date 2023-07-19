@@ -8,16 +8,12 @@ import Head from 'next/head'
 import { NextPageWithLayout } from './_app'
 
 const Home: NextPageWithLayout = () => {
-    const isLaptopScreen = useMediaQuery(SCREEN_LG)
+    const isLaptopScreen = useMediaQuery(SCREEN_LG, false)
 
     return (
         <>
             <Head>
                 <title>StoryGram</title>
-                <meta
-                    name="description"
-                    content="StoryGram clone of instagram as a portfolio project"
-                />
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1"
@@ -27,7 +23,7 @@ const Home: NextPageWithLayout = () => {
             <main className="px-4 sm:mt-10">
                 <div className="lg:grid lg:grid-cols-6 lg:gap-x-10">
                     <div className="lg:col-span-4">
-                        <section className="mx-auto max-w-md space-y-5 divide-y pb-4">
+                        <section className="mx-auto max-w-md space-y-5 divide-y pb-4 dark:divide-gray-600">
                             <Feeds />
                         </section>
                     </div>

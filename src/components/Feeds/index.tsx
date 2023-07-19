@@ -1,7 +1,6 @@
 import { CommentIcon } from '@/assets'
-import { SCREEN_SM } from '@/constants/screens'
 import { useAuth } from '@/context/AuthContext'
-import useMediaQuery from '@/hooks/useMediaQuery'
+import { useTheme } from '@/context/ThemeContext'
 import { useFeeds } from '@/requests/usePost'
 import { useUserById } from '@/requests/useUser'
 import { IPost } from '@/schema/post-schema'
@@ -26,7 +25,7 @@ function Feed({
     likes,
     photo,
 }: IPost) {
-    const isMobile = useMediaQuery(SCREEN_SM)
+    const { is_mobile: isMobile } = useTheme()
     const { data: author, isLoading, isError, error } = useUserById(authorId)
 
     const currentUser = useAuth()
@@ -53,7 +52,7 @@ function Feed({
 
                 <DotIcon />
 
-                <p className="text-xs text-gray-700">
+                <p className="text-xs text-gray-700 dark:text-gray-300">
                     {formatDistanceToNowStrict(createdAt)}
                 </p>
 
@@ -77,7 +76,7 @@ function Feed({
 
             <Link
                 href={`/post/${postId}`}
-                className="relative block aspect-square max-h-80 w-full bg-black"
+                className="relative block aspect-square max-h-80 w-full bg-black dark:rounded-md dark:border dark:border-gray-500"
             >
                 <Image
                     src={photo}
@@ -125,7 +124,12 @@ function Feed({
 export default function Feeds() {
     const { data: posts, isError, isLoading, error } = useFeeds()
 
-    if (isLoading) return <p>loading...</p>
+    if (isLoading)
+        return (
+            <div className="fixed inset-0 flex items-center justify-center">
+                <Spinner />
+            </div>
+        )
 
     if (isError) return <AlertBadge error={error} renderText />
 

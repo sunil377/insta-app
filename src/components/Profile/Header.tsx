@@ -26,7 +26,7 @@ function Header({
     const userBio = (
         <>
             {bio ? (
-                <p>{bio}</p>
+                <p className="text-gray-900 dark:text-gray-300">{bio}</p>
             ) : isOwner ? (
                 <Link
                     href="/accounts/edit#bio"
@@ -65,7 +65,7 @@ function Header({
                             {isOwner ? (
                                 <Link
                                     href="/accounts/edit"
-                                    className="block w-full rounded-md bg-gray-100 px-4 py-1.5 text-center text-sm font-medium sm:w-auto"
+                                    className="block w-full rounded-md bg-gray-200 px-4 py-1.5 text-center text-sm font-medium transition-colors hover:bg-gray-300 dark:bg-gray-900 dark:hover:bg-gray-900 sm:w-auto"
                                 >
                                     Edit Profile
                                 </Link>
@@ -95,7 +95,9 @@ function Header({
                     <div className="hidden sm:flex sm:gap-x-6">
                         <div className="sm:flex sm:gap-x-2">
                             <p className="font-bold">{posts.length}</p>
-                            <p className="text-gray-800">posts</p>
+                            <p className="text-gray-800 dark:text-gray-300">
+                                posts
+                            </p>
                         </div>
 
                         <FollowersInfo followers={followers} />
@@ -132,7 +134,7 @@ function Settings() {
         <>
             <button
                 title="setttings"
-                className="hidden rounded-full p-1.5 xs:inline-block sm:order-last"
+                className="hidden rounded-full p-1.5 text-xl transition-colors hover:bg-gray-300 dark:hover:bg-gray-900 xs:inline-block sm:order-last"
                 onClick={() => setOpen(true)}
             >
                 <SettingsIcon />
@@ -140,7 +142,7 @@ function Settings() {
             <Modal
                 isOpen={isOpen}
                 onClose={() => setOpen(false)}
-                className="w-full max-w-sm rounded-md bg-white"
+                className="w-full max-w-sm rounded-md bg-white text-black dark:bg-slate-900 dark:text-slate-100"
             >
                 <ModalList>
                     <ModalListItem>

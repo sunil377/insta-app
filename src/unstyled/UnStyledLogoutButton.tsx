@@ -18,28 +18,27 @@ const UnStyledLogoutButton = forwardRef<
             <Modal
                 isOpen={isOpen}
                 onClose={() => setOpen(false)}
-                className="w-full max-w-sm rounded-xl bg-gray-100 text-sm"
+                className="w-full max-w-sm rounded-xl bg-gray-100 text-sm dark:bg-slate-900 dark:text-slate-100"
             >
                 <ModalList>
                     <section className="space-y-2 py-5">
                         <Dialog.Title className="text-xl">
                             Log Out?
                         </Dialog.Title>
-                        <p className="px-5 text-secondary-light">
+                        <p className="px-5 leading-6 text-secondary-light dark:text-slate-300 lg:px-10">
                             Are you sure that you want to log out of your
                             Account?
                         </p>
                     </section>
                     <ModalListItem>
                         <button
-                            className="text-primary-main transition-colors hover:text-primary-dark"
+                            className="text-primary-main hover:text-primary-dark dark:hover:text-primary-main"
                             onClick={() => handleLogOut.mutate()}
                             disabled={handleLogOut.isLoading}
                         >
                             <b>Log Out</b>
                         </button>
-                    </ModalListItem>
-                    <ModalListItem>
+
                         <button onClick={() => setOpen(false)}>Cancel</button>
                     </ModalListItem>
                 </ModalList>

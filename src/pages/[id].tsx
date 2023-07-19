@@ -3,13 +3,15 @@ import TabButton from '@/components/Profile/TabButton'
 import TabPanel from '@/components/Profile/TabPanel'
 import { AlertBadge, Spinner } from '@/components/util'
 import { adminAuth } from '@/config/firebase-admin'
+import { initial_state_of_theme } from '@/context/ThemeContext'
 import useGetSearchQuery from '@/hooks/useGetSearchQuery'
 import MainLayout from '@/layout/main-layout'
 import { queries } from '@/requests/queries'
 import { useProfileUser } from '@/requests/useUser'
+import { getThemeFormCookies } from '@/routes/util'
 import { getServerUser } from '@/services/server'
 import { Tab } from '@headlessui/react'
-import { QueryClient, dehydrate } from '@tanstack/react-query'
+import { DehydratedState, QueryClient, dehydrate } from '@tanstack/react-query'
 import type {
     GetServerSidePropsContext,
     InferGetServerSidePropsType,
@@ -35,7 +37,7 @@ const ProfilePage: IPage = () => {
     }
 
     return (
-        <main className="mx-auto mt-16 max-w-4xl bg-white text-sm sm:mt-10">
+        <main className="mx-auto mt-16 max-w-4xl text-sm sm:mt-10">
             <Header {...profileUser} />
             <Tab.Group
                 as="section"
@@ -55,8 +57,8 @@ const ProfilePage: IPage = () => {
                     })
                 }
             >
-                <Tab.List className="border-t sm:flex sm:justify-center">
-                    <div className="grid grid-cols-3 text-center sm:block sm:space-x-4">
+                <Tab.List className="border-t dark:border-gray-700 sm:flex sm:justify-center">
+                    <div className="-m-0.5 grid grid-cols-3 text-center sm:block sm:space-x-4">
                         <TabButton userId={profileUser.docId} params="posts">
                             POSTS
                         </TabButton>
@@ -71,7 +73,7 @@ const ProfilePage: IPage = () => {
                 <Tab.Panels className="pb-4">
                     <TabPanel list={profileUser.posts} title="Post" />
                     <TabPanel list={profileUser.saved} title="Saved" />
-                    <TabPanel list={profileUser.saved} title="Tagged" />
+                    <TabPanel list={[]} title="Tagged" />
                 </Tab.Panels>
             </Tab.Group>
         </main>
@@ -88,9 +90,17 @@ type IPage = NextPageWithLayout<
     InferGetServerSidePropsType<typeof getServerSideProps>
 >
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+export async function getServerSideProps(
+    ctx: GetServerSidePropsContext,
+): Promise<{
+    props: {
+        dehydratedState: DehydratedState
+        currentUser: string
+    } & initial_state_of_theme
+}> {
     const cookies = nookies.get(ctx)
     const token = cookies?.token
+    const theme = getThemeFormCookies(cookies)
 
     if (!token) {
         return {
@@ -145,6 +155,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         props: {
             dehydratedState: dehydrate(queryClient),
             currentUser,
+            ...theme,
         },
     }
 }

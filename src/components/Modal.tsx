@@ -47,7 +47,7 @@ function Modal({
 export function ModalList(props: React.HTMLAttributes<HTMLDivElement>) {
     return (
         <div
-            className="divide-y divide-secondary-lighter text-center text-xsm text-black"
+            className="divide-y divide-secondary-lighter text-center text-xsm dark:divide-slate-700"
             {...props}
         />
     )
@@ -60,7 +60,7 @@ export function ModalListItem({ children }: { children: React.ReactNode }) {
                   ...child.props,
                   className: clsx(
                       child.props.className,
-                      'block w-full py-3 font-normal',
+                      'block w-full py-3.5 font-normal dark:hover:bg-slate-950 transition-colors hover:bg-gray-300 first:rounded-t-md last:rounded-b-md',
                   ),
               })
             : child

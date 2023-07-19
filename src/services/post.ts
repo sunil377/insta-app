@@ -44,8 +44,12 @@ async function getPosts(author: string) {
 }
 
 async function getFeedsPosts(currentUser: string) {
+    console.log('getFeedsPost')
     const responseUser = await getUser(currentUser)
+    console.log(responseUser)
+
     if (responseUser.followings.length === 0) {
+        console.log('no following user')
         return []
     }
 
@@ -56,6 +60,7 @@ async function getFeedsPosts(currentUser: string) {
     )
 
     const responsePosts = await getDocs(feedQuery)
+    console.log(parseQuerySnapshot<IPost>(responsePosts))
     return parseQuerySnapshot<IPost>(responsePosts)
 }
 

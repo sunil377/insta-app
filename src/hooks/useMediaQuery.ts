@@ -9,10 +9,10 @@ function subscriber(query: string) {
     }
 }
 
-export default function useMediaQuery(query: string, initialState = '') {
+export default function useMediaQuery(query: string, initialState: boolean) {
     return useSyncExternalStore(
         subscriber(query),
         () => window.matchMedia(query).matches,
-        () => !!initialState,
+        () => initialState,
     )
 }

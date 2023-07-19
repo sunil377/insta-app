@@ -10,7 +10,7 @@ function MenuDialog({ postId }: { postId: string }) {
             <button
                 onClick={() => setOpen(true)}
                 title="more info"
-                className="ml-auto aspect-square rounded-full p-1.5 text-xl"
+                className="ml-auto aspect-square rounded-full p-1.5 text-2xl transition-colors dark:hover:bg-slate-950"
             >
                 <ThreeDotIcon />
             </button>
@@ -18,11 +18,11 @@ function MenuDialog({ postId }: { postId: string }) {
             <Modal
                 isOpen={isOpen}
                 onClose={() => setOpen(false)}
-                className="w-full rounded-lg bg-white shadow-md sm:max-w-sm"
+                className="w-full max-w-sm rounded-lg bg-white shadow-md dark:bg-slate-900 dark:text-slate-100"
             >
                 <ModalList>
                     <ModalListItem>
-                        <button className="text-red-500">
+                        <button className="text-red-500 dark:text-red-600">
                             <b>Delete</b>
                         </button>
                         <button>Edit</button>

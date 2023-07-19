@@ -1,39 +1,22 @@
 import { adminAuth } from '@/config/firebase-admin'
+import { initial_state_of_theme } from '@/context/ThemeContext'
 import { queries } from '@/requests/queries'
+import { getThemeFormCookies } from '@/routes/util'
 import { getServerPost, getServerUser } from '@/services/server'
-import { QueryClient, dehydrate } from '@tanstack/react-query'
+import { DehydratedState, QueryClient, dehydrate } from '@tanstack/react-query'
 import { GetServerSidePropsContext } from 'next'
 import nookies from 'nookies'
 import { z } from 'zod'
 
-async function publicRoute(ctx: GetServerSidePropsContext) {
-    const cookies = nookies.get(ctx)
-    const token = cookies.token ?? ''
-
-    if (!token) {
-        return {
-            props: {},
-        }
-    }
-
-    try {
-        await adminAuth.verifyIdToken(token)
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        } as never
-    } catch (error) {
-        return {
-            props: {},
-        }
-    }
-}
-
-async function protectedRouteWithUser(ctx: GetServerSidePropsContext) {
+async function protectedRouteWithUser(ctx: GetServerSidePropsContext): Promise<{
+    props: {
+        dehydratedState: DehydratedState
+        currentUser: string
+    } & initial_state_of_theme
+}> {
     const cookies = nookies.get(ctx)
     const token = cookies?.token
+    const theme = getThemeFormCookies(cookies)
 
     if (!token) {
         return {
@@ -73,13 +56,21 @@ async function protectedRouteWithUser(ctx: GetServerSidePropsContext) {
         props: {
             dehydratedState: dehydrate(queryClient),
             currentUser,
+            ...theme,
         },
     }
 }
 
-async function protectedRouteWithPost(ctx: GetServerSidePropsContext) {
+async function protectedRouteWithPost(ctx: GetServerSidePropsContext): Promise<{
+    props: {
+        dehydratedState: DehydratedState
+        currentUser: string
+        postId: string
+    } & initial_state_of_theme
+}> {
     const cookies = nookies.get(ctx)
     const token = cookies?.token
+    const theme = getThemeFormCookies(cookies)
 
     if (!token) {
         return {
@@ -111,8 +102,6 @@ async function protectedRouteWithPost(ctx: GetServerSidePropsContext) {
         queryFn: () => getServerUser(currentUser!),
     })
 
-    console.log(ctx.query)
-
     const { id } = z
         .object({
             id: z.string(),
@@ -135,8 +124,9 @@ async function protectedRouteWithPost(ctx: GetServerSidePropsContext) {
             dehydratedState: dehydrate(queryClient),
             currentUser,
             postId: id,
+            ...theme,
         },
     }
 }
 
-export { protectedRouteWithPost, protectedRouteWithUser, publicRoute }
+export { protectedRouteWithPost, protectedRouteWithUser }

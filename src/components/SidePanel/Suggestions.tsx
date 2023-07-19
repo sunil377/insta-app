@@ -32,7 +32,9 @@ function Suggestions() {
     return (
         <div>
             <div className="mb-1.5 mt-3 flex justify-between ">
-                <p className="text-sm text-gray-700">Suggested for you</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                    Suggested for you
+                </p>
             </div>
             {users.map(
                 ({
@@ -52,7 +54,7 @@ function Suggestions() {
                                 >
                                     {username}
                                 </Link>
-                                <p className="capitalize text-gray-700">
+                                <p className="capitalize text-gray-700 dark:text-gray-300">
                                     {fullname}
                                 </p>
                                 {followings.includes(currentUser) ? (

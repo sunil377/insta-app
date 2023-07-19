@@ -1,37 +1,27 @@
+import { parseUnkownErrorToString } from '@/helpers/util'
 import { usePost } from '@/requests/usePost'
 import { Tab } from '@headlessui/react'
-import { InlineLoader } from '..'
 import MiniPost from '../MiniPost'
+import { Spinner } from '../util'
 
 function Post({ postId }: { postId: string }) {
-    const { data, status } = usePost(postId)
+    const { data, error, isLoading, isError } = usePost(postId)
 
-    switch (status) {
-        case 'error':
-            return (
-                <div className="rounded-sm border bg-white shadow-md">
-                    <div className="flex h-full items-center justify-center">
-                        Something went Wrong
-                    </div>
+    return (
+        <div className="aspect-square rounded-sm border shadow-md dark:border-slate-700">
+            {isLoading ? (
+                <div className="flex h-full items-center justify-center">
+                    <Spinner />
                 </div>
-            )
-        case 'loading':
-            return (
-                <div className="rounded-sm border bg-white shadow-md">
-                    <div className="flex h-full items-center justify-center">
-                        <InlineLoader />
-                    </div>
+            ) : isError ? (
+                <div className="flex h-full items-center justify-center">
+                    {parseUnkownErrorToString(error)}
                 </div>
-            )
-        case 'success':
-            return (
-                <div className="aspect-square rounded-sm border shadow-md">
-                    <MiniPost {...data} />
-                </div>
-            )
-        default:
-            return null
-    }
+            ) : (
+                <MiniPost {...data} />
+            )}
+        </div>
+    )
 }
 
 function TabPanel({ list, title }: { list: string[]; title: string }) {

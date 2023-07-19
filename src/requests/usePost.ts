@@ -37,6 +37,7 @@ export function usePosts(author: string) {
 
 export function useFeeds() {
     const currentUser = useAuth()
+    console.log('useFeeds')
 
     return useQuery({
         queryKey: queries.posts.followings(currentUser),
@@ -161,7 +162,7 @@ interface IArg {
 
 export function useCreatePost() {
     const currentUser = useAuth()
-    const isLaptop = useMediaQuery(SCREEN_LG)
+    const isLaptop = useMediaQuery(SCREEN_LG, false)
     const router = useRouter()
 
     return useMutation({

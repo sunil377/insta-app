@@ -1,8 +1,7 @@
 import { ERROR_COMMENT_MIN_LENGTH } from '@/constants/errors'
-import { SCREEN_SM } from '@/constants/screens'
 import { useAuth } from '@/context/AuthContext'
+import { useTheme } from '@/context/ThemeContext'
 import { convertZodErrorToFormikError } from '@/helpers/util'
-import useMediaQuery from '@/hooks/useMediaQuery'
 import { useCreateComment } from '@/requests/useComment'
 import { IPost } from '@/schema/post-schema'
 import clsx from 'clsx'
@@ -54,7 +53,8 @@ export const CommentForm = forwardRef<HTMLInputElement, { postId: string }>(
             <form
                 className={clsx(
                     {
-                        'rounded-full bg-white px-2': isCommentPage,
+                        'rounded-full bg-white px-2 dark:bg-black':
+                            isCommentPage,
                     },
                     'flex gap-4 text-sm',
                 )}
@@ -68,7 +68,7 @@ export const CommentForm = forwardRef<HTMLInputElement, { postId: string }>(
                         {
                             'pl-4 leading-10': isCommentPage,
                         },
-                        'w-full bg-transparent placeholder:text-secondary-light focus:outline-none',
+                        'w-full bg-transparent placeholder:text-secondary-light focus:outline-none dark:placeholder:text-gray-400',
                     )}
                     name="caption"
                     value={values.caption}
@@ -99,7 +99,7 @@ function Comments({
     postId,
     comments,
 }: { postId: string } & Pick<IPost, 'comments'>) {
-    const isMobile = useMediaQuery(SCREEN_SM)
+    const { is_mobile: isMobile } = useTheme()
 
     const commentLink = isMobile
         ? `/post/${postId}/comments`
@@ -107,7 +107,10 @@ function Comments({
 
     const commentText =
         comments.length > 0 ? (
-            <Link href={commentLink} className="block text-secondary-light">
+            <Link
+                href={commentLink}
+                className="block text-secondary-light dark:text-gray-400"
+            >
                 View all {comments.length} comments
             </Link>
         ) : null

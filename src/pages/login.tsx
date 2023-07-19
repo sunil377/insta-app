@@ -4,8 +4,8 @@ import {
     CustomTextField,
 } from '@/components/form/TextField'
 import GoogleSignIn from '@/feature/GoogleSignIn'
-import { publicRoute } from '@/helpers/routes'
 import { convertZodErrorToFormikError } from '@/helpers/util'
+import publicRoute from '@/routes/PublicRoute'
 import { LoginSchema } from '@/schema/user-schema'
 import { login } from '@/services/auth'
 import {
@@ -56,7 +56,7 @@ export default function Login() {
 
     return (
         <main className="mx-auto w-full max-w-sm px-4 py-10 text-sm">
-            <section className="space-y-5 bg-white px-2 pb-2 text-center xs:border xs:border-gray-300 xs:px-10 xs:pb-6 xs:pt-10">
+            <section className="space-y-5 px-2 pb-2 text-center xs:rounded-md xs:border xs:border-gray-300 xs:px-10 xs:pb-6 xs:pt-10 dark:xs:border-slate-700">
                 <Image src={Instagram} alt="instagram" className="mx-auto" />
                 <Formik
                     initialValues={initialValues}
@@ -72,9 +72,9 @@ export default function Login() {
                 </Formik>
 
                 <div className="flex items-center gap-x-4">
-                    <span className="h-px w-full bg-gray-300" />
+                    <span className="h-px w-full bg-gray-300 dark:bg-slate-700" />
                     <span>OR</span>
-                    <span className="h-px w-full bg-gray-300" />
+                    <span className="h-px w-full bg-gray-300 dark:bg-slate-700" />
                 </div>
 
                 <GoogleSignIn>
@@ -96,7 +96,7 @@ export default function Login() {
                     forgot password?
                 </Link>
             </section>
-            <section className="bg-white py-2 text-center xs:mt-4 xs:border xs:border-gray-300 xs:py-4">
+            <section className="py-2 text-center xs:mt-4 xs:rounded-md xs:border xs:border-gray-300 xs:py-4 xs:dark:border-slate-700">
                 <span> Don&apos;t Have an account? </span>
                 <Link href="/signup" className="font-semibold text-blue-500">
                     Sign Up
@@ -107,23 +107,20 @@ export default function Login() {
 }
 
 function loginform({
-    submitCount,
     isSubmitting,
     isValid,
     errors,
 }: FormikProps<typeof initialValues>) {
     const buttonText = isSubmitting ? <InlineLoader /> : 'Log In'
 
-    const errorText =
-        submitCount > 0 &&
-        Object.keys(errors).map((arg) => (
-            <ErrorMessage
-                name={arg}
-                component="span"
-                key={arg}
-                className="block pl-3 text-start text-xs capitalize leading-3 text-red-500 before:content-['*']"
-            />
-        ))
+    const errorText = Object.keys(errors).map((arg) => (
+        <ErrorMessage
+            name={arg}
+            component="span"
+            key={arg}
+            className="block pl-3 text-start text-xs capitalize leading-3 text-red-500 before:content-['*']"
+        />
+    ))
 
     return (
         <div>
