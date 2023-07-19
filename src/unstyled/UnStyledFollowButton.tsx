@@ -93,13 +93,13 @@ function UnStyledFollowButton({ userId, children }: IProps) {
             <Modal
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
-                className="w-full max-w-sm rounded-md bg-white"
+                className="w-full max-w-sm rounded-md bg-white dark:bg-slate-900"
             >
                 <ModalList>
                     <ModalHeader userId={userId} />
                     <ModalListItem>
                         <button
-                            className="text-red-600 transition-colors hover:text-red-800"
+                            className="text-red-600 transition-colors hover:text-red-800 dark:hover:text-red-600"
                             disabled={mutation.isLoading}
                             onClick={async () => {
                                 await mutation.mutateAsync({ isFollowing })
