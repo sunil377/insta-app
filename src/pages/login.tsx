@@ -1,10 +1,10 @@
-import { InlineLoader } from '@/components'
 import {
     CustomPasswordTextField,
     CustomTextField,
 } from '@/components/form/TextField'
-import GoogleSignIn from '@/feature/GoogleSignIn'
+import { Spinner } from '@/components/util'
 import { convertZodErrorToFormikError } from '@/helpers/util'
+import useGoogleSignIn from '@/hooks/useGoogleSignIn'
 import publicRoute from '@/routes/PublicRoute'
 import { LoginSchema } from '@/schema/user-schema'
 import { login } from '@/services/auth'
@@ -53,6 +53,7 @@ async function onSubmit(
 
 export default function Login() {
     const router = useRouter()
+    const handleGoogleSignin = useGoogleSignIn()
 
     return (
         <main className="mx-auto w-full max-w-sm px-4 py-10 text-sm">
@@ -77,17 +78,15 @@ export default function Login() {
                     <span className="h-px w-full bg-gray-300 dark:bg-slate-700" />
                 </div>
 
-                <GoogleSignIn>
-                    {(onClick, isLoading) => (
-                        <button
-                            className="mx-auto block rounded-md px-4 py-2 text-sm text-blue-500 transition-colors hover:text-blue-700"
-                            onClick={onClick}
-                            disabled={isLoading}
-                        >
-                            {isLoading ? 'Signing in...' : 'Log In with Google'}
-                        </button>
-                    )}
-                </GoogleSignIn>
+                <button
+                    className="mx-auto block rounded-md px-4 py-2 text-sm text-blue-500 transition-colors hover:text-blue-700"
+                    onClick={() => handleGoogleSignin.mutate()}
+                    disabled={handleGoogleSignin.isLoading}
+                >
+                    {handleGoogleSignin.isLoading
+                        ? 'Signing in...'
+                        : 'Log In with Google'}
+                </button>
 
                 <Link
                     href="/forgotpassword"
@@ -111,8 +110,6 @@ function loginform({
     isValid,
     errors,
 }: FormikProps<typeof initialValues>) {
-    const buttonText = isSubmitting ? <InlineLoader /> : 'Log In'
-
     const errorText = Object.keys(errors).map((arg) => (
         <ErrorMessage
             name={arg}
@@ -132,7 +129,7 @@ function loginform({
                     type="submit"
                     disabled={!isValid || isSubmitting}
                 >
-                    {buttonText}
+                    {isSubmitting ? <Spinner /> : 'Log In'}
                 </button>
             </Form>
             <div className="mt-1 h-3" role="alert">

@@ -1,10 +1,10 @@
-import { InlineLoader } from '@/components'
 import {
     CustomPasswordTextField,
     CustomTextField,
 } from '@/components/form/TextField'
-import GoogleSignIn from '@/feature/GoogleSignIn'
+import { Spinner } from '@/components/util'
 import { convertZodErrorToFormikError } from '@/helpers/util'
+import useGoogleSignIn from '@/hooks/useGoogleSignIn'
 import publicRoute from '@/routes/PublicRoute'
 import { SignupSchema } from '@/schema/user-schema'
 import { createUserForAuth, createUserForFirestore } from '@/services/auth'
@@ -50,6 +50,7 @@ async function onSubmit(
 
 export default function Signup() {
     const router = useRouter()
+    const handleGoogleSignin = useGoogleSignIn()
 
     return (
         <main className="mx-auto max-w-sm px-4 py-10 text-sm">
@@ -60,17 +61,13 @@ export default function Signup() {
                     Sign up to see photos and videos from your friends.
                 </h2>
 
-                <GoogleSignIn>
-                    {(onClick, disabled) => (
-                        <button
-                            className="block w-full rounded-md bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-700"
-                            onClick={onClick}
-                            disabled={disabled}
-                        >
-                            Log In with Google
-                        </button>
-                    )}
-                </GoogleSignIn>
+                <button
+                    className="block w-full rounded-md bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+                    onClick={() => handleGoogleSignin.mutate()}
+                    disabled={handleGoogleSignin.isLoading}
+                >
+                    Log In with Google
+                </button>
 
                 <div className="flex items-center gap-x-4">
                     <span className="h-px w-full bg-gray-300 dark:bg-slate-700"></span>
@@ -106,8 +103,6 @@ function signupform({
     isValid,
     errors,
 }: FormikProps<typeof initialValues>) {
-    const buttonText = isSubmitting ? <InlineLoader /> : 'Signup'
-
     const errorText = Object.keys(errors).map((arg) => (
         <ErrorMessage
             name={arg}
@@ -129,7 +124,7 @@ function signupform({
                     type="submit"
                     disabled={!isValid || isSubmitting}
                 >
-                    {buttonText}
+                    {isSubmitting ? <Spinner /> : 'Signup'}
                 </button>
             </Form>
             <div className="mt-1 h-3" role="alert">
