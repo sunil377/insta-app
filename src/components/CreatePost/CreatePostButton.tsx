@@ -1,3 +1,4 @@
+import { boolean_dispatch } from '@/helpers/types'
 import useFileReader from '@/hooks/useFileReader'
 import { useCreatePost } from '@/requests/usePost'
 import useUser from '@/requests/useUser'
@@ -9,7 +10,7 @@ import { HiChevronLeft } from 'react-icons/hi'
 import { AlertBadge, Avatar, Spinner } from '../util'
 import useCaption from './useCaption'
 
-function CreatePostModalContent({ onClose }: { onClose: () => void }) {
+function CreatePostModalContent({ onClose }: { onClose: boolean_dispatch }) {
     const {
         state: { dataURL },
         handleChange,
@@ -58,7 +59,7 @@ function CreatePostModalContent({ onClose }: { onClose: () => void }) {
                                 caption,
                                 file,
                             })
-                            onClose()
+                            onClose(false)
                         }}
                     >
                         {mutation.isLoading ? 'Posting...' : 'Share'}

@@ -20,7 +20,7 @@ function UserBedge({
         <div
             className={clsx(
                 className,
-                'inline-flex items-center justify-center rounded-full bg-purple-700 bg-opacity-90 font-roboto capitalize leading-none text-gray-200',
+                'inline-flex items-center justify-center rounded-full bg-purple-700 bg-opacity-90 font-roboto font-semibold capitalize leading-none text-gray-200',
             )}
             {...props}
         />
@@ -37,6 +37,7 @@ function Avatar({ photo, username, size = 32, className }: avatar) {
     const classes = clsx({
         'h-6 w-6 text-xs': size === 24,
         'h-8 w-8 text-base': size === 32,
+        'h-10 w-10 text-lg': size === 40,
     })
 
     return photo ? (

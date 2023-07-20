@@ -27,10 +27,10 @@ function SearchContent() {
             <h2 className="text-2xl font-semibold">Search</h2>
 
             <Combobox value={selectedPerson} onChange={setSelectedPerson}>
-                <Combobox.Label className="group flex items-center rounded-md bg-gray-100 pr-2 text-sm focus-within:ring-2 focus-within:ring-blue-500 dark:bg-slate-900">
+                <Combobox.Label className="group flex items-center rounded-md bg-gray-100 pr-2 text-sm focus-within:ring-2 focus-within:ring-blue-500 dark:bg-zinc-800">
                     <Combobox.Input
                         onChange={(event) => setQuery(event.target.value)}
-                        className="block w-full rounded-sm bg-transparent px-2 leading-8 focus:outline-none"
+                        className="block w-full rounded-sm bg-transparent px-2 leading-10 focus:outline-none"
                         autoCapitalize="off"
                         placeholder="Search"
                         autoComplete="off"

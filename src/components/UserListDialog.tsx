@@ -1,4 +1,5 @@
 import { CloseIcon } from '@/assets'
+import { boolean_dispatch } from '@/helpers/types'
 import { Dialog } from '@headlessui/react'
 import Modal from './Modal'
 import UserListItem from './UserListItem'
@@ -7,7 +8,7 @@ interface IUserListDialog {
     list: string[]
     title: string
     isOpen: boolean
-    onClose: () => void
+    onClose: boolean_dispatch
 }
 
 function UserListDialog({ list, title, isOpen, onClose }: IUserListDialog) {
@@ -24,7 +25,7 @@ function UserListDialog({ list, title, isOpen, onClose }: IUserListDialog) {
                 <button
                     title="close"
                     className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-base"
-                    onClick={onClose}
+                    onClick={() => onClose(false)}
                 >
                     <CloseIcon />
                 </button>

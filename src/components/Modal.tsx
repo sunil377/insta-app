@@ -1,3 +1,4 @@
+import { boolean_dispatch } from '@/helpers/types'
 import { Dialog, Transition } from '@headlessui/react'
 import clsx from 'clsx'
 import { Children, Fragment, cloneElement } from 'react'
@@ -8,7 +9,7 @@ function Modal({
     ...props
 }: React.HTMLAttributes<HTMLDivElement> & {
     isOpen: boolean
-    onClose: () => void
+    onClose: boolean_dispatch
 }) {
     return (
         <Transition as={Fragment} show={isOpen}>

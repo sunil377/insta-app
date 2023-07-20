@@ -17,7 +17,7 @@ const UnStyledLogoutButton = forwardRef<
 
             <Modal
                 isOpen={isOpen}
-                onClose={() => setOpen(false)}
+                onClose={setOpen}
                 className="w-full max-w-sm rounded-xl bg-gray-100 text-sm dark:bg-slate-900 dark:text-slate-100"
             >
                 <ModalList>

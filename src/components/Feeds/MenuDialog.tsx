@@ -21,7 +21,7 @@ function MenuDialog({ postId, userId }: { postId: string; userId: string }) {
 
             <Modal
                 isOpen={isOpen}
-                onClose={() => setOpen(false)}
+                onClose={setOpen}
                 className="w-full rounded-lg bg-white shadow-md dark:bg-slate-900 sm:max-w-sm"
             >
                 <ModalList>

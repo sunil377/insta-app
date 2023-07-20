@@ -92,7 +92,7 @@ function UnStyledFollowButton({ userId, children }: IProps) {
         <>
             <Modal
                 isOpen={isOpen}
-                onClose={() => setIsOpen(false)}
+                onClose={setIsOpen}
                 className="w-full max-w-sm rounded-md bg-white dark:bg-slate-900"
             >
                 <ModalList>

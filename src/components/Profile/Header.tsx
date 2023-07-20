@@ -141,7 +141,7 @@ function Settings() {
             </button>
             <Modal
                 isOpen={isOpen}
-                onClose={() => setOpen(false)}
+                onClose={setOpen}
                 className="w-full max-w-sm rounded-md bg-white text-black dark:bg-slate-900 dark:text-slate-100"
             >
                 <ModalList>

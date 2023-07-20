@@ -20,6 +20,7 @@ import useUser from '@/requests/useUser'
 import { Menu, Popover, Transition } from '@headlessui/react'
 import clsx from 'clsx'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Fragment, ReactNode, useState } from 'react'
 import SearchContent from './SearchContent'
 
@@ -30,11 +31,17 @@ function Tooltip({
     isPopoverOpen: boolean
     children: React.ReactNode
 }) {
+    const pathname = usePathname()
+    const isMessagePageActive = pathname.startsWith('/message')
+
     return (
         <>
             <div
                 className={clsx(
-                    { 'lg:inline-block': !isPopoverOpen },
+                    {
+                        'lg:inline-block':
+                            !isPopoverOpen && !isMessagePageActive,
+                    },
                     'hidden',
                 )}
             >
@@ -43,7 +50,7 @@ function Tooltip({
 
             <div
                 className={clsx(
-                    { 'lg:hidden': !isPopoverOpen },
+                    { 'lg:hidden': !isPopoverOpen && !isMessagePageActive },
                     'invisible absolute left-16 top-1/2 z-50 -translate-y-1/2 rounded-md border bg-gray-50 px-2.5 py-2 align-middle text-xs opacity-0 shadow-md transition-opacity group-hover:visible group-hover:opacity-100 dark:border-gray-800 dark:bg-slate-900',
                 )}
             >
@@ -59,6 +66,8 @@ function LaptopLayout({ children }: { children: ReactNode }) {
     const [isModalOpen, setModal] = useState(false)
     const handleLogOut = useLogout()
     const { setDarkTheme } = useTheme()
+    const pathname = usePathname()
+    const isMessagePageActive = pathname.startsWith('/message')
 
     return (
         <>
@@ -66,7 +75,10 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                 {({ open: isPopoverOpen }) => (
                     <nav
                         className={clsx(
-                            { 'lg:w-56': !isPopoverOpen },
+                            {
+                                'lg:w-56':
+                                    !isPopoverOpen && !isMessagePageActive,
+                            },
                             'fixed inset-y-0 left-0 z-40 flex w-16 flex-col border-r border-r-gray-300 bg-white px-2 py-4 text-gray-800 transition-all dark:border-r-gray-900 dark:bg-black dark:text-white',
                         )}
                     >
@@ -75,7 +87,7 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                             className={clsx(
                                 {
                                     'lg:w-full lg:justify-start':
-                                        !isPopoverOpen,
+                                        !isPopoverOpen && !isMessagePageActive,
                                 },
                                 'group flex h-12 w-12 items-center justify-center rounded-full text-2xl leading-none transition-all hover:bg-gray-100 dark:hover:bg-gray-900',
                             )}
@@ -83,17 +95,46 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                         >
                             <InstaIcon
                                 className={clsx(
-                                    { 'lg:hidden': !isPopoverOpen },
+                                    {
+                                        'lg:hidden':
+                                            !isPopoverOpen &&
+                                            !isMessagePageActive,
+                                    },
                                     'transform transition-transform group-hover:scale-110',
                                 )}
                             />
                             <InstagramTextIcon
                                 className={clsx(
-                                    { 'lg:inline-block': !isPopoverOpen },
+                                    {
+                                        'lg:inline-block':
+                                            !isPopoverOpen &&
+                                            !isMessagePageActive,
+                                    },
                                     'ml-3 hidden',
                                 )}
                             />
                         </Link>
+
+                        <Transition as={Fragment} show={isPopoverOpen}>
+                            <div className="fixed inset-y-0 left-16 z-30">
+                                <Transition.Child
+                                    enter="duration-300 ease-linear"
+                                    enterFrom="-translate-x-80 opacity-50"
+                                    enterTo="translate-x-0 opacity-100"
+                                    leave="duration-200 ease-linear"
+                                    leaveFrom="translate-x-0 opacity-100"
+                                    leaveTo="-translate-x-80 opacity-50"
+                                    as={Fragment}
+                                >
+                                    <Popover.Panel
+                                        static
+                                        className="h-full w-96 origin-left rounded-r-xl border border-l-0 bg-white dark:border-gray-900 dark:bg-black dark:text-white"
+                                    >
+                                        <SearchContent />
+                                    </Popover.Panel>
+                                </Transition.Child>
+                            </div>
+                        </Transition>
 
                         <div className="mt-5 flex flex-col space-y-2 text-sm">
                             <div className="group relative">
@@ -102,7 +143,8 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                                     className={clsx(
                                         {
                                             'lg:flex lg:w-full lg:gap-x-4':
-                                                !isPopoverOpen,
+                                                !isPopoverOpen &&
+                                                !isMessagePageActive,
                                         },
                                         'inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 dark:hover:bg-gray-900',
                                     )}
@@ -123,7 +165,8 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                                     className={clsx(
                                         {
                                             'lg:flex lg:w-full lg:gap-x-4':
-                                                !isPopoverOpen,
+                                                !isPopoverOpen &&
+                                                !isMessagePageActive,
                                         },
                                         'inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100  dark:hover:bg-gray-900',
                                     )}
@@ -141,34 +184,14 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                                 </Popover.Button>
                             </div>
 
-                            <Transition as={Fragment} show={isPopoverOpen}>
-                                <div className="fixed inset-y-0 left-16 z-30">
-                                    <Transition.Child
-                                        enter="duration-300 ease-linear"
-                                        enterFrom="-translate-x-80 opacity-50"
-                                        enterTo="translate-x-0 opacity-100"
-                                        leave="duration-200 ease-linear"
-                                        leaveFrom="translate-x-0 opacity-100"
-                                        leaveTo="-translate-x-80 opacity-50"
-                                        as={Fragment}
-                                    >
-                                        <Popover.Panel
-                                            static
-                                            className="h-full w-64 origin-left border border-l-0 bg-white dark:border-gray-900 dark:bg-black dark:text-white"
-                                        >
-                                            <SearchContent />
-                                        </Popover.Panel>
-                                    </Transition.Child>
-                                </div>
-                            </Transition>
-
                             <div className="group relative">
                                 <Link
                                     href="/explore"
                                     className={clsx(
                                         {
                                             'lg:flex lg:w-full lg:gap-x-4':
-                                                !isPopoverOpen,
+                                                !isPopoverOpen &&
+                                                !isMessagePageActive,
                                         },
                                         'inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 dark:hover:bg-gray-900',
                                     )}
@@ -188,11 +211,12 @@ function LaptopLayout({ children }: { children: ReactNode }) {
 
                             <div className="group relative">
                                 <Link
-                                    href="/messenger"
+                                    href="/message"
                                     className={clsx(
                                         {
                                             'lg:flex lg:w-full lg:gap-x-4':
-                                                !isPopoverOpen,
+                                                !isPopoverOpen &&
+                                                !isMessagePageActive,
                                         },
                                         'inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 dark:hover:bg-gray-900',
                                     )}
@@ -217,7 +241,8 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                                         className={clsx(
                                             {
                                                 'lg:flex lg:w-full lg:gap-x-4':
-                                                    !isPopoverOpen,
+                                                    !isPopoverOpen &&
+                                                    !isMessagePageActive,
                                             },
                                             'inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 dark:hover:bg-gray-900',
                                         )}
@@ -236,11 +261,11 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                                 </div>
                                 <Modal
                                     isOpen={isModalOpen}
-                                    onClose={() => setModal(false)}
+                                    onClose={setModal}
                                     className="w-full max-w-3xl overflow-hidden rounded-md bg-white shadow-md dark:bg-slate-900 dark:text-slate-100"
                                 >
                                     <CreatePostModalContent
-                                        onClose={() => setModal(false)}
+                                        onClose={setModal}
                                     />
                                 </Modal>
                             </Fragment>
@@ -256,7 +281,8 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                                         className={clsx(
                                             {
                                                 'lg:flex lg:w-full lg:gap-x-4':
-                                                    !isPopoverOpen,
+                                                    !isPopoverOpen &&
+                                                    !isMessagePageActive,
                                             },
                                             'inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 dark:hover:bg-gray-900',
                                         )}
@@ -286,7 +312,8 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                                 className={clsx(
                                     {
                                         'lg:flex lg:w-full lg:gap-x-4':
-                                            !isPopoverOpen,
+                                            !isPopoverOpen &&
+                                            !isMessagePageActive,
                                     },
                                     'inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 dark:hover:bg-gray-900',
                                 )}

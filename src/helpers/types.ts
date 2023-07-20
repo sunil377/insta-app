@@ -3,3 +3,5 @@ export interface IButton
         React.ButtonHTMLAttributes<HTMLButtonElement>,
         HTMLButtonElement
     > {}
+
+export type boolean_dispatch = React.Dispatch<React.SetStateAction<boolean>>
