@@ -1,4 +1,3 @@
-import FetchingIndicator from '@/components/FetchingIndicator'
 import { auth } from '@/config/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import nookies from 'nookies'
@@ -32,7 +31,6 @@ export default function AuthProvider({
 
     return (
         <AuthContext.Provider value={currentUser}>
-            <FetchingIndicator />
             {children}
         </AuthContext.Provider>
     )
