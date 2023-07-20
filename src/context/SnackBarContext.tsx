@@ -1,5 +1,11 @@
 import { Transition } from '@headlessui/react'
-import { Fragment, createContext, useContext, useState } from 'react'
+import {
+    Fragment,
+    createContext,
+    useCallback,
+    useContext,
+    useState,
+} from 'react'
 
 type contextType = null | {
     dismiss: () => void
@@ -19,14 +25,17 @@ export function useSnackBar() {
 function SnackBarProvider({ children }: { children: React.ReactNode }) {
     const [msg, setMsg] = useState('')
 
-    const dismiss = () => {
+    const dismiss = useCallback(() => {
         setMsg('')
-    }
+    }, [])
 
-    const setMessage = (arg: string) => {
-        setMsg(arg)
-        setTimeout(dismiss, 3000)
-    }
+    const setMessage = useCallback(
+        (arg: string) => {
+            setMsg(arg)
+            setTimeout(dismiss, 3000)
+        },
+        [dismiss],
+    )
 
     return (
         <Context.Provider

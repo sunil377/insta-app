@@ -1,7 +1,7 @@
 import { auth } from '@/config/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import nookies from 'nookies'
-import { createContext, ReactNode, useContext, useEffect } from 'react'
+import { createContext, useContext, useEffect } from 'react'
 
 type contextType = string | null
 
@@ -19,7 +19,7 @@ export default function AuthProvider({
     currentUser,
     children,
 }: {
-    children: ReactNode
+    children: React.ReactNode
     currentUser: string
 }) {
     useEffect(() => {

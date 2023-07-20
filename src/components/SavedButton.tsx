@@ -5,15 +5,14 @@ function SavedButton({ postId }: { postId: string }) {
     const { data: currentUser, isSuccess } = useUser()
     const isSaved = isSuccess && currentUser.saved.includes(postId)
 
-    const { mutate } = useUpdateUserSaved(postId)
-    const handleClick = () => mutate({ isSaved })
+    const handleSaved = useUpdateUserSaved(postId)
 
     return (
         <button
             className="ml-auto rounded-full p-1"
             title={isSaved ? 'Unsave' : 'Save'}
-            disabled={!isSuccess}
-            onClick={handleClick}
+            disabled={!isSuccess || handleSaved.isLoading}
+            onClick={() => handleSaved.mutate({ isSaved })}
         >
             {isSaved ? (
                 <SavedFillIcon className="transition-transform hover:scale-105 hover:transform" />
