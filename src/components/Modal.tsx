@@ -14,10 +14,10 @@ function Modal({
         <Transition as={Fragment} show={isOpen}>
             <Dialog onClose={onClose} className="relative z-dialog">
                 <Transition.Child
-                    enter="duration-100 ease-in"
+                    enter="duration-100 ease-linear"
                     enterFrom="opacity-0"
                     enterTo="opacity-100"
-                    leave="duration-200 ease-in"
+                    leave="duration-100 ease-linear"
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                     as={Fragment}
@@ -27,12 +27,12 @@ function Modal({
                 <div className="fixed inset-0 z-10 overflow-y-auto">
                     <div className="flex min-h-full items-center justify-center overflow-hidden p-4 sm:p-10">
                         <Transition.Child
-                            enter="duration-200 ease-in"
-                            enterFrom="scale-75 opacity-0"
+                            enter="duration-200 ease-linear"
+                            enterFrom="scale-125 opacity-0"
                             enterTo="opacity-100 scale-100"
-                            leave="duration-100 ease-in"
-                            leaveFrom="opacity-100 scale-100"
-                            leaveTo="opacity-0 scale-75"
+                            leave="duration-100 ease-linear"
+                            leaveFrom="opacity-100 scale-125"
+                            leaveTo="opacity-0 scale-110"
                             as={Fragment}
                         >
                             <Dialog.Panel {...props} />

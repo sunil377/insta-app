@@ -64,27 +64,6 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                             />
                         </Link>
 
-                        <Transition as={Fragment} show={isPopoverOpen}>
-                            <div className="fixed inset-y-0 left-16 z-30">
-                                <Transition.Child
-                                    enter="duration-300 ease-linear"
-                                    enterFrom="-translate-x-80 opacity-50"
-                                    enterTo="translate-x-0 opacity-100"
-                                    leave="duration-200 ease-linear"
-                                    leaveFrom="translate-x-0 opacity-100"
-                                    leaveTo="-translate-x-80 opacity-50"
-                                    as={Fragment}
-                                >
-                                    <Popover.Panel
-                                        static
-                                        className="h-full w-64 origin-left border border-l-0 bg-white dark:border-gray-900 dark:bg-black dark:text-white"
-                                    >
-                                        <SearchContent />
-                                    </Popover.Panel>
-                                </Transition.Child>
-                            </div>
-                        </Transition>
-
                         <div className="mt-5 flex flex-col space-y-2 text-sm">
                             <Link
                                 href="/"
@@ -152,6 +131,27 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                                     Search
                                 </div>
                             </Popover.Button>
+
+                            <Transition as={Fragment} show={isPopoverOpen}>
+                                <div className="fixed inset-y-0 left-16 z-30">
+                                    <Transition.Child
+                                        enter="duration-300 ease-linear"
+                                        enterFrom="-translate-x-80 opacity-50"
+                                        enterTo="translate-x-0 opacity-100"
+                                        leave="duration-200 ease-linear"
+                                        leaveFrom="translate-x-0 opacity-100"
+                                        leaveTo="-translate-x-80 opacity-50"
+                                        as={Fragment}
+                                    >
+                                        <Popover.Panel
+                                            static
+                                            className="h-full w-64 origin-left border border-l-0 bg-white dark:border-gray-900 dark:bg-black dark:text-white"
+                                        >
+                                            <SearchContent />
+                                        </Popover.Panel>
+                                    </Transition.Child>
+                                </div>
+                            </Transition>
 
                             <Link
                                 href="/explore"

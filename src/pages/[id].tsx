@@ -38,7 +38,7 @@ const ProfilePage: IPage = () => {
 
     return (
         <main className="mx-auto mt-16 max-w-4xl text-sm sm:mt-10">
-            <Header {...profileUser} />
+            <Header {...profileUser} key={pathname} />
             <Tab.Group
                 as="section"
                 defaultIndex={selectedIndex}
