@@ -23,6 +23,37 @@ import Link from 'next/link'
 import { Fragment, ReactNode, useState } from 'react'
 import SearchContent from './SearchContent'
 
+function Tooltip({
+    isPopoverOpen,
+    children,
+}: {
+    isPopoverOpen: boolean
+    children: React.ReactNode
+}) {
+    return (
+        <>
+            <div
+                className={clsx(
+                    { 'lg:inline-block': !isPopoverOpen },
+                    'hidden',
+                )}
+            >
+                {children}
+            </div>
+
+            <div
+                className={clsx(
+                    { 'lg:hidden': !isPopoverOpen },
+                    'invisible absolute left-16 top-1/2 z-50 -translate-y-1/2 rounded-md border bg-gray-50 px-2.5 py-2 align-middle text-xs opacity-0 shadow-md transition-opacity group-hover:visible group-hover:opacity-100 dark:border-gray-800 dark:bg-slate-900',
+                )}
+            >
+                <span className="absolute left-0 top-1/2 z-10 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 transform border-b border-l border-inherit bg-inherit"></span>
+                {children}
+            </div>
+        </>
+    )
+}
+
 function LaptopLayout({ children }: { children: ReactNode }) {
     const { data: currentUser, isError, isLoading, error } = useUser()
     const [isModalOpen, setModal] = useState(false)
@@ -65,72 +96,50 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                         </Link>
 
                         <div className="mt-5 flex flex-col space-y-2 text-sm">
-                            <Link
-                                href="/"
-                                className={clsx(
-                                    {
-                                        'lg:flex lg:w-full lg:gap-x-4':
-                                            isPopoverOpen,
-                                    },
-                                    'group relative inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-black dark:hover:bg-gray-900',
-                                )}
-                            >
-                                <i
-                                    className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-full text-2xl leading-none"
-                                    title="Home"
-                                >
-                                    <HomeIcon className="transfrom flex-none transition-transform group-hover:scale-110" />
-                                </i>
-                                <div
+                            <div className="group relative">
+                                <Link
+                                    href="/"
                                     className={clsx(
-                                        { 'lg:block': !isPopoverOpen },
-                                        'hidden',
+                                        {
+                                            'lg:flex lg:w-full lg:gap-x-4':
+                                                !isPopoverOpen,
+                                        },
+                                        'inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 dark:hover:bg-gray-900',
                                     )}
                                 >
-                                    Home
-                                </div>
-                                <div
+                                    <i
+                                        className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-full text-2xl leading-none"
+                                        aria-label="Home"
+                                    >
+                                        <HomeIcon className="transfrom flex-none transition-transform group-hover:scale-110" />
+                                    </i>
+                                    <Tooltip isPopoverOpen={isPopoverOpen}>
+                                        Home
+                                    </Tooltip>
+                                </Link>
+                            </div>
+                            <div className="group relative">
+                                <Popover.Button
                                     className={clsx(
-                                        { 'lg:hidden': !isPopoverOpen },
-                                        'invisible absolute left-16 z-50 rounded-md border bg-inherit p-2 align-middle text-xs opacity-0 shadow-md transition-opacity before:absolute before:-left-1.5 before:top-1/2 before:-z-10 before:h-3 before:w-3 before:-translate-y-1/2 before:rotate-45 before:transform before:border-b before:border-l before:bg-inherit group-hover:visible group-hover:opacity-100 dark:border-gray-950 dark:before:border-gray-950',
+                                        {
+                                            'lg:flex lg:w-full lg:gap-x-4':
+                                                !isPopoverOpen,
+                                        },
+                                        'inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100  dark:hover:bg-gray-900',
                                     )}
                                 >
-                                    Home
-                                </div>
-                            </Link>
+                                    <i
+                                        className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-full text-2xl leading-none"
+                                        aria-label="Search"
+                                    >
+                                        <SearchIcon className="transfrom flex-none transition-transform group-hover:scale-110" />
+                                    </i>
 
-                            <Popover.Button
-                                className={clsx(
-                                    {
-                                        'lg:flex lg:w-full lg:gap-x-4':
-                                            isPopoverOpen,
-                                    },
-                                    'group relative inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-black dark:hover:bg-gray-900',
-                                )}
-                            >
-                                <i
-                                    className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-full text-2xl leading-none"
-                                    title="Search"
-                                >
-                                    <SearchIcon className="transfrom flex-none transition-transform group-hover:scale-110" />
-                                </i>
-                                <div
-                                    className={clsx(
-                                        { 'lg:block': !isPopoverOpen },
-                                        'hidden',
-                                    )}
-                                >
-                                    Search
-                                </div>
-                                <div
-                                    className={clsx(
-                                        { 'lg:hidden': !isPopoverOpen },
-                                        'invisible absolute left-16 z-50 rounded-md border bg-inherit p-2 align-middle text-xs opacity-0 shadow-md transition-opacity before:absolute before:-left-1.5 before:top-1/2 before:-z-10 before:h-3 before:w-3 before:-translate-y-1/2 before:rotate-45 before:transform before:border-b before:border-l before:bg-inherit group-hover:visible group-hover:opacity-100 dark:border-gray-950 dark:before:border-gray-950',
-                                    )}
-                                >
-                                    Search
-                                </div>
-                            </Popover.Button>
+                                    <Tooltip isPopoverOpen={isPopoverOpen}>
+                                        Search
+                                    </Tooltip>
+                                </Popover.Button>
+                            </div>
 
                             <Transition as={Fragment} show={isPopoverOpen}>
                                 <div className="fixed inset-y-0 left-16 z-30">
@@ -153,108 +162,78 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                                 </div>
                             </Transition>
 
-                            <Link
-                                href="/explore"
-                                className={clsx(
-                                    {
-                                        'lg:flex lg:w-full lg:gap-x-4':
-                                            isPopoverOpen,
-                                    },
-                                    'group relative inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-black dark:hover:bg-gray-900',
-                                )}
-                            >
-                                <i
-                                    className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-full text-2xl leading-none"
-                                    title="Explore"
-                                >
-                                    <ExploreIcon className="transfrom flex-none transition-transform group-hover:scale-110" />
-                                </i>
-                                <div
-                                    className={clsx(
-                                        { 'lg:block': !isPopoverOpen },
-                                        'hidden',
-                                    )}
-                                >
-                                    Explore
-                                </div>
-                                <div
-                                    className={clsx(
-                                        { 'lg:hidden': !isPopoverOpen },
-                                        'invisible absolute left-16 z-50 rounded-md border bg-inherit p-2 align-middle text-xs opacity-0 shadow-md transition-opacity before:absolute before:-left-1.5 before:top-1/2 before:-z-10 before:h-3 before:w-3 before:-translate-y-1/2 before:rotate-45 before:transform before:border-b before:border-l before:bg-inherit group-hover:visible group-hover:opacity-100 dark:border-gray-950 dark:before:border-gray-950',
-                                    )}
-                                >
-                                    Explore
-                                </div>
-                            </Link>
-
-                            <Link
-                                href="/messenger"
-                                className={clsx(
-                                    {
-                                        'lg:flex lg:w-full lg:gap-x-4':
-                                            isPopoverOpen,
-                                    },
-                                    'group relative inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-black dark:hover:bg-gray-900',
-                                )}
-                            >
-                                <i
-                                    className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-full text-2xl leading-none"
-                                    title="Messenger"
-                                >
-                                    <MessengerIcon className="transfrom flex-none transition-transform group-hover:scale-110" />
-                                </i>
-                                <div
-                                    className={clsx(
-                                        { 'lg:block': !isPopoverOpen },
-                                        'hidden',
-                                    )}
-                                >
-                                    Messenger
-                                </div>
-                                <div
-                                    className={clsx(
-                                        { 'lg:hidden': !isPopoverOpen },
-                                        'invisible absolute left-16 z-50 rounded-md border bg-inherit p-2 align-middle text-xs opacity-0 shadow-md transition-opacity before:absolute before:-left-1.5 before:top-1/2 before:-z-10 before:h-3 before:w-3 before:-translate-y-1/2 before:rotate-45 before:transform before:border-b before:border-l before:bg-inherit group-hover:visible group-hover:opacity-100 dark:border-gray-950 dark:before:border-gray-950',
-                                    )}
-                                >
-                                    Messenger
-                                </div>
-                            </Link>
-
-                            <Fragment>
-                                <button
-                                    onClick={() => setModal(true)}
+                            <div className="group relative">
+                                <Link
+                                    href="/explore"
                                     className={clsx(
                                         {
                                             'lg:flex lg:w-full lg:gap-x-4':
-                                                isPopoverOpen,
+                                                !isPopoverOpen,
                                         },
-                                        'group relative inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-black dark:hover:bg-gray-900',
+                                        'inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 dark:hover:bg-gray-900',
                                     )}
                                 >
                                     <i
                                         className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-full text-2xl leading-none"
-                                        title="Create"
+                                        title="Explore"
                                     >
-                                        <AddPostIcon className="transfrom flex-none transition-transform group-hover:scale-110" />
+                                        <ExploreIcon className="transfrom flex-none transition-transform group-hover:scale-110" />
                                     </i>
-                                    <div
+
+                                    <Tooltip isPopoverOpen={isPopoverOpen}>
+                                        Explore
+                                    </Tooltip>
+                                </Link>
+                            </div>
+
+                            <div className="group relative">
+                                <Link
+                                    href="/messenger"
+                                    className={clsx(
+                                        {
+                                            'lg:flex lg:w-full lg:gap-x-4':
+                                                !isPopoverOpen,
+                                        },
+                                        'inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 dark:hover:bg-gray-900',
+                                    )}
+                                >
+                                    <i
+                                        className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-full text-2xl leading-none"
+                                        title="Messenger"
+                                    >
+                                        <MessengerIcon className="transfrom flex-none transition-transform group-hover:scale-110" />
+                                    </i>
+
+                                    <Tooltip isPopoverOpen={isPopoverOpen}>
+                                        Messenger
+                                    </Tooltip>
+                                </Link>
+                            </div>
+
+                            <Fragment>
+                                <div className="group relative">
+                                    <button
+                                        onClick={() => setModal(true)}
                                         className={clsx(
-                                            { 'lg:block': !isPopoverOpen },
-                                            'hidden',
+                                            {
+                                                'lg:flex lg:w-full lg:gap-x-4':
+                                                    !isPopoverOpen,
+                                            },
+                                            'inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 dark:hover:bg-gray-900',
                                         )}
                                     >
-                                        Create
-                                    </div>
-                                    <div
-                                        className={clsx(
-                                            { 'lg:hidden': !isPopoverOpen },
-                                            'invisible absolute left-16 z-50 rounded-md border bg-inherit p-2 align-middle text-xs opacity-0 shadow-md transition-opacity before:absolute before:-left-1.5 before:top-1/2 before:-z-10 before:h-3 before:w-3 before:-translate-y-1/2 before:rotate-45 before:transform before:border-b before:border-l before:bg-inherit group-hover:visible group-hover:opacity-100 dark:border-gray-950 dark:before:border-gray-950',
-                                        )}
-                                    >
-                                        Create
-                                    </div>
-                                </button>
+                                        <i
+                                            className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-full text-2xl leading-none"
+                                            title="Create"
+                                        >
+                                            <AddPostIcon className="transfrom flex-none transition-transform group-hover:scale-110" />
+                                        </i>
+
+                                        <Tooltip isPopoverOpen={isPopoverOpen}>
+                                            Create
+                                        </Tooltip>
+                                    </button>
+                                </div>
                                 <Modal
                                     isOpen={isModalOpen}
                                     onClose={() => setModal(false)}
@@ -271,43 +250,34 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                             ) : isError ? (
                                 <AlertBadge error={error} renderText />
                             ) : (
-                                <Link
-                                    href={'/' + currentUser.docId}
-                                    className={clsx(
-                                        {
-                                            'lg:flex lg:w-full lg:gap-x-4':
-                                                isPopoverOpen,
-                                        },
-                                        'group relative inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-black dark:hover:bg-gray-900',
-                                    )}
-                                >
-                                    <i
-                                        className="transfrom inline-flex h-12 w-12 flex-none shrink-0 scale-90 items-center justify-center rounded-full text-2xl not-italic leading-none transition-transform group-hover:scale-100"
-                                        title={currentUser.username}
+                                <div className="group relative">
+                                    <Link
+                                        href={'/' + currentUser.docId}
+                                        className={clsx(
+                                            {
+                                                'lg:flex lg:w-full lg:gap-x-4':
+                                                    !isPopoverOpen,
+                                            },
+                                            'inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 dark:hover:bg-gray-900',
+                                        )}
                                     >
-                                        <Avatar
-                                            photo={currentUser.profile.photo}
-                                            username={currentUser.username}
-                                        />
-                                    </i>
+                                        <i
+                                            className="transfrom inline-flex h-12 w-12 flex-none shrink-0 scale-90 items-center justify-center rounded-full text-2xl not-italic leading-none transition-transform group-hover:scale-100"
+                                            title={currentUser.username}
+                                        >
+                                            <Avatar
+                                                photo={
+                                                    currentUser.profile.photo
+                                                }
+                                                username={currentUser.username}
+                                            />
+                                        </i>
 
-                                    <div
-                                        className={clsx(
-                                            { 'lg:block': !isPopoverOpen },
-                                            'hidden',
-                                        )}
-                                    >
-                                        Profile
-                                    </div>
-                                    <div
-                                        className={clsx(
-                                            { 'lg:hidden': !isPopoverOpen },
-                                            'invisible absolute left-16 z-50 rounded-md border bg-inherit p-2 align-middle text-xs opacity-0 shadow-md transition-opacity before:absolute before:-left-1.5 before:top-1/2 before:-z-10 before:h-3 before:w-3 before:-translate-y-1/2 before:rotate-45 before:transform before:border-b before:border-l before:bg-inherit group-hover:visible group-hover:opacity-100 dark:border-gray-950 dark:before:border-gray-950',
-                                        )}
-                                    >
-                                        Profile
-                                    </div>
-                                </Link>
+                                        <Tooltip isPopoverOpen={isPopoverOpen}>
+                                            Profile
+                                        </Tooltip>
+                                    </Link>
+                                </div>
                             )}
                         </div>
 
@@ -315,9 +285,10 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                             <Menu.Button
                                 className={clsx(
                                     {
-                                        'lg:flex lg:w-full': !isPopoverOpen,
+                                        'lg:flex lg:w-full lg:gap-x-4':
+                                            !isPopoverOpen,
                                     },
-                                    'group relative inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-black dark:hover:bg-gray-900',
+                                    'inline-flex items-center rounded-full font-normal transition-all hover:bg-gray-100 dark:hover:bg-gray-900',
                                 )}
                             >
                                 <i
@@ -326,24 +297,10 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                                 >
                                     <MenuIcon className="transfrom flex-none transition-transform group-hover:scale-110" />
                                 </i>
-                                <div
-                                    className={clsx(
-                                        {
-                                            'lg:inline-block': !isPopoverOpen,
-                                        },
-                                        'hidden',
-                                    )}
-                                >
+
+                                <Tooltip isPopoverOpen={isPopoverOpen}>
                                     Menu
-                                </div>
-                                <div
-                                    className={clsx(
-                                        { 'lg:hidden': !isPopoverOpen },
-                                        'invisible absolute left-16 z-50 rounded-md border bg-inherit p-2 align-middle text-xs opacity-0 shadow-md transition-opacity before:absolute before:-left-1.5 before:top-1/2 before:-z-10 before:h-3 before:w-3 before:-translate-y-1/2 before:rotate-45 before:transform before:border-b before:border-l before:bg-inherit group-hover:visible group-hover:opacity-100 dark:border-gray-950 dark:before:border-gray-950',
-                                    )}
-                                >
-                                    Menu
-                                </div>
+                                </Tooltip>
                             </Menu.Button>
 
                             <Transition
