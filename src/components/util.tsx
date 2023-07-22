@@ -38,6 +38,7 @@ function Avatar({ photo, username, size = 32, className }: avatar) {
         'h-6 w-6 text-xs': size === 24,
         'h-8 w-8 text-base': size === 32,
         'h-10 w-10 text-lg': size === 40,
+        'h-16 w-16 text-lg': size === 64,
     })
 
     return photo ? (
@@ -102,3 +103,4 @@ function AlertBadge({
 }
 
 export { AlertBadge, Avatar, DotIcon, Spinner, UserBedge }
+
