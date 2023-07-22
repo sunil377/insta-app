@@ -1,11 +1,17 @@
 import { InfoIcon } from '@/assets'
 import { AlertBadge, Avatar, Spinner } from '@/components/util'
+import { useAuth } from '@/context/AuthContext'
 import { protectedRouteWithUser } from '@/helpers/routes'
+import { convertZodErrorToFormikError } from '@/helpers/util'
+import useScrollMutation from '@/hooks/useScrollMutation'
 import MessageLayout from '@/layout/MessageLayout'
 import MainLayout from '@/layout/main-layout'
+import { useChatRoom, useCreateChat } from '@/requests/useChat'
 import { useUserById } from '@/requests/useUser'
 import { Disclosure } from '@headlessui/react'
 import clsx from 'clsx'
+import { format, formatDistanceToNow } from 'date-fns'
+import { Field, Form, Formik } from 'formik'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { z } from 'zod'
@@ -20,6 +26,10 @@ const ChatRoom: NextPageWithLayout = () => {
         isError,
         error,
     } = useUserById(roomUserId)
+    const createChatRoom = useCreateChat(roomUserId)
+    const chatRoom = useChatRoom(roomUserId)
+    const currentUser = useAuth()
+    const observerRef = useScrollMutation()
 
     if (isLoading) {
         return (
@@ -44,10 +54,10 @@ const ChatRoom: NextPageWithLayout = () => {
                     <section
                         className={clsx(
                             open ? 'w-2/3' : 'w-full',
-                            'relative flex flex-col transition-all duration-300',
+                            'relative flex flex-col border-r transition-all duration-300 dark:border-r-zinc-700',
                         )}
                     >
-                        <header className="sticky inset-0 top-0 z-10 flex items-center gap-x-4 border-b border-b-gray-700 px-4 py-4 dark:border-zinc-700">
+                        <header className="sticky inset-0 top-0 z-10 flex items-center gap-x-4 border-b border-b-zinc-300 px-4 py-4 dark:border-zinc-700">
                             <Avatar
                                 photo={roomUser.profile.photo}
                                 username={roomUser.username}
@@ -65,7 +75,10 @@ const ChatRoom: NextPageWithLayout = () => {
                             </Disclosure.Button>
                         </header>
                         <section className="relative flex-1">
-                            <div className="absolute inset-0 max-h-full overflow-y-auto">
+                            <div
+                                className="absolute inset-0 max-h-full overflow-y-auto"
+                                ref={observerRef}
+                            >
                                 <header className="flex flex-col items-center gap-y-4 py-6 text-sm">
                                     <Avatar
                                         photo={roomUser.profile.photo}
@@ -84,38 +97,170 @@ const ChatRoom: NextPageWithLayout = () => {
                                     </div>
                                     <Link
                                         href={`/${roomUser.docId}`}
-                                        className="rounded-md px-4 py-2 dark:bg-zinc-600 dark:text-white"
+                                        className="rounded-md bg-zinc-300 px-4 py-2 text-xs font-medium text-black transition-colors hover:bg-zinc-400 dark:bg-zinc-600 dark:text-white hover:dark:bg-zinc-800"
                                     >
                                         View profile
                                     </Link>
                                 </header>
 
-                                {Array.from({ length: 50 })
-                                    .fill(1)
-                                    .map((_, index) => (
-                                        <li
-                                            key={index}
-                                            className="flex items-center gap-x-2 border-b-2 border-b-transparent px-4 py-2 focus:outline-none focus-visible:border-b-current focus-visible:bg-zinc-900"
-                                            tabIndex={0}
-                                        >
-                                            <div className="h-14 w-14 flex-none rounded-full bg-white"></div>
-                                            <div className="space-y-1 text-xsm">
-                                                <h4>priyaka pannu</h4>
-                                                <p className="inline-flex space-x-2 text-gray-700 dark:text-zinc-400">
-                                                    <span>last message</span>
-                                                    <span>2h</span>
-                                                </p>
-                                            </div>
-                                        </li>
-                                    ))}
+                                {chatRoom.isLoading ? (
+                                    <Spinner />
+                                ) : chatRoom.isError ? (
+                                    <AlertBadge
+                                        error={chatRoom.error}
+                                        renderText
+                                    />
+                                ) : (
+                                    <>
+                                        <p className="text-center text-xs font-medium text-zinc-700 dark:text-zinc-500">
+                                            {chatRoom?.data?.[0]?.createdAt &&
+                                                format(
+                                                    chatRoom.data[0].createdAt,
+                                                    'd LLL yyyy, HH:MM',
+                                                )}
+                                        </p>
+                                        {chatRoom.data.map((room) => (
+                                            <ul
+                                                key={room.docId}
+                                                className="flex flex-col gap-y-2 px-4 pb-4 text-sm"
+                                            >
+                                                {room.messages.map(
+                                                    (message, index) => (
+                                                        <li
+                                                            key={
+                                                                message.message
+                                                            }
+                                                            className={clsx(
+                                                                currentUser ===
+                                                                    message.id
+                                                                    ? 'self-end'
+                                                                    : 'self-start',
+                                                                'max-w-[80%]',
+                                                            )}
+                                                        >
+                                                            <div className="inline-flex gap-x-2">
+                                                                {currentUser !==
+                                                                message.id ? (
+                                                                    <Avatar
+                                                                        photo={
+                                                                            roomUser
+                                                                                .profile
+                                                                                .photo
+                                                                        }
+                                                                        username={
+                                                                            roomUser.username
+                                                                        }
+                                                                        size={
+                                                                            24
+                                                                        }
+                                                                    />
+                                                                ) : null}
+                                                                <p
+                                                                    className={clsx(
+                                                                        currentUser ===
+                                                                            message.id
+                                                                            ? 'bg-primary-main text-white'
+                                                                            : 'bg-zinc-200 dark:bg-zinc-700 dark:text-zinc-100',
+                                                                        'rounded-full py-1',
+                                                                    )}
+                                                                    style={{
+                                                                        paddingLeft:
+                                                                            message
+                                                                                .message
+                                                                                .length /
+                                                                                5 +
+                                                                            10 +
+                                                                            'px',
+                                                                        paddingRight:
+                                                                            message
+                                                                                .message
+                                                                                .length /
+                                                                                5 +
+                                                                            10 +
+                                                                            'px',
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        message.message
+                                                                    }
+                                                                </p>
+                                                            </div>
+                                                            {room.messages
+                                                                .length -
+                                                                1 ===
+                                                            index ? (
+                                                                <p
+                                                                    className={clsx(
+                                                                        currentUser ===
+                                                                            message.id
+                                                                            ? 'text-right'
+                                                                            : 'text-left',
+                                                                        'mt-1 text-xs',
+                                                                    )}
+                                                                >
+                                                                    {formatDistanceToNow(
+                                                                        message.timestamp,
+                                                                        {
+                                                                            addSuffix:
+                                                                                true,
+                                                                        },
+                                                                    )}
+                                                                </p>
+                                                            ) : null}
+                                                        </li>
+                                                    ),
+                                                )}
+                                            </ul>
+                                        ))}
+                                    </>
+                                )}
                             </div>
                         </section>
-                        <footer className="px-4 pb-4">
-                            <input
-                                placeholder="Message"
-                                className="w-full rounded-full border border-gray-300 bg-transparent px-4 leading-8 placeholder:text-sm placeholder:font-normal placeholder:text-gray-700 dark:border-gray-700 placeholder:dark:text-zinc-500"
-                                autoFocus
-                            />
+
+                        <footer className="px-4 py-4">
+                            <Formik
+                                initialValues={{ message: '' }}
+                                validate={(values) =>
+                                    convertZodErrorToFormikError(
+                                        values,
+                                        z.object({
+                                            message: z.string().min(1),
+                                        }),
+                                    )
+                                }
+                                onSubmit={async (
+                                    { message },
+                                    { resetForm },
+                                ) => {
+                                    await createChatRoom.mutateAsync(message)
+                                    resetForm()
+                                }}
+                            >
+                                {({ isValid, submitCount }) => (
+                                    <Form className="flex gap-x-2">
+                                        <Field
+                                            placeholder="Message"
+                                            name="message"
+                                            className="w-full rounded-full border border-gray-300 bg-transparent px-4 leading-8 placeholder:text-sm placeholder:font-normal placeholder:text-gray-700 dark:border-gray-700 placeholder:dark:text-zinc-500"
+                                            aria-invalid={
+                                                submitCount > 0 && !isValid
+                                            }
+                                            autoFocus
+                                        />
+                                        <button
+                                            type="submit"
+                                            disabled={
+                                                createChatRoom.isLoading ||
+                                                !isValid
+                                            }
+                                        >
+                                            {createChatRoom.isLoading
+                                                ? 'sending...'
+                                                : 'send'}
+                                        </button>
+                                    </Form>
+                                )}
+                            </Formik>
                         </footer>
                     </section>
 
@@ -128,12 +273,14 @@ const ChatRoom: NextPageWithLayout = () => {
                         )}
                     >
                         {open ? (
-                            <section className="divide-y divide-gray-700 border-l text-sm dark:divide-zinc-800 dark:border-l-zinc-800">
+                            <section className="divide-y divide-zinc-300 text-sm dark:divide-zinc-800">
                                 <header className="px-4 py-6">
-                                    <h3 className="text-lg">Details</h3>
+                                    <h3 className="text-lg font-semibold">
+                                        Details
+                                    </h3>
                                 </header>
                                 <div className="space-y-2 px-4 py-6">
-                                    <h5>Members</h5>
+                                    <h5 className="font-semibold">Members</h5>
                                     <div className="flex items-center gap-x-4">
                                         <Avatar
                                             photo={roomUser.profile.photo}
@@ -142,7 +289,7 @@ const ChatRoom: NextPageWithLayout = () => {
                                         />
                                         <div>
                                             <h6>{roomUser.username}</h6>
-                                            <p className="text-xs dark:text-gray-400">
+                                            <p className="text-xs text-zinc-700 dark:text-gray-400">
                                                 {roomUser.profile.fullname}
                                             </p>
                                         </div>

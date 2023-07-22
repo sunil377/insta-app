@@ -7,11 +7,16 @@ import {
 } from '@/assets'
 import Modal from '@/components/Modal'
 import { AlertBadge, Avatar, Spinner } from '@/components/util'
+import { useAuth } from '@/context/AuthContext'
 import { boolean_dispatch } from '@/helpers/types'
-import useUser, { useUserSearchQuery } from '@/requests/useUser'
+import { useAllChatRoom } from '@/requests/useChat'
+import useUser, { useUserById, useUserSearchQuery } from '@/requests/useUser'
 import { UserServer } from '@/schema/user-schema'
+import { IMessageServer } from '@/services/message'
 import { Combobox, Dialog } from '@headlessui/react'
 import clsx from 'clsx'
+import { formatDistanceToNow } from 'date-fns'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useRouter } from 'next/router'
 import { Fragment, useEffect, useState } from 'react'
@@ -144,11 +149,51 @@ function MessageModal(props: { isOpen: boolean; onClose: boolean_dispatch }) {
     )
 }
 
+function ChatProfile({ messages, users, updatedAt }: IMessageServer) {
+    const lastMessage = messages[messages.length - 1].message
+    const currentUser = useAuth()
+    const otherUserId = users.filter((id) => id !== currentUser)[0]
+    const { data: user, isLoading, isError, error } = useUserById(otherUserId)
+
+    if (isLoading) {
+        return <Spinner />
+    }
+    if (isError) {
+        return <AlertBadge error={error} renderText />
+    }
+
+    return (
+        <Link
+            href={`/message/${otherUserId}`}
+            className="flex items-center gap-x-2 border-b-2 border-b-transparent px-4 py-2 focus:outline-none focus-visible:border-b-current focus-visible:bg-zinc-900"
+        >
+            <Avatar
+                photo={user.profile.photo}
+                username={user.username}
+                size={40}
+            />
+
+            <div className="space-y-1 text-xsm">
+                <h4>{user.username}</h4>
+                <div className="inline-flex space-x-2 text-gray-700 dark:text-zinc-400">
+                    <p className="line-clamp-1 flex-initial">{lastMessage}</p>
+                    {updatedAt && (
+                        <p className="flex-none">
+                            {formatDistanceToNow(updatedAt)}
+                        </p>
+                    )}
+                </div>
+            </div>
+        </Link>
+    )
+}
+
 const MessageLayout = ({ children }: { children: React.ReactNode }) => {
     const { data: currentUser, isLoading, isError, error } = useUser()
     const [isOpen, setIsOpen] = useState(false)
     const pathname = usePathname()
     const isMessageHomePageActive = pathname === '/message'
+    const chats = useAllChatRoom()
 
     useEffect(() => {
         setIsOpen(false)
@@ -194,24 +239,15 @@ const MessageLayout = ({ children }: { children: React.ReactNode }) => {
                     </div>
                     <h6 className="px-4 font-semibold">Messages</h6>
                     <ul className="max-h-full overflow-y-auto pb-2">
-                        {Array.from({ length: 1 })
-                            .fill(1)
-                            .map((_, index) => (
-                                <li
-                                    key={index}
-                                    className="flex items-center gap-x-2 border-b-2 border-b-transparent px-4 py-2 focus:outline-none focus-visible:border-b-current focus-visible:bg-zinc-900"
-                                    tabIndex={0}
-                                >
-                                    <div className="h-14 w-14 flex-none rounded-full bg-white"></div>
-                                    <div className="space-y-1 text-xsm">
-                                        <h4>priyaka pannu</h4>
-                                        <p className="inline-flex space-x-2 text-gray-700 dark:text-zinc-400">
-                                            <span>last message</span>
-                                            <span>2h</span>
-                                        </p>
-                                    </div>
-                                </li>
-                            ))}
+                        {chats.isLoading ? (
+                            <Spinner />
+                        ) : chats.isError ? (
+                            <AlertBadge error={chats.error} renderText />
+                        ) : (
+                            chats.data.map((chat) => (
+                                <ChatProfile {...chat} key={chat.docId} />
+                            ))
+                        )}
                     </ul>
                 </div>
                 <div className="flex-1">

@@ -23,6 +23,16 @@ export const queries = {
             { following: true },
         ],
     },
+
+    chatroom: {
+        name: 'chatrooms',
+        getAll: (currentUser: string) => [
+            queries.chatroom.name,
+            { currentUser },
+        ],
+        getOne: (userId: string) => [queries.chatroom.name, { user: userId }],
+    },
+
     comments: {
         name: 'comments',
         getAll: (postId: string) => [queries.comments.name, { post: postId }],

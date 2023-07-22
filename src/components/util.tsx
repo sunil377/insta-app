@@ -30,7 +30,7 @@ function UserBedge({
 type avatar = Pick<UserProfileServer, 'photo'> &
     Pick<UserServer, 'username'> &
     Pick<React.HTMLAttributes<HTMLDivElement>, 'className'> & {
-        size?: number
+        size?: 24 | 32 | 40 | 64
     }
 
 function Avatar({ photo, username, size = 32, className }: avatar) {
@@ -103,4 +103,3 @@ function AlertBadge({
 }
 
 export { AlertBadge, Avatar, DotIcon, Spinner, UserBedge }
-

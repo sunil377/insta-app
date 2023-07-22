@@ -16,6 +16,13 @@ export const db_ref = {
             doc(db, db_ref.posts.collection_name, postId),
     },
 
+    chatroom: {
+        collection_name: 'chatroom',
+        collection_ref: () => collection(db, db_ref.chatroom.collection_name),
+        document_ref: (chatRoomId: string) =>
+            doc(db, db_ref.chatroom.collection_name, chatRoomId),
+    },
+
     comments: {
         collection_name: 'comments',
         collection_ref: (postId: string) =>

@@ -61,7 +61,14 @@ function Header({
                 <div className="col-span-3 flex flex-col justify-center gap-y-4 px-4 sm:justify-start">
                     <div className="flex-wrap space-y-2 xs:flex xs:items-center xs:gap-x-4">
                         <h4 className="text-xl">{username}</h4>
-                        <div className="basis-full xs:order-last sm:basis-auto">
+                        <div
+                            className={clsx(
+                                isOwner
+                                    ? 'flex-initial sm:flex-none'
+                                    : 'flex-none',
+                                'inline-block xs:order-last',
+                            )}
+                        >
                             {isOwner ? (
                                 <Link
                                     href="/accounts/edit"
@@ -89,6 +96,14 @@ function Header({
                                 </UnStyledFollowButton>
                             )}
                         </div>
+                        {isOwner ? null : (
+                            <Link
+                                href={`/message/${docId}`}
+                                className="ml-2 flex-none rounded-md bg-gray-200 px-4 py-1.5 font-medium text-gray-950 transition-colors hover:bg-gray-300"
+                            >
+                                message
+                            </Link>
+                        )}
                         {isOwner ? <Settings /> : null}
                     </div>
 
