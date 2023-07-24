@@ -49,13 +49,20 @@ function useRealTimeChatRoom(userId: string) {
                     queries.chatroom.getAll(currentUser),
                     produce((darftState) => {
                         for (const snap of result) {
-                            const findIndex =
-                                darftState?.findIndex(
-                                    (old) => old.docId === snap.docId,
-                                ) ?? -1
-                            if (findIndex !== -1 && darftState) {
-                                darftState[findIndex] = snap
+                            if (!darftState) {
+                                darftState = [snap]
+                                return
                             }
+
+                            const findIndex = darftState.findIndex(
+                                (old) => old.docId === snap.docId,
+                            )
+
+                            if (findIndex !== -1) {
+                                darftState[findIndex] = snap
+                                return
+                            }
+                            darftState.push(snap)
                         }
                     }),
                 )
