@@ -72,7 +72,7 @@ function Header({
                             {isOwner ? (
                                 <Link
                                     href="/accounts/edit"
-                                    className="block w-full rounded-md bg-gray-200 px-4 py-1.5 text-center text-sm font-medium transition-colors hover:bg-gray-300 dark:bg-gray-900 dark:hover:bg-gray-900 sm:w-auto"
+                                    className="block w-full rounded-md bg-gray-200 px-4 py-1.5 text-center text-sm font-medium transition-colors hover:bg-gray-300 dark:bg-zinc-900 hover:dark:bg-zinc-950 sm:w-auto"
                                 >
                                     Edit Profile
                                 </Link>
@@ -82,7 +82,7 @@ function Header({
                                         <button
                                             className={clsx(
                                                 isFollowing
-                                                    ? 'bg-gray-200 text-gray-950 hover:bg-gray-300'
+                                                    ? 'bg-gray-200 text-gray-950 hover:bg-gray-300 dark:bg-zinc-900 dark:text-zinc-100 hover:dark:bg-zinc-950'
                                                     : 'bg-primary-main text-white',
                                                 'rounded-md px-4 py-1.5 font-medium transition-colors',
                                             )}
@@ -99,9 +99,9 @@ function Header({
                         {isOwner ? null : (
                             <Link
                                 href={`/message/${docId}`}
-                                className="ml-2 flex-none rounded-md bg-gray-200 px-4 py-1.5 font-medium text-gray-950 transition-colors hover:bg-gray-300"
+                                className="ml-2 flex-none rounded-md bg-gray-200 px-4 py-1.5 font-medium text-gray-950 transition-colors hover:bg-gray-300 dark:bg-zinc-900 dark:text-zinc-100 hover:dark:bg-zinc-950"
                             >
-                                message
+                                Message
                             </Link>
                         )}
                         {isOwner ? <Settings /> : null}
@@ -110,7 +110,7 @@ function Header({
                     <div className="hidden sm:flex sm:gap-x-6">
                         <div className="sm:flex sm:gap-x-2">
                             <p className="font-bold">{posts.length}</p>
-                            <p className="text-gray-800 dark:text-gray-300">
+                            <p className="text-gray-800 dark:text-zinc-300">
                                 posts
                             </p>
                         </div>
@@ -129,10 +129,10 @@ function Header({
                 </div>
             </section>
 
-            <section className="grid grid-cols-3 justify-items-center border-t py-2 text-center sm:hidden">
+            <section className="grid grid-cols-3 justify-items-center border-t py-2 text-center dark:border-zinc-700 sm:hidden">
                 <div className="sm:flex sm:gap-x-2">
                     <p className="font-bold">{posts.length}</p>
-                    <p className="text-gray-800">posts</p>
+                    <p className="text-gray-800 dark:text-zinc-200">posts</p>
                 </div>
 
                 <FollowersInfo followers={followers} />
@@ -157,7 +157,7 @@ function Settings() {
             <Modal
                 isOpen={isOpen}
                 onClose={setOpen}
-                className="w-full max-w-sm rounded-md bg-white text-black dark:bg-slate-900 dark:text-slate-100"
+                className="w-full max-w-sm rounded-md bg-white text-black dark:bg-zinc-800 dark:text-zinc-100"
             >
                 <ModalList>
                     <ModalListItem>

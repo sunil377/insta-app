@@ -16,7 +16,7 @@ function UserListDialog({ list, title, isOpen, onClose }: IUserListDialog) {
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            className="w-full divide-y divide-secondary-lighter rounded-md bg-white text-black shadow-md dark:divide-slate-700 dark:bg-slate-900 dark:text-slate-100 sm:max-w-sm"
+            className="w-full divide-y divide-secondary-lighter rounded-md border bg-white text-black shadow-md dark:divide-zinc-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 sm:max-w-sm"
         >
             <div className="relative">
                 <Dialog.Title className="py-2 text-center font-semibold">

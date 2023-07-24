@@ -33,7 +33,7 @@ function SelectPostImage() {
 
 function HomeNavigation() {
     return (
-        <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center border-y border-y-gray-300 bg-white px-4 dark:border-y-slate-700 dark:bg-black">
+        <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center border-y border-y-gray-300 bg-white px-4 dark:border-y-zinc-700 dark:bg-black">
             <Link href="/" title="Home">
                 <InstagramTextIcon />
             </Link>
@@ -43,7 +43,7 @@ function HomeNavigation() {
                     <AddPostIcon aria-label="New post" />
                 </Menu.Button>
 
-                <Menu.Items className="absolute right-1/2 z-10 w-20 translate-x-1/2 divide-y rounded-md border bg-gray-50 text-sm dark:border-slate-900 dark:bg-slate-800">
+                <Menu.Items className="absolute right-1/2 z-10 w-20 translate-x-1/2 divide-y rounded-md border bg-gray-50 text-sm dark:border-zinc-700 dark:bg-zinc-800">
                     <Menu.Item>
                         <SelectPostImage />
                     </Menu.Item>

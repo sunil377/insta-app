@@ -12,7 +12,7 @@ function CustomTextField({
     const hasBeenSubmitted = submitCount > 0
 
     return (
-        <div className="group relative rounded-sm border border-gray-300 py-0.5 focus-within:border-gray-500 dark:border-slate-700">
+        <div className="group relative rounded-sm border border-gray-300 py-0.5 focus-within:border-gray-500 dark:border-zinc-700">
             <div className="invisible text-xs">{name}</div>
             <label
                 className={clsx(
@@ -51,7 +51,7 @@ function CustomPasswordTextField({
     const hasBeenSubmitted = submitCount > 0
 
     return (
-        <div className="group relative rounded-sm border border-gray-300 py-0.5 focus-within:border-gray-500 dark:border-slate-700">
+        <div className="group relative rounded-sm border border-gray-300 py-0.5 focus-within:border-gray-500 dark:border-zinc-700">
             <div className="invisible text-xs">{name}</div>
             <label
                 className={clsx(

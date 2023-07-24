@@ -8,7 +8,7 @@ function Post({ postId }: { postId: string }) {
     const { data, error, isLoading, isError } = usePost(postId)
 
     return (
-        <div className="aspect-square rounded-sm border shadow-md dark:border-slate-700">
+        <div className="aspect-square rounded-sm border shadow-md dark:border-zinc-700">
             {isLoading ? (
                 <div className="flex h-full items-center justify-center">
                     <Spinner />

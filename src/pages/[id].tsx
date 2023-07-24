@@ -57,7 +57,7 @@ const ProfilePage: IPage = () => {
                     })
                 }
             >
-                <Tab.List className="border-t dark:border-gray-700 sm:flex sm:justify-center">
+                <Tab.List className="border-t dark:border-zinc-700 sm:flex sm:justify-center">
                     <div className="-m-0.5 grid grid-cols-3 text-center sm:block sm:space-x-4">
                         <TabButton userId={profileUser.docId} params="posts">
                             POSTS

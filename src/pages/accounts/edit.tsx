@@ -93,7 +93,7 @@ const EditProfile: IPage = function EditProfile() {
                                     <Field
                                         id="name"
                                         name="fullname"
-                                        className="w-full rounded-md border bg-gray-100 px-4 py-2 dark:border-slate-700 dark:bg-slate-950"
+                                        className="w-full rounded-md border bg-gray-100 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900"
                                         aria-describedby="user-fullname"
                                         placeholder="Enter your fullname here..."
                                     />
@@ -110,7 +110,7 @@ const EditProfile: IPage = function EditProfile() {
                                     <input
                                         id="username"
                                         name="username"
-                                        className="w-full rounded-md border px-4 py-2 dark:border-slate-700 dark:bg-slate-950"
+                                        className="w-full rounded-md border px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900"
                                         placeholder="Enter username here..."
                                         value={username}
                                         readOnly
@@ -130,7 +130,7 @@ const EditProfile: IPage = function EditProfile() {
                                         as="textarea"
                                         id="bio"
                                         name="bio"
-                                        className="w-full rounded-md border bg-gray-100 px-4 py-2 dark:border-slate-700 dark:bg-slate-950"
+                                        className="w-full rounded-md border bg-gray-100 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900"
                                         maxLength={150}
                                         rows={3}
                                         placeholder="Write Something about your self here......."
@@ -151,7 +151,7 @@ const EditProfile: IPage = function EditProfile() {
                                     <input
                                         name="email"
                                         id="email"
-                                        className="w-full rounded-md border px-4 py-2 dark:border-slate-700 dark:bg-slate-950"
+                                        className="w-full rounded-md border px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900"
                                         value={email}
                                         readOnly
                                         title="Email can't be changed"
@@ -170,7 +170,7 @@ const EditProfile: IPage = function EditProfile() {
                                     <Field
                                         id="phone"
                                         name="phoneNumber"
-                                        className="w-full rounded-md border bg-gray-100 px-4 py-2 dark:border-slate-700 dark:bg-slate-950"
+                                        className="w-full rounded-md border bg-gray-100 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900"
                                         type="text"
                                         placeholder="Enter PhoneNumber here..."
                                     />
@@ -187,7 +187,7 @@ const EditProfile: IPage = function EditProfile() {
                                     <Field
                                         as="select"
                                         id={`gender`}
-                                        className="w-full rounded-md border bg-gray-100 px-4 py-2 dark:border-slate-700 dark:bg-slate-950"
+                                        className="w-full rounded-md border bg-gray-100 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900"
                                         name="gender"
                                     >
                                         <option>Select Gender</option>

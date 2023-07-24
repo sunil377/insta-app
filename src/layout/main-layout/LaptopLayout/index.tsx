@@ -51,7 +51,7 @@ function Tooltip({
             <div
                 className={clsx(
                     { 'lg:hidden': !isPopoverOpen && !isMessagePageActive },
-                    'invisible absolute left-16 top-1/2 z-50 -translate-y-1/2 rounded-md border bg-gray-50 px-2.5 py-2 align-middle text-xs opacity-0 shadow-md transition-opacity group-hover:visible group-hover:opacity-100 dark:border-gray-800 dark:bg-slate-900',
+                    'invisible absolute left-16 top-1/2 z-50 -translate-y-1/2 rounded-md border bg-gray-50 px-2.5 py-2 align-middle text-xs opacity-0 shadow-md transition-opacity group-hover:visible group-hover:opacity-100 dark:border-zinc-700 dark:bg-zinc-900',
                 )}
             >
                 <span className="absolute left-0 top-1/2 z-10 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 transform border-b border-l border-inherit bg-inherit"></span>
@@ -79,7 +79,7 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                                 'lg:w-56':
                                     !isPopoverOpen && !isMessagePageActive,
                             },
-                            'fixed inset-y-0 left-0 z-40 flex w-16 flex-col border-r border-r-gray-300 bg-white px-2 py-4 text-gray-800 transition-all dark:border-r-gray-900 dark:bg-black dark:text-white',
+                            'fixed inset-y-0 left-0 z-40 flex w-16 flex-col border-r border-r-gray-300 bg-white px-2 py-4 text-gray-800 transition-all dark:border-r-zinc-700 dark:bg-black dark:text-white',
                         )}
                     >
                         <Link
@@ -262,7 +262,7 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                                 <Modal
                                     isOpen={isModalOpen}
                                     onClose={setModal}
-                                    className="w-full max-w-3xl overflow-hidden rounded-md bg-white shadow-md dark:bg-slate-900 dark:text-slate-100"
+                                    className="w-full max-w-3xl overflow-hidden rounded-md border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
                                 >
                                     <CreatePostModalContent
                                         onClose={setModal}

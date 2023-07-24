@@ -121,7 +121,7 @@ const ChangePassword: IPage = function ChangePassword() {
                                                 type="password"
                                                 disabled={isGoogleSignin}
                                                 id={`old-pass`}
-                                                className="block w-full rounded-md border bg-gray-100 px-4 py-2 focus:outline-none focus-visible:border-gray-500 dark:border-slate-700 dark:bg-slate-950"
+                                                className="block w-full rounded-md border bg-gray-100 px-4 py-2 focus:outline-none focus-visible:border-gray-500 dark:border-zinc-700 dark:bg-zinc-900"
                                                 placeholder="Enter your Old password here..."
                                                 aria-invalid={
                                                     !!errors.oldPassword
@@ -148,7 +148,7 @@ const ChangePassword: IPage = function ChangePassword() {
                                                 type="password"
                                                 disabled={isGoogleSignin}
                                                 id={`new-pass`}
-                                                className="block w-full rounded-md border bg-gray-100 px-4 py-2 focus:outline-none focus-visible:border-gray-500 dark:border-slate-700 dark:bg-slate-950"
+                                                className="block w-full rounded-md border bg-gray-100 px-4 py-2 focus:outline-none focus-visible:border-gray-500 dark:border-zinc-700 dark:bg-zinc-900"
                                                 placeholder="Enter your new password here..."
                                                 aria-invalid={
                                                     !!errors.newPassword
@@ -175,7 +175,7 @@ const ChangePassword: IPage = function ChangePassword() {
                                                 type="password"
                                                 disabled={isGoogleSignin}
                                                 id={`confirm-pass`}
-                                                className="block w-full rounded-md border bg-gray-100 px-4 py-2 focus:outline-none focus-visible:border-gray-500 dark:border-slate-700 dark:bg-slate-950"
+                                                className="block w-full rounded-md border bg-gray-100 px-4 py-2 focus:outline-none focus-visible:border-gray-500 dark:border-zinc-700 dark:bg-zinc-900"
                                                 placeholder="ReEnter your password..."
                                                 aria-invalid={!!errors.confirm}
                                                 aria-label={

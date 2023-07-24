@@ -55,7 +55,7 @@ function SnackBarProvider({ children }: { children: React.ReactNode }) {
                 as={Fragment}
             >
                 <div
-                    className="fixed inset-x-0 bottom-0 z-snackbar mb-12 border border-b-0 bg-white p-4 text-center text-xsm font-medium capitalize dark:border-gray-700 dark:bg-black sm:bottom-auto sm:left-auto sm:right-5 sm:top-5 sm:mb-0 sm:w-full sm:max-w-xs sm:rounded-md sm:border-b sm:py-3 sm:shadow-sm"
+                    className="fixed inset-x-0 bottom-0 z-snackbar mb-12 border border-b-0 bg-white p-4 text-center text-xsm font-medium capitalize dark:border-zinc-700 dark:bg-black sm:bottom-auto sm:left-auto sm:right-5 sm:top-5 sm:mb-0 sm:w-full sm:max-w-xs sm:rounded-md sm:border-b sm:py-3 sm:shadow-sm"
                     role="alert"
                     aria-live="polite"
                 >

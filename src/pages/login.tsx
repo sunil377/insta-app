@@ -1,3 +1,4 @@
+import { InstagramTextIcon } from '@/assets'
 import {
     CustomPasswordTextField,
     CustomTextField,
@@ -16,10 +17,8 @@ import {
     FormikHelpers,
     FormikProps,
 } from 'formik'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import Instagram from '../../public/images/instagram.png'
 
 const initialValues = {
     email: '',
@@ -57,8 +56,12 @@ export default function Login() {
 
     return (
         <main className="mx-auto w-full max-w-sm px-4 py-10 text-sm">
-            <section className="space-y-5 px-2 pb-2 text-center xs:rounded-md xs:border xs:border-gray-300 xs:px-10 xs:pb-6 xs:pt-10 dark:xs:border-slate-700">
-                <Image src={Instagram} alt="instagram" className="mx-auto" />
+            <section className="space-y-5 px-2 pb-2 text-center xs:rounded-md xs:border xs:border-gray-300 xs:px-10 xs:pb-6 xs:pt-10 dark:xs:border-zinc-700">
+                <InstagramTextIcon
+                    className="mx-auto inline-block"
+                    height={58}
+                    width={206}
+                />
                 <Formik
                     initialValues={initialValues}
                     validateOnMount={true}
@@ -73,9 +76,9 @@ export default function Login() {
                 </Formik>
 
                 <div className="flex items-center gap-x-4">
-                    <span className="h-px w-full bg-gray-300 dark:bg-slate-700" />
+                    <span className="h-px w-full bg-gray-300 dark:bg-zinc-700" />
                     <span>OR</span>
-                    <span className="h-px w-full bg-gray-300 dark:bg-slate-700" />
+                    <span className="h-px w-full bg-gray-300 dark:bg-zinc-700" />
                 </div>
 
                 <button
@@ -95,7 +98,7 @@ export default function Login() {
                     forgot password?
                 </Link>
             </section>
-            <section className="py-2 text-center xs:mt-4 xs:rounded-md xs:border xs:border-gray-300 xs:py-4 xs:dark:border-slate-700">
+            <section className="py-2 text-center xs:mt-4 xs:rounded-md xs:border xs:border-gray-300 xs:py-4 xs:dark:border-zinc-700">
                 <span> Don&apos;t Have an account? </span>
                 <Link href="/signup" className="font-semibold text-blue-500">
                     Sign Up

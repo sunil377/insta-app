@@ -32,13 +32,13 @@ function CreatePostModalContent({ onClose }: { onClose: boolean_dispatch }) {
         <Fragment>
             <header
                 className={clsx(
-                    'flex border-b px-4 py-2 dark:border-b-slate-700',
+                    'flex border-b px-4 py-2 dark:border-b-zinc-700',
                     isNextStep ? 'justify-between' : 'justify-center',
                 )}
             >
                 {isNextStep ? (
                     <button onClick={handleResetState} title="back">
-                        <HiChevronLeft className="text-3xl text-gray-800 dark:text-slate-200" />
+                        <HiChevronLeft className="text-3xl text-gray-800 dark:text-zinc-200" />
                     </button>
                 ) : null}
 
@@ -99,7 +99,7 @@ function CreatePostModalContent({ onClose }: { onClose: boolean_dispatch }) {
                             <div>
                                 <textarea
                                     rows={10}
-                                    className="w-full bg-gray-100 p-2 placeholder:text-sm dark:bg-slate-950"
+                                    className="w-full rounded-md bg-gray-100 p-2 placeholder:text-sm dark:bg-zinc-900"
                                     placeholder="Write a caption..."
                                     maxLength={2000}
                                     value={caption}
@@ -118,7 +118,7 @@ function CreatePostModalContent({ onClose }: { onClose: boolean_dispatch }) {
                         Drag photos and videos here
                     </Dialog.Description>
 
-                    <label className="rounded-md bg-primary-main px-3 py-1.5 text-sm font-semibold text-white focus-within:ring focus-within:ring-primary-main focus-within:ring-offset-2 dark:ring-offset-slate-900">
+                    <label className="rounded-md bg-primary-main px-3 py-1.5 text-sm font-semibold text-white focus-within:ring focus-within:ring-primary-main focus-within:ring-offset-2 dark:ring-offset-zinc-800">
                         Select from computer
                         <input
                             type="file"

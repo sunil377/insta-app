@@ -27,7 +27,7 @@ function SmallScreenPost({
 
     return (
         <div>
-            <header className="flex items-center gap-x-2 border-b border-secondary-lighter border-opacity-50 px-4 py-4">
+            <header className="flex items-center gap-x-2 border-b border-b-zinc-300 px-4 py-4 dark:border-b-zinc-700">
                 {isLoading ? (
                     <Spinner />
                 ) : isError ? (
@@ -54,7 +54,7 @@ function SmallScreenPost({
                             <button
                                 className={clsx(
                                     isFollowing
-                                        ? 'text-gray-950 hover:text-gray-500 dark:text-slate-200 dark:hover:text-slate-400'
+                                        ? 'text-zinc-950 hover:text-zinc-700 dark:text-zinc-300 hover:dark:text-zinc-100'
                                         : 'text-primary-main hover:text-primary-dark',
                                     'p-0.5 font-medium transition-colors',
                                 )}

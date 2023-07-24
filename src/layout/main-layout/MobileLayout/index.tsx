@@ -38,7 +38,7 @@ function MobileLayout({ children }: { children: ReactNode }) {
     return (
         <Fragment>
             <TopNavbar />
-            <footer className="fixed inset-x-0 bottom-0 z-40 flex h-12 items-center justify-evenly border-y border-y-gray-300 bg-white dark:border-y-slate-700 dark:bg-black">
+            <footer className="fixed inset-x-0 bottom-0 z-40 flex h-12 items-center justify-evenly border-y border-y-gray-300 bg-white dark:border-y-zinc-700 dark:bg-black">
                 <Link href="/" className="group rounded-full p-1 text-2xl">
                     <HomeIcon aria-label="Home" />
                 </Link>
@@ -78,7 +78,7 @@ function ProfileMobileNav() {
     const { data: currentUser } = useUser()
 
     return (
-        <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center justify-between border-y border-y-gray-300 bg-white px-2 dark:bg-black xs:px-4">
+        <nav className="fixed inset-x-0 top-0 z-40 flex h-12 items-center justify-between border-y border-y-gray-300 bg-white px-2 dark:border-y-zinc-700 dark:bg-black xs:px-4">
             <SettingsDialog />
 
             <button className="flex items-center px-2 py-0.5 font-semibold">
@@ -95,7 +95,7 @@ function ProfileMobileNav() {
 
 function EditPageMobileNav({ title }: { title: string }) {
     return (
-        <nav className="fixed inset-x-0 top-0 z-40 h-12 border-y border-y-gray-300 bg-white px-2 dark:border-y-slate-700 dark:bg-black xs:px-4">
+        <nav className="fixed inset-x-0 top-0 z-40 h-12 border-y border-y-gray-300 bg-white px-2 dark:border-y-zinc-700 dark:bg-black xs:px-4">
             <div className="relative flex h-full items-center">
                 <BackButton />
                 <h2 className="mx-auto text-lg font-medium">{title}</h2>

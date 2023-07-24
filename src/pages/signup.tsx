@@ -1,3 +1,4 @@
+import { InstagramTextIcon } from '@/assets'
 import {
     CustomPasswordTextField,
     CustomTextField,
@@ -10,10 +11,8 @@ import { SignupSchema } from '@/schema/user-schema'
 import { createUserForAuth, createUserForFirestore } from '@/services/auth'
 import type { FormikHelpers, FormikProps } from 'formik'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import Instagram from '../../public/images/instagram.png'
 
 const initialValues = {
     email: '',
@@ -54,8 +53,12 @@ export default function Signup() {
 
     return (
         <main className="mx-auto max-w-sm px-4 py-10 text-sm">
-            <section className="space-y-4 px-2 pb-2 text-center xs:rounded-md xs:border xs:border-gray-300 xs:px-10 xs:pb-6 xs:pt-10 xs:dark:border-slate-700">
-                <Image src={Instagram} alt="instagram" className="mx-auto" />
+            <section className="space-y-4 px-2 pb-2 text-center xs:rounded-md xs:border xs:border-gray-300 xs:px-10 xs:pb-6 xs:pt-10 xs:dark:border-zinc-700">
+                <InstagramTextIcon
+                    className="mx-auto inline-block"
+                    height={58}
+                    width={206}
+                />
 
                 <h2 className="text-base font-medium leading-5 text-secondary-light">
                     Sign up to see photos and videos from your friends.
@@ -70,9 +73,9 @@ export default function Signup() {
                 </button>
 
                 <div className="flex items-center gap-x-4">
-                    <span className="h-px w-full bg-gray-300 dark:bg-slate-700"></span>
+                    <span className="h-px w-full bg-gray-300 dark:bg-zinc-700"></span>
                     <span>OR</span>
-                    <span className="h-px w-full bg-gray-300 dark:bg-slate-700"></span>
+                    <span className="h-px w-full bg-gray-300 dark:bg-zinc-700"></span>
                 </div>
 
                 <Formik
@@ -88,7 +91,7 @@ export default function Signup() {
                     {signupform}
                 </Formik>
             </section>
-            <section className="py-2 text-center xs:mt-4 xs:rounded-md xs:border xs:border-gray-300 xs:py-4 xs:dark:border-slate-700">
+            <section className="py-2 text-center xs:mt-4 xs:rounded-md xs:border xs:border-gray-300 xs:py-4 xs:dark:border-zinc-700">
                 Have an account?{' '}
                 <Link href="/login" className="font-semibold text-blue-500">
                     Log in

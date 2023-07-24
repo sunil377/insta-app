@@ -18,14 +18,14 @@ const UnStyledLogoutButton = forwardRef<
             <Modal
                 isOpen={isOpen}
                 onClose={setOpen}
-                className="w-full max-w-sm rounded-xl bg-gray-100 text-sm dark:bg-slate-900 dark:text-slate-100"
+                className="w-full max-w-sm rounded-xl bg-gray-100 text-sm dark:bg-zinc-800 dark:text-zinc-100"
             >
                 <ModalList>
                     <section className="space-y-2 py-5">
                         <Dialog.Title className="text-xl">
                             Log Out?
                         </Dialog.Title>
-                        <p className="px-5 leading-6 text-secondary-light dark:text-slate-300 lg:px-10">
+                        <p className="px-5 leading-6 text-secondary-light dark:text-zinc-200 lg:px-10">
                             Are you sure that you want to log out of your
                             Account?
                         </p>

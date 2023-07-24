@@ -76,7 +76,7 @@ function Feed({
 
             <Link
                 href={`/post/${postId}`}
-                className="relative block aspect-square max-h-80 w-full bg-black dark:rounded-md dark:border dark:border-gray-500"
+                className="relative block aspect-square max-h-80 w-full bg-black dark:rounded-md dark:border dark:border-zinc-700"
             >
                 <Image
                     src={photo}

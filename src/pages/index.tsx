@@ -23,7 +23,7 @@ const Home: NextPageWithLayout = () => {
             <main className="px-4 sm:mt-10">
                 <div className="lg:grid lg:grid-cols-6 lg:gap-x-10">
                     <div className="lg:col-span-4">
-                        <section className="mx-auto max-w-md space-y-5 divide-y pb-4 dark:divide-gray-600">
+                        <section className="mx-auto max-w-md space-y-5 divide-y pb-4 dark:divide-zinc-700">
                             <Feeds />
                         </section>
                     </div>

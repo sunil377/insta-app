@@ -43,7 +43,7 @@ function SearchContent() {
                     </button>
                 </Combobox.Label>
 
-                <Combobox.Options className="divide-y rounded-md border bg-white text-sm dark:divide-slate-700 dark:border-slate-800 dark:bg-slate-900">
+                <Combobox.Options className="divide-y rounded-md border bg-white text-sm dark:divide-zinc-700 dark:border-zinc-800 dark:bg-zinc-800">
                     {isLoading || isFetching ? (
                         <Spinner />
                     ) : isError ? (

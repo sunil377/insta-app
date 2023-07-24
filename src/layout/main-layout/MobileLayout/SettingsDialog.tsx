@@ -22,7 +22,7 @@ function SettingsDialog() {
             </button>
             <Dialog open={isOpen} onClose={setOpen}>
                 <Dialog.Panel className="fixed inset-0 z-50 bg-white dark:bg-black">
-                    <nav className="flex items-center justify-between border-b px-2 py-1 dark:border-b-slate-700">
+                    <nav className="flex items-center justify-between border-b px-2 py-1 dark:border-b-zinc-700">
                         <button
                             onClick={() => setOpen(false)}
                             className="rounded-full p-0.5 align-middle text-3xl"
@@ -36,7 +36,7 @@ function SettingsDialog() {
                     </nav>
 
                     <div className="text-sm">
-                        <section className="space-y-2 border-b border-b-gray-300 bg-gray-50 px-3 py-4 dark:border-b-slate-700 dark:bg-slate-950">
+                        <section className="space-y-2 border-b border-b-gray-300 bg-gray-50 px-3 py-4 dark:border-b-zinc-700 dark:bg-zinc-800">
                             <h4 className="inline-flex items-center">
                                 <BsMeta className="mr-0.5 text-xl text-blue-500" />
                                 <b>Meta</b>
@@ -55,8 +55,8 @@ function SettingsDialog() {
                             </button>
                         </section>
 
-                        <section className="divide-y text-sm dark:divide-slate-700">
-                            <h2 className="px-3 py-2 font-bold text-gray-500 dark:text-slate-300 xs:font-semibold">
+                        <section className="divide-y text-sm dark:divide-zinc-800">
+                            <h2 className="px-3 py-2 font-bold text-gray-500 dark:text-zinc-300 xs:font-semibold">
                                 ACCOUNT
                             </h2>
                             <Link
@@ -73,7 +73,7 @@ function SettingsDialog() {
                             </Link>
                         </section>
 
-                        <section className="mt-8 divide-y divide-gray-300 dark:divide-slate-700">
+                        <section className="mt-8 divide-y divide-gray-300 dark:divide-zinc-800">
                             <button
                                 onClick={() => setDarkTheme((prev) => !prev)}
                                 className="flex w-full justify-between px-3 py-2 text-left"

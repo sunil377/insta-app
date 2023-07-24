@@ -33,7 +33,7 @@ const CommentsPage: NextPageWithLayout = () => {
 
     return (
         <section className="space-y-4">
-            <div className="flex items-center gap-x-4 border-b border-b-secondary-lighter bg-slate-300 p-4 dark:border-b-slate-700 dark:bg-slate-950">
+            <div className="flex items-center gap-x-4 border-b border-b-zinc-300 bg-zinc-200 p-4 dark:border-b-zinc-700 dark:bg-zinc-900">
                 {isCurrentUserLoading ? (
                     <Spinner />
                 ) : isCurrentUserError ? (

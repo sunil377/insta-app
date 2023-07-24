@@ -11,10 +11,10 @@ function AccountLayout({ children }: { children: ReactNode }) {
 
     return (
         <Fragment>
-            <div className="mx-auto my-10 rounded-md border text-sm dark:border-slate-700 lg:max-w-4xl">
+            <div className="mx-auto my-10 rounded-md text-sm sm:border sm:dark:border-zinc-700 lg:max-w-4xl">
                 <div className="min-h-[min(500px,calc(100vh-2rem))] sm:grid sm:grid-cols-4">
-                    <div className="border-r dark:border-r-slate-700 sm:col-span-1">
-                        <section className="space-y-2 border-b px-6 py-4 dark:border-b-slate-700">
+                    <div className="border-r dark:border-r-zinc-700 sm:col-span-1">
+                        <section className="space-y-2 border-b px-6 py-4 dark:border-b-zinc-700">
                             <h4 className="inline-flex items-center">
                                 <BsMeta className="mr-0.5 text-xl text-blue-500" />
                                 <b>Meta</b>
