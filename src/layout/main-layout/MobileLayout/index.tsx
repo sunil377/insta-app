@@ -1,7 +1,9 @@
 import { ExploreIcon, HomeIcon, MessengerIcon, UserPlusIcon } from '@/assets'
 import { AlertBadge, Avatar, Spinner } from '@/components/util'
+import { useStore } from '@/context/StoreContext'
 import useUser from '@/requests/useUser'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useRouter } from 'next/router'
 import { Fragment, ReactNode } from 'react'
 import { HiChevronDown } from 'react-icons/hi'
@@ -34,6 +36,13 @@ function TopNavbar() {
 
 function MobileLayout({ children }: { children: ReactNode }) {
     const { data: currentUser, isLoading, isError, error } = useUser()
+    const { is_mobile } = useStore()
+    const pathname = usePathname()
+    const is_message_page = pathname.startsWith('/message')
+
+    if (is_message_page && is_mobile) {
+        return <>{children}</>
+    }
 
     return (
         <Fragment>

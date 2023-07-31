@@ -8,6 +8,7 @@ import {
 import Modal from '@/components/Modal'
 import { AlertBadge, Avatar, Spinner } from '@/components/util'
 import { useAuth } from '@/context/AuthContext'
+import { useStore } from '@/context/StoreContext'
 import { boolean_dispatch } from '@/helpers/types'
 import { useAllChatRoom } from '@/requests/useChat'
 import useUser, { useUserById, useUserSearchQuery } from '@/requests/useUser'
@@ -20,6 +21,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useRouter } from 'next/router'
 import { Fragment, useEffect, useState } from 'react'
+import { HiArrowLeft } from 'react-icons/hi'
 
 function MessageModal(props: { isOpen: boolean; onClose: boolean_dispatch }) {
     const [selectedPerson, setSelectedPerson] = useState<UserServer | null>(
@@ -194,6 +196,9 @@ const MessageLayout = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname()
     const isMessageHomePageActive = pathname === '/message'
     const chats = useAllChatRoom()
+    const { is_mobile } = useStore()
+    const router = useRouter()
+    const isPathID = router.pathname === '/message/[id]'
 
     useEffect(() => {
         setIsOpen(false)
@@ -215,27 +220,48 @@ const MessageLayout = ({ children }: { children: React.ReactNode }) => {
         )
     }
 
+    if (isPathID && is_mobile) {
+        return <>{children}</>
+    }
+
     return (
         <>
-            <Modal
-                className="flex w-full max-w-xl flex-col rounded-xl bg-white text-black dark:bg-zinc-900 dark:text-zinc-100"
-                isOpen={isOpen}
-                onClose={setIsOpen}
-            >
-                <MessageModal isOpen={isOpen} onClose={setIsOpen} />
-            </Modal>
-            <div className="fixed inset-y-0 left-16 right-0 flex">
-                <div className="h-full w-96 flex-none origin-left space-y-6 rounded-r-xl border border-l-0 bg-white pb-4 pt-8  dark:border-gray-900 dark:bg-black dark:text-gray-200">
-                    <div className="flex justify-between px-4">
+            {is_mobile ? null : (
+                <Modal
+                    className="flex w-full max-w-xl flex-col rounded-xl bg-white text-black dark:bg-zinc-900 dark:text-zinc-100"
+                    isOpen={isOpen}
+                    onClose={setIsOpen}
+                >
+                    <MessageModal isOpen={isOpen} onClose={setIsOpen} />
+                </Modal>
+            )}
+            <div className="fixed inset-y-0 left-0 right-0 flex sm:left-16">
+                <div className="h-full w-full flex-none origin-left space-y-6 rounded-r-xl border border-l-0 bg-white dark:border-gray-900 dark:bg-black dark:text-gray-200 sm:w-52 sm:pb-4 sm:pt-8 md:w-72 lg:w-96">
+                    <div className="flex justify-between px-4 py-2 sm:py-0">
+                        {is_mobile ? (
+                            <button onClick={() => router.back()}>
+                                <HiArrowLeft />
+                            </button>
+                        ) : null}
+
                         <h4 className="text-xl font-semibold">
                             {currentUser.username}
                         </h4>
-                        <button onClick={() => setIsOpen(true)}>
-                            <WritePenIcon
-                                className="text-2xl"
-                                title="New Message"
-                            />
-                        </button>
+                        {is_mobile ? (
+                            <Link href="/message/new">
+                                <WritePenIcon
+                                    className="text-2xl"
+                                    title="New Message"
+                                />
+                            </Link>
+                        ) : (
+                            <button onClick={() => setIsOpen(true)}>
+                                <WritePenIcon
+                                    className="text-2xl"
+                                    title="New Message"
+                                />
+                            </button>
+                        )}
                     </div>
                     <h6 className="px-4 font-semibold">Messages</h6>
                     <ul className="max-h-full overflow-y-auto pb-2">
@@ -252,28 +278,37 @@ const MessageLayout = ({ children }: { children: React.ReactNode }) => {
                 </div>
                 <div className="flex-1">
                     {isMessageHomePageActive ? (
-                        <div className="flex h-full w-full items-center justify-center">
-                            <div className="space-y-4 text-center">
-                                <MessengerIcon className="inline-block text-7xl" />
-                                <h3 className="text-xl">Your messages</h3>
-                                <p className="text-sm text-gray-700 dark:text-zinc-300">
-                                    Send private photos and messages to a friend
-                                    or group
-                                </p>
-                                <button
-                                    className="rounded-md bg-primary-main px-4 py-2 text-sm text-white transition-colors hover:bg-primary-dark"
-                                    onClick={() => setIsOpen(true)}
-                                >
-                                    Send message
-                                </button>
-                            </div>
-                        </div>
+                        <HeroText setIsOpen={setIsOpen} />
                     ) : (
                         children
                     )}
                 </div>
             </div>
         </>
+    )
+}
+
+function HeroText({ setIsOpen }: { setIsOpen: boolean_dispatch }) {
+    const { is_mobile } = useStore()
+
+    if (is_mobile) return null
+
+    return (
+        <div className="flex h-full w-full items-center justify-center">
+            <div className="space-y-4 text-center">
+                <MessengerIcon className="inline-block text-7xl" />
+                <h3 className="text-xl">Your messages</h3>
+                <p className="text-sm text-gray-700 dark:text-zinc-300">
+                    Send private photos and messages to a friend or group
+                </p>
+                <button
+                    className="rounded-md bg-primary-main px-4 py-2 text-sm text-white transition-colors hover:bg-primary-dark"
+                    onClick={() => setIsOpen(true)}
+                >
+                    Send message
+                </button>
+            </div>
+        </div>
     )
 }
 

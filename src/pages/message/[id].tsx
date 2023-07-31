@@ -1,6 +1,7 @@
 import { InfoIcon } from '@/assets'
 import { AlertBadge, Avatar, Spinner } from '@/components/util'
 import { useAuth } from '@/context/AuthContext'
+import { useStore } from '@/context/StoreContext'
 import { convertZodErrorToFormikError } from '@/helpers/util'
 import useScrollMutation from '@/hooks/useScrollMutation'
 import MessageLayout from '@/layout/MessageLayout'
@@ -14,6 +15,7 @@ import { format, formatDistanceToNow } from 'date-fns'
 import { Field, Form, Formik } from 'formik'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { HiArrowLeft } from 'react-icons/hi'
 import { z } from 'zod'
 import { NextPageWithLayout } from '../_app'
 
@@ -30,6 +32,7 @@ const ChatRoom: NextPageWithLayout = () => {
     const chatRoom = useChatRoom(roomUserId)
     const currentUser = useAuth()
     const observerRef = useScrollMutation()
+    const { is_mobile } = useStore()
 
     if (isLoading) {
         return (
@@ -50,10 +53,10 @@ const ChatRoom: NextPageWithLayout = () => {
     return (
         <Disclosure>
             {({ open }) => (
-                <div className="flex h-full w-full">
+                <div className="flex h-full min-h-screen w-full sm:min-h-full">
                     <section
                         className={clsx(
-                            open ? 'w-2/3' : 'w-full',
+                            open ? 'w-full sm:w-2/3' : 'w-full',
                             'relative flex flex-col border-r transition-all duration-300 dark:border-r-zinc-700',
                         )}
                     >
@@ -268,14 +271,21 @@ const ChatRoom: NextPageWithLayout = () => {
                         as="aside"
                         static
                         className={clsx(
-                            open ? 'w-1/3' : 'w-0',
-                            'flex-none transition-all duration-300',
+                            open
+                                ? 'fixed inset-0 z-50 sm:static sm:z-auto sm:w-1/3 '
+                                : 'sm:w-0',
+                            'flex-none bg-white transition-all duration-300 dark:bg-black',
                         )}
                     >
                         {open ? (
                             <section className="divide-y divide-zinc-300 text-sm dark:divide-zinc-800">
-                                <header className="px-4 py-6">
-                                    <h3 className="text-lg font-semibold">
+                                <header className="flex px-4 py-6">
+                                    {is_mobile ? (
+                                        <Disclosure.Button>
+                                            <HiArrowLeft className="text-2xl" />
+                                        </Disclosure.Button>
+                                    ) : null}
+                                    <h3 className="w-full text-center text-lg font-semibold">
                                         Details
                                     </h3>
                                 </header>
