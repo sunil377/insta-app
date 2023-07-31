@@ -402,35 +402,48 @@ function LaptopLayout({ children }: { children: ReactNode }) {
                                                         className="text-lg"
                                                     />
                                                 </Menu.Button>
-                                                <Menu.Items className="absolute bottom-full left-full z-10 w-56 origin-bottom-left divide-y rounded-md border bg-white fill-current stroke-current text-sm shadow-2xl dark:divide-gray-900 dark:border-gray-800 dark:bg-black">
-                                                    <Menu.Item
-                                                        as="button"
-                                                        className="black w-full px-2 py-1.5 data-[headlessui-state=active]:bg-gray-100 data-[headlessui-state=active]:dark:bg-gray-950"
-                                                        onClick={() =>
-                                                            setTheme('system')
-                                                        }
-                                                    >
-                                                        System
-                                                    </Menu.Item>
-                                                    <Menu.Item
-                                                        as="button"
-                                                        className="black w-full px-2 py-1.5 data-[headlessui-state=active]:bg-gray-100 data-[headlessui-state=active]:dark:bg-gray-950"
-                                                        onClick={() =>
-                                                            setTheme('dark')
-                                                        }
-                                                    >
-                                                        Dark
-                                                    </Menu.Item>
-                                                    <Menu.Item
-                                                        as="button"
-                                                        className="black w-full px-2 py-1.5 data-[headlessui-state=active]:bg-gray-100 data-[headlessui-state=active]:dark:bg-gray-950"
-                                                        onClick={() =>
-                                                            setTheme('light')
-                                                        }
-                                                    >
-                                                        Light
-                                                    </Menu.Item>
-                                                </Menu.Items>
+                                                <Transition
+                                                    enter="transition duration-100 ease-out"
+                                                    enterFrom="transform scale-95 opacity-0"
+                                                    enterTo="transform scale-100 opacity-100"
+                                                    leave="transition duration-75 ease-out"
+                                                    leaveFrom="transform scale-100 opacity-100"
+                                                    leaveTo="transform scale-95 opacity-0"
+                                                >
+                                                    <Menu.Items className="absolute bottom-full left-full z-10 w-56 origin-bottom-left divide-y rounded-md border bg-white fill-current stroke-current text-sm shadow-2xl dark:divide-gray-900 dark:border-gray-800 dark:bg-black">
+                                                        <Menu.Item
+                                                            as="button"
+                                                            className="black w-full px-2 py-1.5 data-[headlessui-state=active]:bg-gray-100 data-[headlessui-state=active]:dark:bg-gray-950"
+                                                            onClick={() =>
+                                                                setTheme(
+                                                                    'system',
+                                                                )
+                                                            }
+                                                        >
+                                                            System
+                                                        </Menu.Item>
+                                                        <Menu.Item
+                                                            as="button"
+                                                            className="black w-full px-2 py-1.5 data-[headlessui-state=active]:bg-gray-100 data-[headlessui-state=active]:dark:bg-gray-950"
+                                                            onClick={() =>
+                                                                setTheme('dark')
+                                                            }
+                                                        >
+                                                            Dark
+                                                        </Menu.Item>
+                                                        <Menu.Item
+                                                            as="button"
+                                                            className="black w-full px-2 py-1.5 data-[headlessui-state=active]:bg-gray-100 data-[headlessui-state=active]:dark:bg-gray-950"
+                                                            onClick={() =>
+                                                                setTheme(
+                                                                    'light',
+                                                                )
+                                                            }
+                                                        >
+                                                            Light
+                                                        </Menu.Item>
+                                                    </Menu.Items>
+                                                </Transition>
                                             </Menu>
                                         )}
                                     </Menu.Item>
