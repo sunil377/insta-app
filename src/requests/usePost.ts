@@ -37,7 +37,6 @@ export function usePosts(author: string) {
 
 export function useFeeds() {
     const currentUser = useAuth()
-    console.log('useFeeds')
 
     return useQuery({
         queryKey: queries.posts.followings(currentUser),
