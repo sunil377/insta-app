@@ -1,16 +1,16 @@
 import { MoonIcon, SettingsIcon } from '@/assets'
-import { useTheme } from '@/context/ThemeContext'
 import UnStyledLogoutButton from '@/unstyled/UnStyledLogoutButton'
-import { Dialog } from '@headlessui/react'
+import { Dialog, Disclosure } from '@headlessui/react'
+import { useTheme } from 'next-themes'
 import Link from 'next/link'
 import { Fragment, useState } from 'react'
 import { BsMeta } from 'react-icons/bs'
 import { HiChevronRight } from 'react-icons/hi'
-import { MdClose } from 'react-icons/md'
+import { MdClose, MdSunny } from 'react-icons/md'
 
 function SettingsDialog() {
     const [isOpen, setOpen] = useState(false)
-    const { setDarkTheme } = useTheme()
+    const { setTheme } = useTheme()
 
     return (
         <Fragment>
@@ -74,16 +74,45 @@ function SettingsDialog() {
                         </section>
 
                         <section className="mt-8 divide-y divide-gray-300 dark:divide-zinc-800">
-                            <button
-                                onClick={() => setDarkTheme((prev) => !prev)}
-                                className="flex w-full justify-between px-3 py-2 text-left"
-                            >
-                                <span>Switch apperance</span>
-                                <MoonIcon
-                                    title="change Theme"
-                                    className="text-lg"
-                                />
-                            </button>
+                            <Disclosure>
+                                <Disclosure.Button className="flex w-full justify-between px-3 py-2 text-left">
+                                    <span>Switch apperance</span>
+                                </Disclosure.Button>
+                                <Disclosure.Panel>
+                                    <button
+                                        onClick={() => setTheme('system')}
+                                        className="flex w-full justify-between px-3 py-2 text-left"
+                                    >
+                                        <span>System</span>
+                                        <SettingsIcon
+                                            title="system"
+                                            className="text-lg"
+                                        />
+                                    </button>
+
+                                    <button
+                                        onClick={() => setTheme('dark')}
+                                        className="flex w-full justify-between px-3 py-2 text-left"
+                                    >
+                                        <span>Dark</span>
+                                        <MoonIcon
+                                            title="dark"
+                                            className="text-lg"
+                                        />
+                                    </button>
+
+                                    <button
+                                        onClick={() => setTheme('light')}
+                                        className="flex w-full justify-between px-3 py-2 text-left"
+                                    >
+                                        <span>Light</span>
+                                        <MdSunny
+                                            title="light"
+                                            className="text-lg"
+                                        />
+                                    </button>
+                                </Disclosure.Panel>
+                            </Disclosure>
                             <UnStyledLogoutButton className="flex w-full justify-between px-3 py-2 text-left text-red-500">
                                 <span>Log Out</span>
                                 <HiChevronRight className="text-2xl text-gray-500" />

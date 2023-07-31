@@ -1,9 +1,9 @@
 import UserListItem from '@/components/UserListItem'
 import { AlertBadge, Spinner } from '@/components/util'
-import { protectedRouteWithPost } from '@/helpers/routes'
 import MainLayout from '@/layout/main-layout'
 import { NextPageWithLayout } from '@/pages/_app'
 import { usePost } from '@/requests/usePost'
+import { protectedRouteWithPost } from '@/routes/routes'
 import { useRouter } from 'next/router'
 import { z } from 'zod'
 

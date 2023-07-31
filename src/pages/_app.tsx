@@ -1,7 +1,7 @@
 import PageLoader from '@/components/PageLoader'
 import AuthContext from '@/context/AuthContext'
 import SnackBarProvider from '@/context/SnackBarContext'
-import ThemeProvider from '@/context/ThemeContext'
+import StoreProvider from '@/context/StoreContext'
 import '@/styles/globals.css'
 import {
     Hydrate,
@@ -10,6 +10,7 @@ import {
 } from '@tanstack/react-query'
 import clsx from 'clsx'
 import { NextPage } from 'next'
+import { ThemeProvider } from 'next-themes'
 import type { AppProps } from 'next/app'
 import { Roboto } from 'next/font/google'
 import { ReactElement, ReactNode, useState } from 'react'
@@ -52,17 +53,24 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
                 >
                     <AuthContext currentUser={pageProps.currentUser}>
                         <ThemeProvider
-                            initialState={{
-                                is_mobile: pageProps?.is_mobile ?? false,
-                                is_dark: pageProps?.is_dark ?? false,
-                            }}
+                            enableSystem
+                            attribute="class"
+                            defaultTheme="system"
                         >
-                            <div className={clsx(roboto.variable)}>
-                                <SnackBarProvider>
-                                    <PageLoader />
-                                    {getLayout(<Component {...pageProps} />)}
-                                </SnackBarProvider>
-                            </div>
+                            <StoreProvider
+                                initialState={{
+                                    is_mobile: pageProps?.is_mobile ?? false,
+                                }}
+                            >
+                                <div className={clsx(roboto.variable)}>
+                                    <SnackBarProvider>
+                                        <PageLoader />
+                                        {getLayout(
+                                            <Component {...pageProps} />,
+                                        )}
+                                    </SnackBarProvider>
+                                </div>
+                            </StoreProvider>
                         </ThemeProvider>
                     </AuthContext>
                 </ErrorBoundary>

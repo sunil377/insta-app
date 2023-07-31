@@ -1,19 +1,20 @@
 import { adminAuth } from '@/config/firebase-admin'
-import { initial_state_of_theme } from '@/context/ThemeContext'
+import { global_state } from '@/context/StoreContext'
 import { GetServerSidePropsContext } from 'next'
 import nookies from 'nookies'
-import { getThemeFormCookies } from './util'
 
 async function publicRoute(
     ctx: GetServerSidePropsContext,
-): Promise<{ props: initial_state_of_theme }> {
+): Promise<{ props: global_state }> {
     const cookies = nookies.get(ctx)
-    const token = cookies.token ?? ''
-    const theme = getThemeFormCookies(cookies)
+    const token = cookies?.token ?? ''
+    const is_mobile = cookies?.is_mobile === 'true'
 
     if (!token) {
         return {
-            props: theme,
+            props: {
+                is_mobile,
+            },
         }
     }
 
@@ -27,7 +28,9 @@ async function publicRoute(
         } as never
     } catch (error) {
         return {
-            props: theme,
+            props: {
+                is_mobile,
+            },
         }
     }
 }

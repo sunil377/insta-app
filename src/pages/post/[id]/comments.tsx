@@ -1,11 +1,11 @@
 import { CommentForm } from '@/components/Feeds/Comments'
 import Comments from '@/components/Post/Comments'
 import { AlertBadge, Avatar, Spinner } from '@/components/util'
-import { protectedRouteWithPost } from '@/helpers/routes'
 import MainLayout from '@/layout/main-layout'
 import { NextPageWithLayout } from '@/pages/_app'
 import { usePost } from '@/requests/usePost'
 import useUser from '@/requests/useUser'
+import { protectedRouteWithPost } from '@/routes/routes'
 import { useRouter } from 'next/router'
 import { z } from 'zod'
 

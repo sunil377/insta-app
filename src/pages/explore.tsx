@@ -1,18 +1,18 @@
 import MiniPost from '@/components/MiniPost'
 import { AlertBadge, Spinner } from '@/components/util'
 import { useAuth } from '@/context/AuthContext'
-import { useTheme } from '@/context/ThemeContext'
-import { protectedRouteWithUser } from '@/helpers/routes'
+import { useStore } from '@/context/StoreContext'
 import MainLayout from '@/layout/main-layout'
 import SearchContent from '@/layout/main-layout/LaptopLayout/SearchContent'
 import { usePosts } from '@/requests/usePost'
+import { protectedRouteWithUser } from '@/routes/routes'
 import clsx from 'clsx'
 import { NextPageWithLayout } from './_app'
 
 const Explore: NextPageWithLayout = () => {
     const currentUser = useAuth()
     const { data: posts, isLoading, isError, error } = usePosts(currentUser)
-    const { is_mobile: isMobile } = useTheme()
+    const { is_mobile: isMobile } = useStore()
 
     if (isLoading) {
         return (

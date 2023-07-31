@@ -1,6 +1,6 @@
 import Post from '@/components/Post'
-import { protectedRouteWithPost } from '@/helpers/routes'
 import MainLayout from '@/layout/main-layout'
+import { protectedRouteWithPost } from '@/routes/routes'
 import { InferGetServerSidePropsType } from 'next'
 import { NextPageWithLayout } from '../../_app'
 

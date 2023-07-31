@@ -1,6 +1,6 @@
 import { CommentIcon } from '@/assets'
 import { useAuth } from '@/context/AuthContext'
-import { useTheme } from '@/context/ThemeContext'
+import { useStore } from '@/context/StoreContext'
 import { useFeeds } from '@/requests/usePost'
 import { useUserById } from '@/requests/useUser'
 import { IPost } from '@/schema/post-schema'
@@ -25,7 +25,7 @@ function Feed({
     likes,
     photo,
 }: IPost) {
-    const { is_mobile: isMobile } = useTheme()
+    const { is_mobile: isMobile } = useStore()
     const { data: author, isLoading, isError, error } = useUserById(authorId)
 
     const currentUser = useAuth()

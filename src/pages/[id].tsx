@@ -3,12 +3,12 @@ import TabButton from '@/components/Profile/TabButton'
 import TabPanel from '@/components/Profile/TabPanel'
 import { AlertBadge, Spinner } from '@/components/util'
 import { adminAuth } from '@/config/firebase-admin'
-import { initial_state_of_theme } from '@/context/ThemeContext'
+import { global_state } from '@/context/StoreContext'
 import useGetSearchQuery from '@/hooks/useGetSearchQuery'
 import MainLayout from '@/layout/main-layout'
 import { queries } from '@/requests/queries'
 import { useProfileUser } from '@/requests/useUser'
-import { getThemeFormCookies } from '@/routes/util'
+import { REDIRECT_LOGIN } from '@/routes/routes'
 import { getServerUser } from '@/services/server'
 import { Tab } from '@headlessui/react'
 import { DehydratedState, QueryClient, dehydrate } from '@tanstack/react-query'
@@ -96,18 +96,15 @@ export async function getServerSideProps(
     props: {
         dehydratedState: DehydratedState
         currentUser: string
-    } & initial_state_of_theme
+    } & global_state
 }> {
     const cookies = nookies.get(ctx)
     const token = cookies?.token
-    const theme = getThemeFormCookies(cookies)
+    const is_mobile = cookies?.is_mobile === 'true'
 
     if (!token) {
         return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
+            redirect: REDIRECT_LOGIN,
         } as never
     }
 
@@ -118,10 +115,7 @@ export async function getServerSideProps(
         currentUser = response.uid
     } catch (error) {
         return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
+            redirect: REDIRECT_LOGIN,
         } as never
     }
 
@@ -155,7 +149,7 @@ export async function getServerSideProps(
         props: {
             dehydratedState: dehydrate(queryClient),
             currentUser,
-            ...theme,
+            is_mobile,
         },
     }
 }

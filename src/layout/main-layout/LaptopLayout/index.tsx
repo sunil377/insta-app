@@ -14,11 +14,11 @@ import {
 import CreatePostModalContent from '@/components/CreatePost/CreatePostButton'
 import Modal from '@/components/Modal'
 import { AlertBadge, Avatar, Spinner } from '@/components/util'
-import { useTheme } from '@/context/ThemeContext'
 import useLogout from '@/hooks/useLogout'
 import useUser from '@/requests/useUser'
 import { Menu, Popover, Transition } from '@headlessui/react'
 import clsx from 'clsx'
+import { useTheme } from 'next-themes'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Fragment, ReactNode, useState } from 'react'
@@ -65,7 +65,7 @@ function LaptopLayout({ children }: { children: ReactNode }) {
     const { data: currentUser, isError, isLoading, error } = useUser()
     const [isModalOpen, setModal] = useState(false)
     const handleLogOut = useLogout()
-    const { setDarkTheme } = useTheme()
+    const { setTheme } = useTheme()
     const pathname = usePathname()
     const isMessagePageActive = pathname.startsWith('/message')
 
@@ -384,26 +384,54 @@ function LaptopLayout({ children }: { children: ReactNode }) {
 
                                     <Menu.Item as={Fragment}>
                                         {({ active }) => (
-                                            <button
-                                                onClick={() =>
-                                                    setDarkTheme(
-                                                        (prev) => !prev,
-                                                    )
-                                                }
-                                                className={clsx(
-                                                    {
-                                                        'bg-gray-100 dark:bg-gray-950':
-                                                            active,
-                                                    },
-                                                    'flex w-full items-center justify-between px-4 py-2 font-normal',
-                                                )}
-                                            >
-                                                <span>Switch apperance</span>
-                                                <MoonIcon
-                                                    title="change Theme"
-                                                    className="text-lg"
-                                                />
-                                            </button>
+                                            <Menu as="div" className="relative">
+                                                <Menu.Button
+                                                    className={clsx(
+                                                        {
+                                                            'bg-gray-100 dark:bg-gray-950':
+                                                                active,
+                                                        },
+                                                        'flex w-full items-center justify-between px-4 py-2 font-normal',
+                                                    )}
+                                                >
+                                                    <span>
+                                                        Switch apperance
+                                                    </span>
+                                                    <MoonIcon
+                                                        title="change Theme"
+                                                        className="text-lg"
+                                                    />
+                                                </Menu.Button>
+                                                <Menu.Items className="absolute bottom-full left-full z-10 w-56 origin-bottom-left divide-y rounded-md border bg-white fill-current stroke-current text-sm shadow-2xl dark:divide-gray-900 dark:border-gray-800 dark:bg-black">
+                                                    <Menu.Item
+                                                        as="button"
+                                                        className="black w-full px-2 py-1.5 data-[headlessui-state=active]:bg-gray-100 data-[headlessui-state=active]:dark:bg-gray-950"
+                                                        onClick={() =>
+                                                            setTheme('system')
+                                                        }
+                                                    >
+                                                        System
+                                                    </Menu.Item>
+                                                    <Menu.Item
+                                                        as="button"
+                                                        className="black w-full px-2 py-1.5 data-[headlessui-state=active]:bg-gray-100 data-[headlessui-state=active]:dark:bg-gray-950"
+                                                        onClick={() =>
+                                                            setTheme('dark')
+                                                        }
+                                                    >
+                                                        Dark
+                                                    </Menu.Item>
+                                                    <Menu.Item
+                                                        as="button"
+                                                        className="black w-full px-2 py-1.5 data-[headlessui-state=active]:bg-gray-100 data-[headlessui-state=active]:dark:bg-gray-950"
+                                                        onClick={() =>
+                                                            setTheme('light')
+                                                        }
+                                                    >
+                                                        Light
+                                                    </Menu.Item>
+                                                </Menu.Items>
+                                            </Menu>
                                         )}
                                     </Menu.Item>
                                     <Menu.Item as={Fragment}>

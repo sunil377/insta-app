@@ -1,29 +1,30 @@
 import { adminAuth } from '@/config/firebase-admin'
-import { initial_state_of_theme } from '@/context/ThemeContext'
+import { global_state } from '@/context/StoreContext'
 import { queries } from '@/requests/queries'
-import { getThemeFormCookies } from '@/routes/util'
 import { getServerPost, getServerUser } from '@/services/server'
 import { DehydratedState, QueryClient, dehydrate } from '@tanstack/react-query'
 import { GetServerSidePropsContext } from 'next'
 import nookies from 'nookies'
 import { z } from 'zod'
 
+const REDIRECT_LOGIN = {
+    destination: '/login',
+    permanent: false,
+}
+
 async function protectedRouteWithUser(ctx: GetServerSidePropsContext): Promise<{
     props: {
         dehydratedState: DehydratedState
         currentUser: string
-    } & initial_state_of_theme
+    } & global_state
 }> {
     const cookies = nookies.get(ctx)
     const token = cookies?.token
-    const theme = getThemeFormCookies(cookies)
+    const is_mobile = cookies?.is_mobile === 'true'
 
     if (!token) {
         return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
+            redirect: REDIRECT_LOGIN,
         } as never
     }
 
@@ -34,10 +35,7 @@ async function protectedRouteWithUser(ctx: GetServerSidePropsContext): Promise<{
         currentUser = response.uid
     } catch (error) {
         return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
+            redirect: REDIRECT_LOGIN,
         } as never
     }
 
@@ -56,7 +54,7 @@ async function protectedRouteWithUser(ctx: GetServerSidePropsContext): Promise<{
         props: {
             dehydratedState: dehydrate(queryClient),
             currentUser,
-            ...theme,
+            is_mobile,
         },
     }
 }
@@ -66,18 +64,15 @@ async function protectedRouteWithPost(ctx: GetServerSidePropsContext): Promise<{
         dehydratedState: DehydratedState
         currentUser: string
         postId: string
-    } & initial_state_of_theme
+    } & global_state
 }> {
     const cookies = nookies.get(ctx)
     const token = cookies?.token
-    const theme = getThemeFormCookies(cookies)
+    const is_mobile = cookies?.is_mobile === 'true'
 
     if (!token) {
         return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
+            redirect: REDIRECT_LOGIN,
         } as never
     }
 
@@ -88,10 +83,7 @@ async function protectedRouteWithPost(ctx: GetServerSidePropsContext): Promise<{
         currentUser = response.uid
     } catch (error) {
         return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
+            redirect: REDIRECT_LOGIN,
         } as never
     }
 
@@ -124,9 +116,9 @@ async function protectedRouteWithPost(ctx: GetServerSidePropsContext): Promise<{
             dehydratedState: dehydrate(queryClient),
             currentUser,
             postId: id,
-            ...theme,
+            is_mobile,
         },
     }
 }
 
-export { protectedRouteWithPost, protectedRouteWithUser }
+export { REDIRECT_LOGIN, protectedRouteWithPost, protectedRouteWithUser }

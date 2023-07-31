@@ -1,9 +1,9 @@
 import Feeds from '@/components/Feeds'
 import SidePanel from '@/components/SidePanel'
 import { SCREEN_LG } from '@/constants/screens'
-import { protectedRouteWithUser } from '@/helpers/routes'
 import useMediaQuery from '@/hooks/useMediaQuery'
 import MainLayout from '@/layout/main-layout'
+import { protectedRouteWithUser } from '@/routes/routes'
 import Head from 'next/head'
 import { NextPageWithLayout } from './_app'
 

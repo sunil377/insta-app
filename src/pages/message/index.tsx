@@ -1,6 +1,6 @@
-import { protectedRouteWithUser } from '@/helpers/routes'
 import MessageLayout from '@/layout/MessageLayout'
 import MainLayout from '@/layout/main-layout'
+import { protectedRouteWithUser } from '@/routes/routes'
 import { NextPageWithLayout } from '../_app'
 
 const Messages: NextPageWithLayout = () => {

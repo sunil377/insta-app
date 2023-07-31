@@ -1,6 +1,6 @@
 import { ERROR_COMMENT_MIN_LENGTH } from '@/constants/errors'
 import { useAuth } from '@/context/AuthContext'
-import { useTheme } from '@/context/ThemeContext'
+import { useStore } from '@/context/StoreContext'
 import { convertZodErrorToFormikError } from '@/helpers/util'
 import { useCreateComment } from '@/requests/useComment'
 import { IPost } from '@/schema/post-schema'
@@ -99,7 +99,7 @@ function Comments({
     postId,
     comments,
 }: { postId: string } & Pick<IPost, 'comments'>) {
-    const { is_mobile: isMobile } = useTheme()
+    const { is_mobile: isMobile } = useStore()
 
     const commentLink = isMobile
         ? `/post/${postId}/comments`
